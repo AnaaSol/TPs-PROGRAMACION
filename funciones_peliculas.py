@@ -26,5 +26,3 @@ def frases_random(matrix):
     phrase=[matrix[number][0], matrix[number][1]]
     matriz.append(phrase)
   return matriz
-
-a=frases_random(matriz)
