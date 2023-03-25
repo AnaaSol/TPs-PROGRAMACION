@@ -46,10 +46,33 @@ y1=[]
 for i in range(len(matriz1)):
     x1.append(i)
     valor1=(matriz1[i][1]-min_anual_nike)/(max_anual_nike-min_anual_nike)
-    y1.append(valor1)
+    y1.append(valor1)   
 
-plt.plot(x, y, label="Google", color="blue")
-plt.plot(x1, y1, label="Nike", color="Orange")
-plt.show    
+a=[]
+b=[]
+inicio=matriz[0][1]
+for i in range(len(matriz)):
+    a.append(i)
+    nuevo=((inicio-matriz[i][1])/matriz[i][1])*100
+    b.append(nuevo)
 
+a1=[]
+b1=[]
+inicio1=matriz1[0][1]
+for i in range(len(matriz1)):
+    a1.append(i)
+    nuevo1=((inicio1-matriz1[i][1])/matriz1[i][1])*100
+    b1.append(nuevo1)
+
+plt.subplot(2, 1, 1)
+plt.plot(x,y, label="Google", color="blue")
+plt.plot(x1, y1, label="Nike", color="orange")
+
+plt.subplot(2, 1, 2)
+plt.plot(a, b, label="Google", color="blue")
+plt.plot(a1, b1, label="Nike", color="orange")
+
+plt.show
+
+    
     
