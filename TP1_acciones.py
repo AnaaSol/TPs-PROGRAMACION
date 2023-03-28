@@ -64,10 +64,13 @@ for i in range(len(matriz1)):
     nuevo1=((inicio1-matriz1[i][1])/matriz1[i][1])*100
     b1.append(nuevo1)
 
+#dos filas, una columna, la primera
 plt.subplot(2, 1, 1)
+#la función plot une los elementos de las listas x e y uno a uno para obtener las coordenadas de los puntos con los que grafica la curva.
 plt.plot(x,y, label="Google", color="blue")
 plt.plot(x1, y1, label="Nike", color="orange")
 
+#dos filas, una columna, la segunda
 plt.subplot(2, 1, 2)
 plt.plot(a, b, label="Google", color="blue")
 plt.plot(a1, b1, label="Nike", color="orange")
