@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de partidas</title>
+    <link rel="icon" type="image/png" href="static/icon.png">
+</head>
+<body>
+    {% if esta_vacia: %}
+        <h3>Aún no se ha jugado ninguna partida</h3>
+    {% else: %}
+        {% for partida in lista: %}
+        <li>
+            {{partida.nombre}} - {{partida.puntaje}}/5 - {{partida.fecha}}
+        </li>
+        {% endfor %}
+        <br>
+    {% endif %}
+    <br>
+    <form action="/">
+    <input type="submit" value="Volver">
+    </form>
+</body>
+</html>

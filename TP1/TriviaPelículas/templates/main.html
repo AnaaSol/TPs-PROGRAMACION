@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trivia</title>
+    <link rel="icon" type="image/png" href="static/images/icon.png">
+</head>
+<body>
+    <h1 style="text-align:center;">¡Trivia de películas!</h1>
+</body>
+<style>
+.item1 { grid-area: img; }
+.item2 { grid-area: menu; }
+.item3 { grid-area: main; }
+.item4 { grid-area: footer; }
+
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    'menu main img'
+    'menu main img'
+    'footer footer footer ';
+  gap: 10px;
+  column-gap: 0px;
+  padding: 20px;
+}
+
+.grid-container > div {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 17px;
+}
+</style>
+<body>
+  <div class="grid-container">
+    <div class="item1">
+    <img src="static/images/movie.jpg" width="600" height="200">
+    </div>
+    <div class="item4" style="font-size:100%;">
+    <br>
+    ¡Este es el juego de la trivia!
+    Durante 5 rondas, le será dada 
+    una frase y deberá 
+    elegir la película
+    a la que corresponde 
+    ¡Éxitos!
+    </div>
+    <div class="item2">
+    <br>
+    Nombre de jugador:
+    <br>
+    <form action="/" method="post">
+    <label for="nombre"></label><br>
+    <input type="text" id="nombre" name="nombre"><br>
+    <br>
+    <input type="submit" value="Aceptar"> 
+    </form>
+    <br>
+    {% if usuario != "anonimo": %}
+      <h3>Bienvenido/a {{usuario}}</h3>
+    {%endif%}
+    </div>  
+    <div class="item3">
+    <br>
+    <style>
+      .button {
+        border: none;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 15px;
+        margin: 4px 4px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+      }
+  
+      .button1 {
+        background-color: white; 
+        padding: 10px 64px;
+        color: black; 
+        border: 2px solid #4CAF50;
+      }
+  
+      .button1:hover {
+        background-color: #4CAF50;
+        color: white;
+      }
+  
+      .button2 {
+        background-color: white;
+        padding: 10px 20px;
+        color: black; 
+        border: 2px solid #008CBA;
+      }
+  
+      .button2:hover {
+        background-color: #008CBA;
+        color: white;
+      }
+  
+      </style>
+      <form action="/trivia">        
+          <button class="button button1">¡Trivia!</button>
+        </form>
+      <form action="/historial">        
+          <button class="button button2">Historial de partidas</button>
+        </form>
+  </div>
+  </div>
+</body>

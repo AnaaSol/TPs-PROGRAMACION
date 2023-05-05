@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>¡A jugar!</title>
+    <link rel="icon" type="image/png" href="static/images/icon.png">
+</head>
+<body>
+  {% if vueltas==6: %}
+    <h3>Su puntaje final es: {{puntaje_final}}/5</h3>
+    <form action="/">        
+      <button>Continuar</button>
+    </form>
+  {% else :%}
+    {% if valor=="correcta": %} 
+      <h3>DING DING DING</h3><br>
+      <h3>¡¡¡Felicitaciones!!! Su respuesta fue correcta</h3>
+    {% elif valor=="incorrecta": %}
+      <h3>OOPS</h3>
+      <h3>Lo sentimos, su respuesta fue incorrecta</h3>
+    {% endif %}
+      <style>
+        .button {
+          border: none;
+          color: white;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 15px;
+          margin: 4px 4px;
+          transition-duration: 0.4s;
+          cursor: pointer;
+        }
+    
+        .button1 {
+          background-color: white; 
+          padding: 10px 64px;
+          color: black; 
+          border: 2px solid #4CAF50;
+        }
+    
+        .button1:hover {
+          background-color: #4CAF50;
+          color: white;
+        }
+    
+        .button2 {
+          background-color: white;
+          padding: 10px 20px;
+          color: black; 
+          border: 2px solid #008CBA;
+        }
+    
+        .button2:hover {
+          background-color: #008CBA;
+          color: white;
+        }
+        
+        .button3 {
+          background-color: white;
+          padding: 10px 20px;
+          color: black; 
+          border: 2px solid #8000FF;
+        }
+    
+        .button3:hover {
+          background-color: #8000FF;
+          color: white;
+        }
+    
+        </style>
+        <h3>¿A qué película corresponde la frase?:</h3>
+          <h4>{{frases[x][0]}}</h4>
+          {% if frases[x][0] == frases[0][0]: %}
+            <form action="/trivia" method="post">
+              <input type="radio" id="correcta" name="op" value="correcta">
+              <label for="op1">{{frases[0][1]}}</label><br>
+              <input type="radio" id="op2" name="op">
+              <label for="op2">{{frases[1][1]}}</label><br>
+              <input type="radio" id="op3" name="op">
+              <label for="op3">{{frases[2][1]}}</label><br>
+              <br>
+              <input type="submit" value="Enviar">
+            </form>  
+          {% elif frases[x][0] == frases[1][0]: %}
+            <form action="/trivia" method="post">
+              <input type="radio" id="op1" name="op">
+              <label for="op1">{{frases[0][1]}}</label><br>
+              <input type="radio" id="correcta" name="op" value="correcta">
+              <label for="op2">{{frases[1][1]}}</label><br>
+              <input type="radio" id="op3" name="op">
+              <label for="op3">{{frases[2][1]}}</label><br>
+              <br>
+              <input type="submit" value="Enviar">
+            </form>  
+          {% elif frases[x][0] == frases[2][0]: %}
+            <form action="/trivia" method="post">
+              <input type="radio" id="op1" name="op">
+              <label for="op1">{{frases[0][1]}}</label><br>
+              <input type="radio" id="op2" name="op">
+              <label for="op2">{{frases[1][1]}}</label><br>
+              <input type="radio" id="correcta" name="op" value="correcta">
+              <label for="op3">{{frases[2][1]}}</label><br>
+              <br>
+              <input type="submit" value="Enviar">
+            </form> 
+          {% endif %}
+      <h4>Correctas: {{cont}}/5</h4>
+  </body>
+  {% endif %}
+</html>
