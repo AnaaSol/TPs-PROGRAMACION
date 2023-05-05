@@ -22,10 +22,6 @@ def guardar_3datos_en_archivo (nombre_archivo, datos):
     with open (nombre_archivo, "a", encoding="utf-8") as archi:
             print(datos["nombre"], datos["puntaje"], datos["fecha"], file=archi, sep=",")
 
-def guardar_1dato_en_archivo (nombre_archivo, datos):
-    with open (nombre_archivo, "w", encoding="utf-8") as archi:
-            print(datos, file=archi)
-
 def frases_random(matrix):
   "Devuelve una matriz con 3 listas de frases random y sus respectivas películas."
   matriz=[]
