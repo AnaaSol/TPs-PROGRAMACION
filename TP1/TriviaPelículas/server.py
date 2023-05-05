@@ -10,7 +10,7 @@ import datetime
 import csv
 import random
 
-from modulos.modulos import agregar_lista_archivo, guardar_3datos_en_archivo, frases_random_web, guardar_1dato_en_archivo
+from modulos.modulos import agregar_lista_archivo, guardar_3datos_en_archivo, frases_random_web
 
 app = Flask(__name__)
 lista = []
