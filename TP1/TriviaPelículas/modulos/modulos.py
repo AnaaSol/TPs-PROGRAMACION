@@ -6,6 +6,7 @@ Created on Fri Apr 14 15:47:30 2023
 """
 import csv
 import random
+import operator
 
 def agregar_lista_archivo (nombre_archivo, lista):
     with open (nombre_archivo) as file:
@@ -24,11 +25,24 @@ def guardar_3datos_en_archivo (nombre_archivo, datos):
 
 def frases_random(matrix):
   "Devuelve una matriz con 3 listas de frases random y sus respectivas películas."
+
   matriz=[]
   list=random.sample(range(len(matrix)),3)
   for number in list:
     phrase=[matrix[number][0], matrix[number][1]]
     matriz.append(phrase)
+  matriz.sort(key=operator.itemgetter(1))
+
+  for x in range(len(matriz)):
+      try:
+        while matriz[x][1]==matriz[x+1][1]:
+          list=random.sample(range(len(matrix)),3)
+          for number in list:
+            phrase=[matrix[number][0], matrix[number][1]]
+            matriz=[]
+            matriz.append(phrase)
+      except IndexError:
+          pass
   return matriz
 
 def frases_random_web(matrix):
@@ -38,4 +52,16 @@ def frases_random_web(matrix):
   for number in list:
     phrase=[matrix[number][0], matrix[number][1]]
     matriz.append(phrase)
+  matriz.sort(key=operator.itemgetter(1))
+
+  for x in range(len(matriz)):
+      try:
+        while matriz[x][1]==matriz[x+1][1]:
+          list=random.sample(range(len(matrix)),15)
+          for number in list:
+            phrase=[matrix[number][0], matrix[number][1]]
+            matriz=[]
+            matriz.append(phrase)
+      except IndexError:
+          pass
   return matriz

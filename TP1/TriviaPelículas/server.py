@@ -47,6 +47,7 @@ def raiz():
     return render_template("main.html", usuario=usuario)
 
 vueltas=0
+cont=0
 
 @app.route("/trivia", methods=['GET', 'POST'])
 def agregar():

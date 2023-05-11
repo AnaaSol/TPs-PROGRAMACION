@@ -1,9 +1,10 @@
 import random
 import datetime
 import csv
-import frases_random
+from modulos.modulos import frases_random
+import operator
 
-with open ("frases_de_peliculas.txt", encoding="utf-8") as archivo:
+with open ("./data/frases_de_peliculas.txt", encoding="utf-8") as archivo:
   archi=csv.reader(archivo, delimiter=";")
   peliculas=list(archi)
 
@@ -29,7 +30,7 @@ salir=False
 lista=[]
 
 try:
-    with open ("registro_opciones.txt") as file:
+    with open ("./data.registro_opciones.txt") as file:
         file=csv.reader(file, delimiter=",")
         file=list(file)
         for x in file:
@@ -41,11 +42,18 @@ while not salir:
     option=input(menu)
     if option=="1":
         lista.append([1, (str(datetime.datetime.now())[:19])])
-        for x in range(len(matriz)):
-            print(matriz[x][1])
+        matriz.sort(key=operator.itemgetter(1))
+        try:
+            for x in range(len(matriz)):
+              if matriz[x][1]!=matriz[x+1][1]:
+                print(matriz[x+1][1])
+              else:
+                 pass
+        except IndexError:
+          pass
     elif option=="2":
         lista.append([2, (str(datetime.datetime.now())[:19])])
-        triplete=frases_random.frases_random(matriz)
+        triplete=frases_random(matriz)
         x=random.randint(0,2)
         opciones=f"""
         ¿De qué película es la frase {triplete[x][0]}?
@@ -72,13 +80,14 @@ while not salir:
           
     elif option=="3":
         lista.append([3, (str(datetime.datetime.now())[:19])])
-        print(lista)
+        for x in range(len(lista)):
+          print(lista[x][0], lista[x][1])
         
     elif option=="4":
         lista=[]
         
     elif option=="5":
-        with open ("registro_opciones.txt", "a") as registro:
+        with open ("./data/registro_opciones.txt", "a") as registro:
             for x in range(len(lista)):
                 print(lista[x][0], lista[x][1], file=registro, sep=",")
         salir=True      
