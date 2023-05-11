@@ -19,7 +19,7 @@ def abrir_archivos (archivo, a=","):
 
 def variacion_porcentual (inicio, fin):
     "Devuelve la variación porcentual del valor de inicio respecto del valor de fin"
-    variacion=(((inicio-fin)/fin)*100)
+    variacion=(((fin-inicio)/inicio)*100)
     if variacion<0:
         variacion=-variacion
     variacion=round(variacion, 2)
