@@ -1,14 +1,37 @@
 from math import *
 from detector_alimento import *
 
+class Cajón():
+    def __init__(self):
+        self.sensor=DetectorAlimento()
+        self.alimentos=[]
+
+    def Llenar_cajón(self, N):
+        self.alimentos=[]
+        for i in range(N):
+            self.alimentos.append(self.sensor.detectar_alimento)
+
+        for x in range(len(self.alimentos)):
+            while self.alimentos[x]["alimento"]=="undefined":
+                self.alimentos[x]=self.sensor.detectar_alimento
+
+#cajón no es el objeto sino self.alimentos
+class Cajón_verdura():
+    def __init__(self):
+        self.cajón_verduras=[]
+
+    def Clasificar(self, cajón):
+        for i in range(len(cajón)):
+            if cajón[i]["alimento"] in ["zanahoria", "papa"]:
+                self.cajón_verduras.append(cajón[i])
 
 class Kiwi():
     def __init__(self, peso):
         self.peso=peso
 
     def calcular_aw(self):
-        awk=round(0.96*(1-(e)**((-1/18)*self.peso))/(1+(e)**((-1/18)*self.peso)), 3)
-        return awk
+        aw=round(0.96*(1-(e)**((-1/18)*self.peso))/(1+(e)**((-1/18)*self.peso)), 3)
+        return aw
     
 awk=[]
 awk.append(Kiwi.calcular_aw())
