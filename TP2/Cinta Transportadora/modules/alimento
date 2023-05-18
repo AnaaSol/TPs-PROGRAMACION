@@ -16,14 +16,17 @@ class Cajón():
                 self.alimentos[x]=self.sensor.detectar_alimento
 
 #cajón no es el objeto sino self.alimentos
-class Cajón_verdura():
+class Clasificador():
     def __init__(self):
         self.cajón_verduras=[]
+        self.cajón_frutas=[]
 
     def Clasificar(self, cajón):
         for i in range(len(cajón)):
             if cajón[i]["alimento"] in ["zanahoria", "papa"]:
                 self.cajón_verduras.append(cajón[i])
+            elif cajón[i]["alimento"] in ["manzana", "kiwi"]:
+                self.cajón_frutas.append(cajón[i])
 
 class Kiwi():
     def __init__(self, peso):
