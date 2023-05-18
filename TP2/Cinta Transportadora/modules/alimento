@@ -27,6 +27,7 @@ class Clasificador():
                 self.cajón_verduras.append(cajón[i])
             elif cajón[i]["alimento"] in ["manzana", "kiwi"]:
                 self.cajón_frutas.append(cajón[i])
+<<<<<<< HEAD
 
 class Fruta():
     def __init__(self):
@@ -44,6 +45,8 @@ class Verdura():
     def __init__(self):
         self.papas=[]
         self.zanahoria=[]
+=======
+>>>>>>> 35b36cfb91692ecee944e6424ba71c96a8f7ba74
 
 class Kiwi():
     def __init__(self, peso):
