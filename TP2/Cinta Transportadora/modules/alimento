@@ -27,7 +27,6 @@ class Clasificador():
                 self.cajón_verduras.append(cajón[i])
             elif cajón[i]["alimento"] in ["manzana", "kiwi"]:
                 self.cajón_frutas.append(cajón[i])
-<<<<<<< HEAD
 
 class Fruta():
     def __init__(self):
@@ -45,8 +44,13 @@ class Verdura():
     def __init__(self):
         self.papas=[]
         self.zanahoria=[]
-=======
->>>>>>> 35b36cfb91692ecee944e6424ba71c96a8f7ba74
+
+    def Cargar(self, canasta):
+        for x in canasta:
+            if x["alimento"]=="papas":
+                self.papas.append(canasta[x])
+            elif x["alimento"]=="zanahoria":
+                self.zanahoria.append(canasta[x]) 
 
 class Kiwi():
     def __init__(self, peso):
@@ -92,11 +96,11 @@ class Zanahoria():
 awz=[]
 awz.append(Zanahoria.calcular_aw())
 
-# verdura=awz+awp
+verdura=awz+awp
 
-# fruta=awk+awm
+fruta=awk+awm
 
-# total=verdura+fruta
+total=verdura+fruta
 
 def promedio (lista):
     for x in lista:
