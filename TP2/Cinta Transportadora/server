@@ -1,2 +1,7 @@
-from modules import *
+from modules.classes import *
+
+#la importación no anda haha muy bueno
+
+
+
 
