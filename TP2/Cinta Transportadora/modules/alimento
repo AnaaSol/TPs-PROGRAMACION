@@ -60,8 +60,6 @@ class Kiwi():
         aw=round(0.96*(1-(e)**((-1/18)*self.peso))/(1+(e)**((-1/18)*self.peso)), 3)
         return aw
     
-awk=[]
-awk.append(Kiwi.calcular_aw())
 
 class Manzana():
     def __init__(self, peso):
@@ -70,9 +68,6 @@ class Manzana():
     def calcular_aw(self):
         awm=round(0.97*(((1/15)*self.peso)**2)/(1+((1/15)*self.peso)**2), 3)
         return awm
-    
-awm=[]
-awm.append(Manzana.calcular_aw())
 
 class Papa():
     def __init__(self, peso):
@@ -82,8 +77,6 @@ class Papa():
         aw=round(0.66*atan((1/18)*self.peso), 3)
         return aw
     
-awp=[]
-awp.append(Papa.calcular_aw())
 
 class Zanahoria():
     def __init__(self, peso):
@@ -93,14 +86,6 @@ class Zanahoria():
         aw=round((0.96*(1*-e**(-1/10)*self.peso)), 3)
         return aw
     
-awz=[]
-awz.append(Zanahoria.calcular_aw())
-
-verdura=awz+awp
-
-fruta=awk+awm
-
-total=verdura+fruta
 
 def promedio (lista):
     for x in lista:

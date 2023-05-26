@@ -1,2 +1,22 @@
-from modules import *
+from modules.alimento import *
+from modules.detector_alimento import *
 
+Papa=Papa(0.2)
+
+awk=[]
+awk.append(Kiwi.calcular_aw())
+
+awm=[]
+awm.append(Manzana.calcular_aw())
+
+awp=[]
+awp.append(Papa.calcular_aw())
+
+awz=[]
+awz.append(Zanahoria.calcular_aw())
+
+verdura=awz+awp
+
+fruta=awk+awm
+
+total=verdura+fruta
