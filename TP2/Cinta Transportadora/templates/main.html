@@ -2,87 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Trivia</title>
+    <title>Cinta Transportadora</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
- fieldset {
-          background-color: #eeeeee;
-        }
+    fieldset {background-color: #d9e3e9;}
         
-        legend {
-          background-color: rgb(114, 158, 175);
-          color: white;
-          padding: 5px 10px;
-        }
+    legend {
+        background-color: rgb(80, 126, 145);
+        color: white;
+        padding: 5px 10px;}
         
-        input {
-          margin: 5px;
-        }
+    input {margin: 5px;}
         
-        div {
-            margin-left: 200px;
-            margin-right: 200px;
-            margin-top: 60px;
-        }
-table {font-family: arial, sans-serif; width: 100%;}
-td, th {border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;}
-* {
-  box-sizing: border-box;
-}
+    div {margin-left: 200px;
+        margin-right: 200px;
+        margin-top: 20px}
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
+    table {font-family: arial, sans-serif; width: 100%;}
 
-/* Style the header */
-header {
-  background-color: #87a0cf;
-  padding: 10px;
-  text-align: center;
-  font-size: 25px;
-  color: white;
-}
+    td, th {border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;}
+    * {
+    box-sizing: border-box;
+    }
 
-/* Create two columns/boxes that floats next to each other */
-nav {
-  float: left;
-  width: 30%;
-  height: 300px; /* only for demonstration, should be removed */
-  background: #ccc;
-  padding: 20px;
-}
+    body {
+    font-family: Arial, Helvetica, sans-serif;
+    }
 
-/* Style the list inside the menu */
-nav ul {
-  list-style-type: none;
-  padding: 0;
-}
+    header {
+    background-color: #87a0cf;
+    padding: 10px;
+    text-align: center;
+    font-size: 25px;
+    color: white;
+    }
 
-article {
-  float: left;
-  padding: 20px;
-  width: 70%;
-  background-color: #f1f1f1;
-  height: 300px; /* only for demonstration, should be removed */
-}
+    nav {
+    float: left;
+    width: 30%;
+    height: 420px;
+    background: #ccc;
+    padding: 20px;
+    }
 
-/* Clear floats after the columns */
-section::after {
-  content: "";
-  display: table;
-  clear: both;
-}
+    nav ul {
+    list-style-type: none;
+    padding: 0;
+    }
 
+    article {
+    float: left;
+    padding: 20px;
+    width: 70%;
+    background-color: #f1f1f1;
+    height: 420px;
+    }
 
-/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
-@media (max-width: 600px) {
-  nav, article {
-    width: 100%;
-    height: auto;
-  }
-}
+    section::after {
+    content: "";
+    display: table;
+    clear: both;
+    }
+
+    @media (max-width: 600px) {
+    nav, article {
+        width: 100%;
+        height: auto;
+    }
+    }
+
+    .table2 {background-color:#ebac82;
+            border: 1px solid #ec6363;
+            text-align: left;}
+
+    .table3 {background-color:#daec98;
+    border: 1px solid #8cc557;
+    text-align: left;}
+
 </style>
 </head>
 <body>
@@ -94,40 +92,93 @@ section::after {
 <section>
   <nav>
     <ul>
-      <label><b>Ingresar N° de alimentos:</b></label><br><br>
-      <input type="number"
-             min="0"
-             max="10000"
-             id="cant"
-             value="0">
-      <br><br>
-      <img src="static/cinta_transportadora.jpg", width="180" height="150">
+        <label><b>Ingresar N° de alimentos:</b></label><br><br>
+        <form action="/" method="post">
+        <input type="number"
+                min="1"
+                max="10000"
+                id="cant"
+                name="cant"
+                value="1"><br>
+            <input type="submit" value="Iniciar carga">
+        </form>
+        <br><br>
+        <img src="static/cinta_transportadora.jpg", width="180" height="150">
+        <br><br>
+        {% if N > 0:%}
+            <h4>Se cargaron {{N}} alimentos</h4>
+        {% endif %}
     </ul>
   </nav>
   <article>
     <table>
-      <tr>
+        <tr>
         <td><b>aw Frutas</b></td>
-      </tr>
-      <tr> 
+        <td>{{awFruta_prom}}</td>
+        </tr>
+        <tr> 
         <td>aw kiwis</td>
-      </tr>
-      <tr>
+        <td>{{awK}}</td>
+        </tr>
+        <tr>
         <td>aw manzanas</td>
-      </tr>
-      <tr>
+        <td>{{awM}}</td>
+        </tr>
+        <tr>
         <td><b>aw Verduras</b></td>
-      </tr>
-      <tr>
+        <td>{{awVerdura_prom}}</td>
+        </tr>
+        <tr>
         <td>aw papas</td>
-      </tr>
-      <tr>
+        <td>{{awP}}</td>
+        </tr>
+        <tr>
         <td>aw zanahorias</td>
-      </tr>
-      <tr>
+        <td>{{awZ}}</td>
+        </tr>
+        <tr>
         <td><b>aw Total</b></td>
-      </tr>
+        <td>{{awTot}}</td>
+        </tr>
     </table>
+    {%if N > 0:%}
+        {% if awK >= 0.95:%}
+        <table class="table2">
+            <br>
+            <tr>
+                <td>&#9888; Se recomienda la inspección del cajón</td>
+            </tr>
+        </table>
+        {% elif awM >= 0.95:%}
+        <table class="table2">
+            <br>
+            <tr>
+                <td> &#9888; Se recomienda la inspección del cajón</td>
+            </tr>
+        </table>
+        {% elif awZ >= 0.95:%}
+        <table class="table2">
+            <br>
+            <tr>
+                <td> &#9888; Se recomienda la inspección del cajón</td>
+            </tr>
+        </table>
+        {% elif awP >= 0.95:%}
+        <table class="table2">
+            <br>
+            <tr>
+                <td> &#9888; Se recomienda la inspección del cajón</td>
+            </tr>
+        </table>
+        {% else:%}
+        <table class="table3">
+            <br>
+            <tr>
+                <td>El cajón no requiere de inspección</td>
+            </tr>
+        </table>
+        {% endif %}
+    {% endif %}
   </article>
   </section>
   </fieldset>

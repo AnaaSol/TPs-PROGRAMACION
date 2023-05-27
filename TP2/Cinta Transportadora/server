@@ -1,31 +1,38 @@
-from modules.classes import *
+# from modules.classes import *
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
 def raiz():
+    N=0
     if request.method == 'POST':
-        N=int(request.form["nombre"])
+        N=int(request.form["cant"])
 
-    Tape=Cinta()
-    Tape.Llenar_cajón(N)
-    K, M, Z, P=Tape.Separar()
+    # Tape=Cinta()
+    # Tape.Llenar_cajón(N)
+    # K, M, Z, P=Tape.Separar()
 
-    Calcu=Calculadora_aw()
-    awK=Calcu.Calcular_aw(K, "kiwi")
-    awM=Calcu.Calcular_aw(M, "manzana")
-    awZ=Calcu.Calcular_aw(Z, "zanahoria")
-    awP=Calcu.Calcular_aw(P, "papa")
+    awK=0.09
+    awM=0.23
+    awZ=0.95
+    awP=0.71
+    awFruta_prom=0.64
+    awVerdura_prom=0.41
+    awTot=0.59
 
-    awFruta_prom=(awK+awM)/(len(K)+len(M))
-    awVerdura_prom=(awZ+awP)/(len(P)+len(Z))
+    # Calcu=Calculadora_aw()
+    # awK=Calcu.Calcular_aw(K, "kiwi")
+    # awM=Calcu.Calcular_aw(M, "manzana")
+    # awZ=Calcu.Calcular_aw(Z, "zanahoria")
+    # awP=Calcu.Calcular_aw(P, "papa")
 
-    awTot=(awFruta_prom+awVerdura_prom)/(len(K)+len(M)+len(Z)+len(P))
+    # awFruta_prom=(awK+awM)/(len(K)+len(M))
+    # awVerdura_prom=(awZ+awP)/(len(P)+len(Z))
 
-    return render_template("main.html", awK=awK, awM=awM, awP=awP, awZ=awZ, awFruta_prom=awFruta_prom, awVerdura_prom=awVerdura_prom, awTot=awTot)
+    # awTot=(awFruta_prom+awVerdura_prom)/(len(K)+len(M)+len(Z)+len(P))
 
-    #hacer el control de calidad usando Analizar_calidad() e incorporarlo al return
+    return render_template("main.html", N=N, awK=awK, awM=awM, awP=awP, awZ=awZ, awFruta_prom=awFruta_prom, awVerdura_prom=awVerdura_prom, awTot=awTot)
 
 if __name__ == "__main__":
     app.run(debug=True)
