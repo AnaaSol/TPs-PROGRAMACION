@@ -1,2 +1,31 @@
-from modules import *
+from modules.classes import *
+from flask import Flask, render_template, request
 
+app = Flask(__name__)
+
+@app.route("/", methods=['GET', 'POST'])
+def raiz():
+    if request.method == 'POST':
+        N=int(request.form["nombre"])
+
+    Tape=Cinta()
+    Tape.Llenar_cajón(N)
+    K, M, Z, P=Tape.Separar()
+
+    Calcu=Calculadora_aw()
+    awK=Calcu.Calcular_aw(K, "kiwi")
+    awM=Calcu.Calcular_aw(M, "manzana")
+    awZ=Calcu.Calcular_aw(Z, "zanahoria")
+    awP=Calcu.Calcular_aw(P, "papa")
+
+    awFruta_prom=(awK+awM)/(len(K)+len(M))
+    awVerdura_prom=(awZ+awP)/(len(P)+len(Z))
+
+    awTot=(awFruta_prom+awVerdura_prom)/(len(K)+len(M)+len(Z)+len(P))
+
+    return render_template("main.html", awK=awK, awM=awM, awP=awP, awZ=awZ, awFruta_prom=awFruta_prom, awVerdura_prom=awVerdura_prom, awTot=awTot)
+
+    #hacer el control de calidad usando Analizar_calidad() e incorporarlo al return
+
+if __name__ == "__main__":
+    app.run(debug=True)
