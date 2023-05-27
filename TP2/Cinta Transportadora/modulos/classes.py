@@ -93,90 +93,29 @@ class Cinta():
                     kiwis.append(self.cajón[i])
             return kiwis, manzanas, zanahorias, papas
         
-    def Analizar_calidad(self, kiwis, manzanas, zanahorias, papas):
-        "Analiza la actividad acuosa de los alimentos en el cajón"
-        awK=self.calculadora.Calcular_aw(kiwis, "kiwi")
-        awM=self.calculadora.Calcular_aw(manzanas, "manzana")
-        awP=self.calculadora.Calcular_aw(papas, "papa")
-        awZ=self.calculadora.Calcular_aw(zanahorias, "zanahoria")
-        #debería poner cada cálculo dentro de un try en caso de que el cajón no tenga el alimento y la calculadora devuelva que el cajón está vacío, pero no sé cómo referenciar esa excepción particular en el except
-        awFrutas_prom=(awK+awM)/(len(M)+len(K))
-        awVerduras_prom=(awP+awZ)/(len(P)+len(Z))
-        if awK>0.95:
-            print("Se recomienda revisar los kiwis")
+    # def Analizar_calidad(self, kiwis, manzanas, zanahorias, papas):
+    #     "Analiza la actividad acuosa de los alimentos en el cajón"
+    #     awK=self.calculadora.Calcular_aw(kiwis, "kiwi")
+    #     awM=self.calculadora.Calcular_aw(manzanas, "manzana")
+    #     awP=self.calculadora.Calcular_aw(papas, "papa")
+    #     awZ=self.calculadora.Calcular_aw(zanahorias, "zanahoria")
+    #     #debería poner cada cálculo dentro de un try en caso de que el cajón no tenga el alimento y la calculadora devuelva que el cajón está vacío, pero no sé cómo referenciar esa excepción particular en el except
+    #     awFrutas_prom=(awK+awM)/(len(M)+len(K))
+    #     awVerduras_prom=(awP+awZ)/(len(P)+len(Z))
+    #     if awK>0.95:
+    #         print("Se recomienda revisar los kiwis")
         
-        if awM>0.95:
-            print("Se recomienda revisar las manzanas")
+    #     if awM>0.95:
+    #         print("Se recomienda revisar las manzanas")
 
-        if awP>0.95:
-            print("Se recomienda revisar las papas")
+    #     if awP>0.95:
+    #         print("Se recomienda revisar las papas")
 
-        if awZ>0.95:
-            print("Se recomienda revisar las zanahorias")
+    #     if awZ>0.95:
+    #         print("Se recomienda revisar las zanahorias")
 
-        if awZ<=0.95 and awM<=0.95 and awK<=0.95 and awP<=0.95:
-            print("Todo correcto")
+    #     if awZ<=0.95 and awM<=0.95 and awK<=0.95 and awP<=0.95:
+    #         print("Todo correcto")
 
-        return awM, awK, awFrutas_prom, awZ, awP, awVerduras_prom
+    #     return awM, awK, awFrutas_prom, awZ, awP, awVerduras_prom
 
-
-#caja=Cinta()
-#caja.Llenar_cajón(8)
-#kiwis, manzanas, zanahorias, papas=caja.Separar()
-#nada=[]
-#print(kiwis)
-#print(papas)
-#Calcu=Calculadora_aw()
-#juju funciona;;
-#print(Calcu.Calcular_aw(kiwis, "kiwi"))
-#print(Calcu.Calcular_aw(nada, "kiwi"))
-#print(Calcu.Calcular_aw(caja.cajón, "kiwi"))
-#print(Calcu.Calcular_aw(kiwis, "banana"))
-
-#server(main)
-
-#pedir con un formulario
-N=int(input("Cantidad de alimentos"))
-
-Tape=Cinta()
-Tape.Llenar_cajón(N)
-K, M, Z, P=Tape.Separar()
-
-Calcu=Calculadora_aw()
-awK=Calcu.Calcular_aw(K, "kiwi")
-awM=Calcu.Calcular_aw(M, "manzana")
-awZ=Calcu.Calcular_aw(Z, "zanahoria")
-awP=Calcu.Calcular_aw(P, "papa")
-
-awFruta_prom=(awK+awM)/(len(K)+len(M))
-awVerdura_prom=(awZ+awP)/(len(P)+len(Z))
-
-awTot=(awFruta_prom+awVerdura_prom)/(len(K)+len(M)+len(Z)+len(P))
-
-#este control lo hace Analizar_calidad() ahora
-
-if awK>0.95:
-    print("Revisar kiwis")
-else:
-    print("Kiwis tranqui")
-
-if awM>0.95:
-    print("Revisar manzanas")
-else:
-    print("Manzanas tranqui")
-
-if awZ>0.95:
-    print("Revisar zanahorias")
-else:
-    print("Zanahorias tranqui")
-
-if awP>0.95:
-    print("Revisar papas")
-else:
-    print("Papas tranqui")
-
-
-
-
-#Cajón.Llenar_cajón(N)
-#print(Cajón.alimentos)
