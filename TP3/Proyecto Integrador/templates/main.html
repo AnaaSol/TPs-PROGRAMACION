@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Inicio</title>
 <style>
     fieldset {background-color: #d9e3e9;}
@@ -22,9 +23,110 @@
     td, th {border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;}
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header {
+        background-color: #666;
+        padding: 8px;
+        text-align: center;
+        font-size: 27px;
+        color: white;
+    }
+
+    
+    nav {
+        float: left;
+        width: 30%;
+        height: 400px; 
+        background: #ccc;
+        padding: 20px;
+    }
+
+    nav ul {
+    list-style-type: none;
+    padding: 45px;
+    }
+
+    article {
+    float: left;
+    padding: 60px;
+    width: 40%;
+    background-color: #f1f1f1;
+    height: 400px; 
+    }
+
+    lateral {
+    float: right;
+    padding: 30px;
+    width: 30%;
+    background-color: #f1f1f1;
+    height: 400px;
+    text-align: left;
+    font-size: 15px;
+    }
+
+    section::after {
+    content: "";
+    display: table;
+    /* clear: both; */
+    }
+
+    @media (max-width: 600px) {
+    nav, article, lateral{
+        width: 100%;
+        height: auto;
+    }
+    }
+
 </style>
 </head>
 <body>
-
+    <header>
+        <h2>Servicio de reclamos FIUNER</h2>
+        <h6><i>Customer Relationship Management</i></h6>
+    </header>
+    <section>
+        <nav>
+            <ul>
+            <img src="static/fiuner_logo.png" width="200" lenght="90"><br>
+            <p>Espacio destinado a reclamos FIUNER</p>
+            <p><i>"Atender las solicitudes de los clientes es un factor importante en cualquier organización."</i></p>
+            </ul>
+        </nav>
+        <article>
+            <h1><b>Bienvenido</b></h1>
+            <form action="/" method="post">
+                <label for="fname">Nombre de usuario:</label><br>
+                <input type="text" id="nombre" name="nombre"><br>
+                <label for="lname">Contraseña:</label><br>
+                <input type="text" id="contraseña" name="contraseña"><br><br>
+                <input type="submit" value="Submit">
+            </form>
+            {% if condicion[1]=="nada": %}
+                <p>{{condicion[0]}}</p>
+            {% elif condicion[1] in ["estudiante", "docente", "PAyS"]: %}
+                <form action="/usuario">
+                    <input type="submit" value="Continuar">
+                </form>
+            {% elif condicion[1]=="jefe": %}
+            <form action="/jefe">
+                <input type="submit" value="Continuar">
+            </form>
+            {% endif %}
+        </article>
+        <lateral>
+            <p>Ayudanos a menjorar este servicio. </p>
+            <p>Podés escribirnos tus sugerencias via vail a:</p>
+            <p>&#9900 anasolm@gmail.com</p>
+            <p>&#9900 paulabelendemartini2@gmail.com</p>
+        </lateral>
+    </section>
 </body>
 </html>

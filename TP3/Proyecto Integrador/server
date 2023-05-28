@@ -1,0 +1,84 @@
+
+from modulos.classes import *
+from flask import Flask, render_template, request
+import csv
+
+app = Flask(__name__)
+
+datos=[["a", "a", "a", "a", "a", "a"]]
+try:
+    with open ("./data/usuarios.txt") as file:
+        file=csv.reader(file, delimiter=",")
+        file=list(file)
+        for x in file:
+            nombre=x[0]
+            nombre=Persona()
+            nombre.set_nombre(x[0])
+            nombre.set_apellido(x[1])
+            nombre.set_mail(x[2])
+            nombre.set_usuario(x[3])
+            nombre.set_claustro(x[4])
+            nombre.set_contraseña(x[5])
+            datos.append(x[0])
+except FileNotFoundError:
+    with open("./data/usuarios.txt", "w") as archi:
+        pass
+
+@app.route("/", methods=['GET', 'POST'])
+def raiz():
+    global datos  
+    condicion=[]
+    if request.method == 'POST':
+        n=request.form["nombre"]
+        c=request.form["contraseña"]
+        print(n)
+        for x in datos:
+            print(x[0], x[5])
+            if x[0]==n and x[5]==c:
+                condicion=["Acceso correcto", x[4]]
+            elif x[0]==n:
+                condicion=["Usuario o contraseña incorrecta, ingrese nuevamente", "nada"]
+            elif x[5]==c:
+                condicion=["Usuario o contraseña incorrecto, ingrese nuevamente", "nada"]
+            else:
+                condicion=["Los datos ingresados son incorrectos o aún no te has registrado", "nada"]
+    print(datos)
+    return render_template("main.html", condicion=condicion)
+
+@app.route("/nuevo_usuario", methods=['GET', 'POST'])
+def new_user():
+    if request.method == 'POST':
+        user=request.form["nombre"]
+        user=Persona()
+        name=user.set_nombre(request.form["nombre"])
+        surname=user.set_apellido(request.form["apellido"])
+        email=user.set_mail(request.form["mail"])
+        usr=user.set_usuario(request.form["usuario"])
+        clautr=user.set_claustro(request.form["claustro"])
+        contr=user.set_contraseña(request.form["contraseña"])
+        with open ("./data/usuarios.txt", "a") as archi:
+            print(name, surname, email, usr, clautr, contr, file=archi)
+    return render_template("sing_up.html")
+
+@app.route("/jefe", methods=['GET', 'POST'])
+def jefe():
+    return render_template("jefe.html")
+
+@app.route("/usuario", methods=['GET', 'POST'])
+def usuario():
+    return render_template("usuario.html")
+
+@app.route("/hacer_reclamo", methods=['GET', 'POST'])
+def crear():
+    return render_template("reclamo.html")
+
+@app.route("/reclamos_usuario", methods=['GET', 'POST'])
+def recl():
+    return render_template("reclamo_usuario.html")
+
+@app.route("/reclamos_departamento", methods=['GET', 'POST'])
+def responder():
+    return render_template("reclamo_depto.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)
