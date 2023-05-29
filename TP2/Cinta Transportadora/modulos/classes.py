@@ -29,6 +29,7 @@ class DetectorAlimento:
 class Calculadora_aw():
     def Calcular_aw(self, alimentos, tipo):
         """Calcula la actividad acuosa de un conjunto de alimentos iguales"""
+        #tipo es un str y alimentos es un cajón: una lista de diccionarios con las claves "alimento" y "peso"
         if tipo in ["kiwi", "manzana", "papa", "zanahoria"]:
             if len(alimentos)==0:
                 raise Exception("No hay alimentos")
@@ -63,34 +64,36 @@ class Cinta():
     def __init__(self):
         self.sensor=DetectorAlimento()
         self.calculadora=Calculadora_aw()
-        self.cajón=[]
 
     def Llenar_cajón(self, N):
+        cajón=[]
         for i in range(N):
-            self.cajón.append(self.sensor.detectar_alimento())
+            cajón.append(self.sensor.detectar_alimento())
 
-        for x in range(len(self.cajón)):
-            while self.cajón[x]["alimento"]=="undefined":
-                self.cajón[x]=self.sensor.detectar_alimento()
+        for x in range(len(cajón)):
+            while cajón[x]["alimento"]=="undefined":
+                cajón[x]=self.sensor.detectar_alimento()
 
-    def Separar(self):
+        return cajón
+
+    def Separar(self, cajón):
         """Separa el contenido del cajón según el alimento"""
         kiwis=[]
         manzanas=[]
         zanahorias=[]
         papas=[]
-        if len(self.cajón)==0:
+        if len(cajón)==0:
             raise Exception("El cajón está vacío")
         else:
-            for i in range(len(self.cajón)):
-                if self.cajón[i]["alimento"]=="zanahoria":
-                    zanahorias.append(self.cajón[i])
-                elif self.cajón[i]["alimento"]=="papa":
-                    papas.append(self.cajón[i])
-                elif self.cajón[i]["alimento"]=="manzana":
-                    manzanas.append(self.cajón[i])
-                elif self.cajón[i]["alimento"]=="kiwi":
-                    kiwis.append(self.cajón[i])
+            for i in range(len(cajón)):
+                if cajón[i]["alimento"]=="zanahoria":
+                    zanahorias.append(cajón[i])
+                elif cajón[i]["alimento"]=="papa":
+                    papas.append(cajón[i])
+                elif cajón[i]["alimento"]=="manzana":
+                    manzanas.append(cajón[i])
+                elif cajón[i]["alimento"]=="kiwi":
+                    kiwis.append(cajón[i])
             return kiwis, manzanas, zanahorias, papas
         
     # def Analizar_calidad(self, kiwis, manzanas, zanahorias, papas):
