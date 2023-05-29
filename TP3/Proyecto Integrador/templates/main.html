@@ -4,25 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Inicio</title>
-<style>
-    fieldset {background-color: #d9e3e9;}
-        
-    legend {
-        background-color: rgb(80, 126, 145);
-        color: white;
-        padding: 5px 10px;}
-        
+<style>     
     input {margin: 5px;}
-        
-    div {margin-left: 200px;
-        margin-right: 200px;
-        margin-top: 20px}
-
-    table {font-family: arial, sans-serif; width: 100%;}
-
-    td, th {border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;}
 
     * {
         box-sizing: border-box;
@@ -107,10 +90,10 @@
                 <input type="text" id="nombre" name="nombre"><br>
                 <label for="lname">Contraseña:</label><br>
                 <input type="text" id="contraseña" name="contraseña"><br><br>
-                <input type="submit" value="Submit">
+                <input type="submit" value="Submit"><br>
             </form>
             {% if condicion[1]=="nada": %}
-                <p>{{condicion[0]}}</p>
+                <p style="color:rgb(206, 23, 23); font-size: 14px;">{{condicion[0]}}</p>
             {% elif condicion[1] in ["estudiante", "docente", "PAyS"]: %}
                 <form action="/usuario">
                     <input type="submit" value="Continuar">
@@ -122,6 +105,11 @@
             {% endif %}
         </article>
         <lateral>
+            <br>
+            <h1>¿Deseas registrate?</h1>
+            <form action="/sing_up">
+                <input type="submit" value="Registrarse">
+            </form><br><br><br>
             <p>Ayudanos a menjorar este servicio. </p>
             <p>Podés escribirnos tus sugerencias via vail a:</p>
             <p>&#9900 anasolm@gmail.com</p>

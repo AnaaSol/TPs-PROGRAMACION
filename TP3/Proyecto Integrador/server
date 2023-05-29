@@ -31,9 +31,7 @@ def raiz():
     if request.method == 'POST':
         n=request.form["nombre"]
         c=request.form["contraseña"]
-        print(n)
         for x in datos:
-            print(x[0], x[5])
             if x[0]==n and x[5]==c:
                 condicion=["Acceso correcto", x[4]]
             elif x[0]==n:
@@ -42,10 +40,9 @@ def raiz():
                 condicion=["Usuario o contraseña incorrecto, ingrese nuevamente", "nada"]
             else:
                 condicion=["Los datos ingresados son incorrectos o aún no te has registrado", "nada"]
-    print(datos)
     return render_template("main.html", condicion=condicion)
 
-@app.route("/nuevo_usuario", methods=['GET', 'POST'])
+@app.route("/sing_up", methods=['GET', 'POST'])
 def new_user():
     if request.method == 'POST':
         user=request.form["nombre"]
