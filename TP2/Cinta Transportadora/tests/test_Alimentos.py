@@ -20,7 +20,7 @@ class TestManzana(unittest.TestCase):
         self.manzana = Manzana(0.35) 
     
     def test_calcular_aws(self):
-        """Prueba el cálculo correcto del promedio de la actividad acuosa de kiwis, manzanas, zanahorias, papas, frutas, verduras, y alimentos"""
+        """Prueba el cálculo correcto del promedio de la actividad acuosa de manzanas"""
 
         #Se prueba el cálculo correcto del aw de una manzana
         awm=0.93604 #calculado
@@ -32,10 +32,10 @@ class TestZanahoria(unittest.TestCase):
         self.zanahoria = Zanahoria(0.3) 
     
     def test_calcular_aws(self):
-        """Prueba el cálculo correcto del promedio de la actividad acuosa de kiwis, manzanas, zanahorias, papas, frutas, verduras, y alimentos"""
+        """Prueba el cálculo correcto del promedio de la actividad acuosa de zanahorias"""
 
         #Se prueba el cálculo correcto del aw de una zanahoria
-        awz=0.95999 #calculado
+        awz=0.91220441 #calculado
         self.assertAlmostEqual(self.zanahoria.Calcular_aw(), awz, places=2)
 
 class TestPapa(unittest.TestCase):
@@ -44,7 +44,7 @@ class TestPapa(unittest.TestCase):
         self.papa = Papa(0.6) 
     
     def test_calcular_aws(self):
-        """Prueba el cálculo correcto del promedio de la actividad acuosa de kiwis, manzanas, zanahorias, papas, frutas, verduras, y alimentos"""
+        """Prueba el cálculo correcto del promedio de la actividad acuosa de papas"""
 
         #Se prueba el cálculo correcto del aw de una papa
         awp=0.97579 #calculado

@@ -1,4 +1,4 @@
-from classes import *
+from modulos.classes import *
 
 FIUNER=Facultad("Matemática")
 

@@ -1,6 +1,7 @@
 from math import *
 import numpy as np
 import random
+from abc import ABC, abstractmethod
 
 class DetectorAlimento:
     """clase que representa un conjunto de sensores de la cinta transportadora
@@ -68,32 +69,32 @@ class Calculadora_Aw():
             if zanahorias==0:
                 awz_prom=0
             else:
-                awz_prom=awz/zanahorias
+                awz_prom=round(awz/zanahorias, 2)
 
             if papas==0:
                 awp_prom=0
             else:
-                awp_prom=awp/papas
+                awp_prom=round(awp/papas, 2)
 
             if kiwis==0:
                 awk_prom=0
             else:
-                awk_prom=awk/kiwis
+                awk_prom=round(awk/kiwis, 2)
 
             if manzanas==0:
                 awm_prom=0
             else:
-                awm_prom=awm/manzanas
+                awm_prom=round(awm/manzanas, 2)
 
             if kiwis+manzanas==0:
                 awFrutas=0
             else:
-                awFrutas=awFrutas/(kiwis+manzanas)
+                awFrutas=round(awFrutas/(kiwis+manzanas), 2)
 
             if papas+zanahorias==0:
                 awVerduras=0
             else:
-                awVerduras=awVerduras/(papas+zanahorias)
+                awVerduras=round(awVerduras/(papas+zanahorias), 2)
 
             return awk_prom, awm_prom, awp_prom, awz_prom, awFrutas, awVerduras, awTot/(manzanas+kiwis+papas+zanahorias)
 
@@ -128,7 +129,7 @@ class Cinta():
 
         return cajón
         
-class Alimento():
+class Alimento(ABC):
     def __init__(self, peso):
         self.peso=peso
 
@@ -149,5 +150,5 @@ class Papa(Alimento):
 
 class Zanahoria(Alimento):
     def Calcular_aw(self):
-        aw=round((0.96*(1*-e**(-10)*self.peso)), 3)
+        aw=round(0.96*(1-exp(-10*self.peso)), 3)
         return aw
