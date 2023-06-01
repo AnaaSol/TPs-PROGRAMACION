@@ -26,96 +26,128 @@ class DetectorAlimento:
         peso_detectado = random.choices(self.peso_alimentos, self.prob_pesos)[0]
         return {"alimento": alimento_detectado, "peso": peso_detectado}
     
-class Calculadora_aw():
-    def Calcular_aw(self, alimentos, tipo):
-        """Calcula la actividad acuosa de un conjunto de alimentos iguales"""
-        if tipo in ["kiwi", "manzana", "papa", "zanahoria"]:
-            if len(alimentos)==0:
-                raise Exception("No hay alimentos")
+class Calculadora_Aw():
+    """Calcula el promedio de la aw de un cajón por alimento y tipo de alimento"""
+    def Calcular_aws(self, cajón):
+   
+        if len(cajón)==0:
+            raise Exception("El cajón está vacío")
+        else: 
+            awk=0
+            kiwis=0
+            awm=0
+            manzanas=0
+            awp=0
+            papas=0
+            awz=0
+            zanahorias=0
+            awFrutas=0
+            awVerduras=0
+            awTot=0
+
+            for alimento in cajón:
+                aw=alimento.Calcular_aw()
+                awTot+=aw
+                if isinstance(alimento, Kiwi):
+                    kiwis+=1
+                    awk+=aw
+                    awFrutas+=aw
+                if isinstance(alimento, Manzana):
+                    manzanas+=1
+                    awm+=aw
+                    awFrutas+=aw
+                if isinstance(alimento, Papa):
+                    papas+=1
+                    awp+=aw
+                    awVerduras+=aw
+                if isinstance(alimento, Zanahoria):
+                    zanahorias+=1
+                    awz+=aw
+                    awVerduras+=aw
+
+            if zanahorias==0:
+                awz_prom=0
             else:
-                tot=len(alimentos)
-                aws=0
-                for i in range(len(alimentos)):
-                    if alimentos[i]["alimento"]==tipo:
-                        if tipo=="kiwi":
-                            peso=alimentos[i]["peso"]
-                            aw=round(0.96*(1-(e)**((-1/18)*peso))/(1+(e)**((-1/18)*peso)), 3)
-                            aws+=aw
-                        elif tipo=="manzana":
-                            peso=alimentos[i]["peso"]
-                            aw=round(0.97*(((1/15)*peso)**2)/(1+((1/15)*peso)**2), 3)
-                            aws+=aw
-                        elif tipo=="zanahoria":
-                            peso=alimentos[i]["peso"]
-                            aw=round((0.96*(1*-e**(-1/10)*peso)), 3)
-                            aws+=aw
-                        elif tipo=="papa":
-                            peso=alimentos[i]["peso"]
-                            aw=round(0.66*atan((1/18)*peso), 3)
-                            aws+=aw
-                    else:
-                        raise Exception("Los alimentos no son del mismo tipo")
-                return aws/tot
-        else:
-            raise Exception("Lo sentimos, esta calculadora sólo puede trabajar con kiwis, manzanas, papas o zanahorias")
+                awz_prom=awz/zanahorias
+
+            if papas==0:
+                awp_prom=0
+            else:
+                awp_prom=awp/papas
+
+            if kiwis==0:
+                awk_prom=0
+            else:
+                awk_prom=awk/kiwis
+
+            if manzanas==0:
+                awm_prom=0
+            else:
+                awm_prom=awm/manzanas
+
+            if kiwis+manzanas==0:
+                awFrutas=0
+            else:
+                awFrutas=awFrutas/(kiwis+manzanas)
+
+            if papas+zanahorias==0:
+                awVerduras=0
+            else:
+                awVerduras=awVerduras/(papas+zanahorias)
+
+            return awk_prom, awm_prom, awp_prom, awz_prom, awFrutas, awVerduras, awTot/(manzanas+kiwis+papas+zanahorias)
+
 
 class Cinta():
     def __init__(self):
         self.sensor=DetectorAlimento()
-        self.calculadora=Calculadora_aw()
-        self.cajón=[]
 
     def Llenar_cajón(self, N):
+        lista=[]
+        cajón=[]
         for i in range(N):
-            self.cajón.append(self.sensor.detectar_alimento())
+            lista.append(self.sensor.detectar_alimento())
 
-        for x in range(len(self.cajón)):
-            while self.cajón[x]["alimento"]=="undefined":
-                self.cajón[x]=self.sensor.detectar_alimento()
+        for x in range(len(cajón)):
+            while lista[x]["alimento"]=="undefined":
+                lista[x]=self.sensor.detectar_alimento()
+  
+        for dato in lista:
+            if dato["alimento"]=="kiwi":
+                kiwi=Kiwi(dato["peso"])
+                cajón.append(kiwi)
+            elif dato["alimento"]=="manzana":
+                manzana=Manzana(dato["peso"])
+                cajón.append(manzana)
+            elif dato["alimento"]=="zanahoria":
+                zanahoria=Zanahoria(dato["peso"])
+                cajón.append(zanahoria)
+            elif dato["alimento"]=="papa":
+                papa=Papa(dato["peso"])
+                cajón.append(papa)
 
-    def Separar(self):
-        """Separa el contenido del cajón según el alimento"""
-        kiwis=[]
-        manzanas=[]
-        zanahorias=[]
-        papas=[]
-        if len(self.cajón)==0:
-            raise Exception("El cajón está vacío")
-        else:
-            for i in range(len(self.cajón)):
-                if self.cajón[i]["alimento"]=="zanahoria":
-                    zanahorias.append(self.cajón[i])
-                elif self.cajón[i]["alimento"]=="papa":
-                    papas.append(self.cajón[i])
-                elif self.cajón[i]["alimento"]=="manzana":
-                    manzanas.append(self.cajón[i])
-                elif self.cajón[i]["alimento"]=="kiwi":
-                    kiwis.append(self.cajón[i])
-            return kiwis, manzanas, zanahorias, papas
+        return cajón
         
-    # def Analizar_calidad(self, kiwis, manzanas, zanahorias, papas):
-    #     "Analiza la actividad acuosa de los alimentos en el cajón"
-    #     awK=self.calculadora.Calcular_aw(kiwis, "kiwi")
-    #     awM=self.calculadora.Calcular_aw(manzanas, "manzana")
-    #     awP=self.calculadora.Calcular_aw(papas, "papa")
-    #     awZ=self.calculadora.Calcular_aw(zanahorias, "zanahoria")
-    #     #debería poner cada cálculo dentro de un try en caso de que el cajón no tenga el alimento y la calculadora devuelva que el cajón está vacío, pero no sé cómo referenciar esa excepción particular en el except
-    #     awFrutas_prom=(awK+awM)/(len(M)+len(K))
-    #     awVerduras_prom=(awP+awZ)/(len(P)+len(Z))
-    #     if awK>0.95:
-    #         print("Se recomienda revisar los kiwis")
-        
-    #     if awM>0.95:
-    #         print("Se recomienda revisar las manzanas")
+class Alimento():
+    def __init__(self, peso):
+        self.peso=peso
 
-    #     if awP>0.95:
-    #         print("Se recomienda revisar las papas")
+class Kiwi(Alimento):
+    def Calcular_aw(self):
+        aw=round(0.96*(1-(e)**((-18)*self.peso))/(1+(e)**((-18)*self.peso)), 3)
+        return aw
 
-    #     if awZ>0.95:
-    #         print("Se recomienda revisar las zanahorias")
+class Manzana(Alimento):
+    def Calcular_aw(self):
+        aw=round(0.97*(((15)*self.peso)**2)/(1+((15)*self.peso)**2), 3)
+        return aw
 
-    #     if awZ<=0.95 and awM<=0.95 and awK<=0.95 and awP<=0.95:
-    #         print("Todo correcto")
+class Papa(Alimento):
+    def Calcular_aw(self):
+        aw=round(0.66*atan((18)*self.peso), 3)
+        return aw
 
-    #     return awM, awK, awFrutas_prom, awZ, awP, awVerduras_prom
-
+class Zanahoria(Alimento):
+    def Calcular_aw(self):
+        aw=round((0.96*(1*-e**(-10)*self.peso)), 3)
+        return aw
