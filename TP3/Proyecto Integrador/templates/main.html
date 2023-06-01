@@ -58,7 +58,6 @@
     section::after {
     content: "";
     display: table;
-    /* clear: both; */
     }
 
     @media (max-width: 600px) {
@@ -66,6 +65,30 @@
         width: 100%;
         height: auto;
     }
+    }
+
+    .button {
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+    margin: 4px 4px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    }
+
+    .button1 {
+    background-color: white; 
+    padding: 10px 64px;
+    color: black; 
+    border: 2px solid #4c7faf;
+    }
+
+    .button1:hover {
+    background-color: #4c7faf;
+    color: white;
     }
 
 </style>
@@ -85,23 +108,43 @@
         </nav>
         <article>
             <h1><b>Bienvenido</b></h1>
+            {% if condicion[1]=="nothing": %}
+                <form action="/" method="post">
+                    <label for="fname">Nombre de usuario:</label><br>
+                    <input type="text" id="nombre" name="nombre"><br>
+                    <label for="lname">Contraseña:</label><br>
+                    <input type="password" id="contraseña" name="contraseña"><br><br>
+                    <input type="submit" value="Submit"><br>
+                </form>
+            {% elif condicion[1]=="nada": %}
+                <form action="/" method="post">
+                    <label for="fname">Nombre de usuario:</label><br>
+                    <input type="text" id="nombre" name="nombre"><br>
+                    <label for="lname">Contraseña:</label><br>
+                    <input type="password" id="contraseña" name="contraseña"><br><br>
+                    <input type="submit" value="Submit"><br>
+                </form>
+                <p style="color:rgb(206, 23, 23); font-size: 14px;">{{condicion[0]}}</p>
+            <!-- {% elif condicion[1] in ["Estudiante", "Docente", "PAyS"]: %}
+                <form action="/" method="post">
+                    <label for="fname">Nombre de usuario:</label><br>
+                    <input type="text" id="nombre" name="nombre"><br>
+                    <label for="lname">Contraseña:</label><br>
+                    <input type="password" id="contraseña" name="contraseña"><br><br>
+                </form>
+                <form action="/usuario">
+                    <button class="button button1">Continuar</button>
+                </form>
+            {% elif condicion[1]=="jefe": %}
             <form action="/" method="post">
                 <label for="fname">Nombre de usuario:</label><br>
                 <input type="text" id="nombre" name="nombre"><br>
                 <label for="lname">Contraseña:</label><br>
-                <input type="text" id="contraseña" name="contraseña"><br><br>
-                <input type="submit" value="Submit"><br>
+                <input type="password" id="contraseña" name="contraseña"><br><br>
             </form>
-            {% if condicion[1]=="nada": %}
-                <p style="color:rgb(206, 23, 23); font-size: 14px;">{{condicion[0]}}</p>
-            {% elif condicion[1] in ["estudiante", "docente", "PAyS"]: %}
-                <form action="/usuario">
-                    <input type="submit" value="Continuar">
-                </form>
-            {% elif condicion[1]=="jefe": %}
             <form action="/jefe">
-                <input type="submit" value="Continuar">
-            </form>
+                <button class="button button1">Continuar</button>
+            </form> -->
             {% endif %}
         </article>
         <lateral>

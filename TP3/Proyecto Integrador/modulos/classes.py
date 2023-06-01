@@ -1,8 +1,9 @@
 import random
 import datetime
+from abc import ABC, abstractmethod
 
-class Persona:
-
+class Persona(ABC):
+    @abstractmethod
     def __init__(self):
         self.nombre=""
         self.apellido=""
@@ -21,7 +22,8 @@ class Persona:
     
     def set_usuario(self, usuario):
         if isinstance (usuario, Persona):
-            raise Exception ("Ya existe un usario con este nombre, por favor, ingresar otro")
+            return "No es posible"
+            #raise Exception ("Ya existe un usario con este nombre, por favor, ingresar otro")
         else:
             self.usuario=usuario
             return usuario
@@ -32,7 +34,8 @@ class Persona:
 
     def set_mail(self, mail):
         if isinstance (mail, Persona):
-            raise Exception ("Ya existe una cuenta con este mail, iniciar sección o ingresar uno distinto")
+            return "No es posible"
+            #raise Exception ("Ya existe una cuenta con este mail, iniciar sección o ingresar uno distinto")
         else:
             self.mail=mail
             return mail
@@ -41,7 +44,6 @@ class Persona:
         self.usuario=claustro
         return claustro
     
-
     def cambiar_datos(self, dato_a_cambiar, nuevo):
         if dato_a_cambiar == "mail":
             if isinstance (nuevo, Persona):
@@ -53,8 +55,6 @@ class Persona:
         else:
             raise Exception ("No es posible modificar el tipo de dato ingresado")
 
-    # def logging(self):   creo que esto se lo haría desde server y con el html
-    #     pass
 
 class Usuario(Persona):
     def __init__(self):
@@ -62,8 +62,6 @@ class Usuario(Persona):
         self.reclamos_adheridos=[]
         self.reclamos_generados=[]
 
-    # def crear_usuraio(self):  creo que esto se lo haría desde server y con el html
-    #     pass
 
     def generar_reclamo(self, nombre_reclamo, descripcion):
         self.reclamos_generados.append([nombre_reclamo, descripcion, (datetime.datetime.now())[:19]])

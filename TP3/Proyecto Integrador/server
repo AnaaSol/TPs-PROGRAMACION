@@ -1,61 +1,100 @@
-
 from modulos.classes import *
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, flash, abort
+#from flask_login import login_user, login_required, current_user, logout_user
+#from werkzeug.security import generate_password_hash, check_password_hash
 import csv
+#from modulos.config import app, db, login_manager
 
 app = Flask(__name__)
 
-datos=[["a", "a", "a", "a", "a", "a"]]
+datos=[]
 try:
     with open ("./data/usuarios.txt") as file:
-        file=csv.reader(file, delimiter=",")
+        file=csv.reader(file, delimiter=" ")
         file=list(file)
         for x in file:
-            nombre=x[0]
-            nombre=Persona()
-            nombre.set_nombre(x[0])
-            nombre.set_apellido(x[1])
-            nombre.set_mail(x[2])
-            nombre.set_usuario(x[3])
-            nombre.set_claustro(x[4])
-            nombre.set_contraseña(x[5])
-            datos.append(x[0])
+            # nombre=x[0]
+            # x[0]=Usuario()
+            # x[0].set_nombre(nombre)
+            # x[0].set_apellido(x[1])
+            # x[0].set_mail(x[2])
+            # x[0].set_usuario(x[3])
+            # x[0].set_claustro(x[4])
+            # x[0].set_contraseña(x[5])
+            datos.append(x)
 except FileNotFoundError:
     with open("./data/usuarios.txt", "w") as archi:
         pass
-
+print (datos)
 @app.route("/", methods=['GET', 'POST'])
 def raiz():
     global datos  
-    condicion=[]
+    condicion=["nothing", "nothing"]
     if request.method == 'POST':
         n=request.form["nombre"]
         c=request.form["contraseña"]
+        print(n,c)
         for x in datos:
-            if x[0]==n and x[5]==c:
-                condicion=["Acceso correcto", x[4]]
-            elif x[0]==n:
+            if x[3]==n and x[5]==c:
+                if x[4]=="jefe":
+                    #condicion=["Acceso correcto", x[4]]
+                    return redirect(url_for("jefe"))
+                else:
+                    return redirect(url_for("usuario"))
+            elif x[3]!=n and x[5]==c:
                 condicion=["Usuario o contraseña incorrecta, ingrese nuevamente", "nada"]
-            elif x[5]==c:
-                condicion=["Usuario o contraseña incorrecto, ingrese nuevamente", "nada"]
+            elif x[3]==n and x[5]!=c:
+                condicion=["Usuario o contraseña incorrecta, ingrese nuevamente", "nada"]
             else:
                 condicion=["Los datos ingresados son incorrectos o aún no te has registrado", "nada"]
+    print (condicion)
     return render_template("main.html", condicion=condicion)
 
 @app.route("/sing_up", methods=['GET', 'POST'])
 def new_user():
+    global datos
+    condicion="nada"
     if request.method == 'POST':
-        user=request.form["nombre"]
-        user=Persona()
-        name=user.set_nombre(request.form["nombre"])
+        user=request.form["name"]
+        user=Usuario()
+        name=user.set_nombre(request.form["name"])
+        if " " in name:
+            indice=name.index(" ")
+            name=name.pop(indice)
         surname=user.set_apellido(request.form["apellido"])
-        email=user.set_mail(request.form["mail"])
-        usr=user.set_usuario(request.form["usuario"])
-        clautr=user.set_claustro(request.form["claustro"])
+        email=user.set_mail(request.form["email"])
+        usr=user.set_usuario(request.form["nombre_usuario"])
+        clautr=user.set_claustro(request.form["cloister"])
         contr=user.set_contraseña(request.form["contraseña"])
-        with open ("./data/usuarios.txt", "a") as archi:
-            print(name, surname, email, usr, clautr, contr, file=archi)
-    return render_template("sing_up.html")
+        contr2=request.form["contraseña_rep"]
+        with open ("./data/usuarios.txt", "w") as archi:
+            print(name2, surname, email, usr, clautr, contr, file=archi)
+        if contr!=contr2:
+            condicion="Las contraseñas ingresadas no coinciden"
+        else:
+            if user=="":
+                condicion="Faltan ingresar datos"
+            elif surname=="":
+                condicion="Faltan ingresar datos"
+            elif email=="":
+                condicion="Faltan ingresar datos"
+            elif usr=="":
+                condicion="Faltan ingresar datos"
+            elif contr=="":
+                condicion="Faltan ingresar datos"
+            elif contr2=="":
+                condicion="Faltan ingresar datos"
+            elif email=="No es posible":
+                condicion="Ya existe una cuenta con este mail, iniciar sección o ingresar uno distinto"
+            elif usr=="No es posible":
+                condicion="Ya existe una cuenta con este nombre de usuario, iniciar sección o ingresar uno distinto"
+            else:
+                datos.append([name, surname, email, usr, clautr, contr])
+                with open ("./data/usuarios.txt", "w") as archi:
+                    for x in range(len(datos)):
+                        print(datos[x][0], datos[x][1], datos[x][2], datos[x][3], datos[x][4], datos[x][5], file=archi)
+                return redirect(url_for("raiz"))
+    return render_template("sing_up.html", condicion=condicion)
 
 @app.route("/jefe", methods=['GET', 'POST'])
 def jefe():
@@ -65,9 +104,13 @@ def jefe():
 def usuario():
     return render_template("usuario.html")
 
-@app.route("/hacer_reclamo", methods=['GET', 'POST'])
+@app.route("/reclamo", methods=['GET', 'POST'])
 def crear():
     return render_template("reclamo.html")
+
+@app.route("/reclamos_pendientes", methods=['GET', 'POST'])
+def pendientes():
+    return render_template("reclamos_pendientes.html")
 
 @app.route("/reclamos_usuario", methods=['GET', 'POST'])
 def recl():

@@ -31,21 +31,34 @@
                 <input type="email" id="email" name="email"><br><br>
                 <label for="nombre_usuario">Nombre de usuario:</label>
                 <input type="text" id="nombre_usuario" name="nombre_usuario"><br><br>
-                <label for="claustro">Claustro:</label>
-                <select> 
-                    <option value="1" id="calustro" name="claustro">Estudiante</option> 
-                    <option value="2" id="calustro" name="claustro">Docente</option> 
-                    <option value="3" id="calustro" name="claustro">PAyS</option> 
+                <label for="cloister">Claustro:</label>
+                <select id="cloister" name="cloister"> 
+                    <option value="Estudiante" id="cloister" name="cloister">Estudiante</option> 
+                    <option value="Docente" id="cloister" name="cloister">Docente</option> 
+                    <option value="PAyS" id="cloister" name="cloister">PAyS</option> 
                 </select><br><br>
                 <label for="contraseña">Contraseña:</label>
                 <input type="password" id="contraseña" name="contraseña"><br><br>
                 <label for="contraseña_rep">Repetir contraseña:</label>
                 <input type="password" id="contraseña_rep" name="contraseña_rep"><br><br>
-            </fieldset>
-            <fieldset>
                 <input type="submit" value="Continuar">
+                {% if condicion=="nada": %}
+                    <p style="font-size:14xp">Complete el formulario</p>
+                {% else:%}
+                    <p style="color:rgb(206, 23, 23); font-size: 14px;">{{condicion}}</p>
+                {% endif %}
             </fieldset>
         </form>
+        
+            <!-- {% if condicion=="nada": %}
+                <p style="font-size:14xp">Complete el formulario</p>
+            {% elif condicion=="correcto": %}
+            <form action="/">
+                <input type="submit" value="Continuar">
+            </form>
+            {% else:%}
+                <p style="color:rgb(206, 23, 23); font-size: 14px;">{{condicion}}</p>
+            {% endif %} -->
     </div>
 </body>
 </html>

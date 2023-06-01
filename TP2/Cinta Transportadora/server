@@ -9,28 +9,28 @@ def raiz():
     if request.method == 'POST':
         N=int(request.form["cant"])
 
-    # Tape=Cinta()
-    # Tape.Llenar_cajón(N)
-    # K, M, Z, P=Tape.Separar()
+    Tape=Cinta()
+    Tape.Llenar_cajón(N)
+    K, M, Z, P=Tape.Separar()
 
-    awK=0.09
-    awM=0.23
-    awZ=0.15
-    awP=0.71
-    awFruta_prom=0.64
-    awVerdura_prom=0.41
-    awTot=0.59
+    # awK=0.09
+    # awM=0.23
+    # awZ=0.15
+    # awP=0.71
+    # awFruta_prom=0.64
+    # awVerdura_prom=0.41
+    # awTot=0.59
 
-    # Calcu=Calculadora_aw()
-    # awK=Calcu.Calcular_aw(K, "kiwi")
-    # awM=Calcu.Calcular_aw(M, "manzana")
-    # awZ=Calcu.Calcular_aw(Z, "zanahoria")
-    # awP=Calcu.Calcular_aw(P, "papa")
+    Calcu=Calculadora_aw()
+    awK=Calcu.Calcular_aw(K, "kiwi")
+    awM=Calcu.Calcular_aw(M, "manzana")
+    awZ=Calcu.Calcular_aw(Z, "zanahoria")
+    awP=Calcu.Calcular_aw(P, "papa")
 
-    # awFruta_prom=(awK+awM)/(len(K)+len(M))
-    # awVerdura_prom=(awZ+awP)/(len(P)+len(Z))
+    awFruta_prom=(awK+awM)/(len(K)+len(M))
+    awVerdura_prom=(awZ+awP)/(len(P)+len(Z))
 
-    # awTot=(awFruta_prom+awVerdura_prom)/(len(K)+len(M)+len(Z)+len(P))
+    awTot=(awFruta_prom+awVerdura_prom)/(len(K)+len(M)+len(Z)+len(P))
 
     return render_template("main.html", N=N, awK=awK, awM=awM, awP=awP, awZ=awZ, awFruta_prom=awFruta_prom, awVerdura_prom=awVerdura_prom, awTot=awTot)
 

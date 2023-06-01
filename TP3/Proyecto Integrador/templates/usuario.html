@@ -3,5 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <title>Página principal</title>
+<style>
+    input {margin: 5px;}
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header {
+        background-color: #666;
+        padding: 8px;
+        text-align: center;
+        font-size: 27px;
+        color: white;
+    }
+
+
+    nav {
+        float: left;
+        width: 31%;
+        height: 400px; 
+        background: #ccc;
+        padding: 20px;
+    }
+
+    nav ul {
+    list-style-type: none;
+    padding: 45px;
+    }
+
+    article {
+    float: left;
+    padding: 60px;
+    width: 23%;
+    background-color: #f1f1f1;
+    height: 400px; 
+    }
+
+    lateral {
+    float: left;
+    padding: 30px;
+    width: 23%;
+    background-color: #f1f1f1;
+    height: 400px;
+    text-align: left;
+    font-size: 15px;
+    }
+
+    ending {
+    float: right;
+    padding: 30px;
+    width: 23%;
+    background-color: #f1f1f1;
+    height: 400px;
+    text-align: left;
+    font-size: 15px;
+    }
+
+    section::after {
+    content: "";
+    display: table;
+    }
+
+    @media (max-width: 600px) {
+    nav, article, lateral, ending{
+        width: 100%;
+        height: auto;
+    }
+    }
+</style>
 </head>
+<body>
+    <header>
+        <h6><i>Bienvenido/a al</i></h6>
+        <h2>Servicio de reclamos FIUNER</h2>
+    </header>
+    <section>
+        <nav>
+            <ul>
+                i don't know what to put here
+                perhaps nothing
+            </ul>
+        </nav>
+        <article>
+            <form action="/reclamo">
+                <input type="submit" value="Crear reclamo"><br>
+            </form>
+        </article>
+        <lateral>
+            <h1>¿Qué desea hacer??</h1>
+            <form action="/reclamos_pendientes">
+                <input type="submit" value="Listar reclamos"><br>
+            </form>
+        </lateral>
+        <ending>
+            <form action="/reclamos_usuario">
+                <input type="submit" value="Mis reclamos"><br>
+            </form>
+        </ending>
+    </section>
+</body>
 </html>
