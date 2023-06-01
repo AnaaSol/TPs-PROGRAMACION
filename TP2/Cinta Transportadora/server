@@ -1,4 +1,4 @@
-#from modulos.classes import *
+from modulos.classes import *
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
@@ -6,31 +6,25 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def raiz():
     N=0
+
     if request.method == 'POST':
         N=int(request.form["cant"])
+        print(N)
 
-    # Tape=Cinta()
-    # Tape.Llenar_cajón(N)
-    # K, M, Z, P=Tape.Separar()
+        Tape=Cinta()
+        Cajón=Tape.Llenar_cajón(N)
 
-    awK=0.09
-    awM=0.23
-    awZ=0.15
-    awP=0.71
-    awFruta_prom=0.64
-    awVerdura_prom=0.41
-    awTot=0.59
+        Calcu=Calculadora_Aw()
+        awK, awM, awP, awZ, awFruta_prom, awVerdura_prom, awTot=Calcu.Calcular_aws(Cajón)
 
-    # Calcu=Calculadora_aw()
-    # awK=Calcu.Calcular_aw(K, "kiwi")
-    # awM=Calcu.Calcular_aw(M, "manzana")
-    # awZ=Calcu.Calcular_aw(Z, "zanahoria")
-    # awP=Calcu.Calcular_aw(P, "papa")
-
-    # awFruta_prom=(awK+awM)/(len(K)+len(M))
-    # awVerdura_prom=(awZ+awP)/(len(P)+len(Z))
-
-    # awTot=(awFruta_prom+awVerdura_prom)/(len(K)+len(M)+len(Z)+len(P))
+    if N==0:
+        awK="0.00"
+        awM="0.00"
+        awP="0.00"
+        awZ="0.00"
+        awFruta_prom="0.00"
+        awVerdura_prom="0.00"
+        awTot="0.00"
 
     return render_template("main.html", N=N, awK=awK, awM=awM, awP=awP, awZ=awZ, awFruta_prom=awFruta_prom, awVerdura_prom=awVerdura_prom, awTot=awTot)
 
