@@ -178,18 +178,29 @@ class Departamento:
         else:
             raise Exception("Sólo puede ser director del departamento un profesor")
 
-class Facultad():
+class Facultad:
     def __init__(self, nombre_depto):
         self.Depto_default=Departamento(nombre_depto)
-        self.departamentos=[self.Depto_default]
+        self.__departamentos=[self.Depto_default] #para que no puedan modificar los deptos accediento al atributo
         self.estudiantes=[]
         self.cantidad_deptos=1
         self.matrícula=0
 
     def Crear_departamento(self, nombre_depto):
         nuevo_departamento=Departamento(nombre_depto)
-        self.departamentos.append(nuevo_departamento)
+        self.__departamentos.append(nuevo_departamento)
         self.cantidad_deptos+=1
+
+#para no acceder al método del departamento como atributo de facultad
+    def Agregar_profesor_a_depto(self, depto, profesor): #depto tiene que ser un str con el nombre del departamento y profesor, un objeto
+        for departamento in self.__departamentos:
+            if departamento.nombre==depto:
+                departamento.Agregar_profesor(profesor)
+        
+    def Asignar_director_a_depto(self, depto, director):
+        for departamento in self.__departamentos:
+            if departamento.nombre==depto:
+                departamento.Asignar_director(director)
 
     def Agregar_estudiante(self, estudiante):
         if isinstance(estudiante, Estudiante):

@@ -2,10 +2,10 @@ from modulos.classes import *
 
 FIUNER=Facultad("Matemática")
 
-#cómo hago para que los departamentos sólo puedan ser creados desde facultad?
-#Depto_informática=Departamento()
+#en la composición el objeto miembro no existe por fuera del contenedor
+#Depto_informática=FIUNER.Crear_departamento("Informática")
 
-Depto_informática=FIUNER.Crear_departamento("Informática")
+FIUNER.Crear_departamento("Informática")
 
 Ana=Estudiante()
 Ana.set_nombre("Ana")
@@ -52,17 +52,12 @@ Bruno.Renunciar(Avanzada)
 print(Bruno.cursos)
 print(Avanzada.cátedra)
 print(Bruno.depto)
-#FIUNER.departamentos[0].Agregar_profesor(Bruno)
-#Depto_informática.Agregar_profesor(Bruno) #en la composición el objeto miembro no existe por fuera del contenedor
-FIUNER.departamentos[1].Agregar_profesor(Bruno)
+
+FIUNER.Agregar_profesor_a_depto("Informática", Bruno)
 print(Bruno.depto)
-#FIUNER.departamentos[1].Asignar_director(Javier) #funciona la excepción
-FIUNER.departamentos[1].Agregar_profesor(Javier)
-FIUNER.departamentos[1].Asignar_director(Javier)
-print(FIUNER.departamentos[1].director)
-
-#cuidado con la información cíclica
-
-
-
+#FIUNER.Asignar_director_a_depto("Informática", Javier) #funciona la excepción
+FIUNER.Agregar_profesor_a_depto("Informática", Javier)
+print(Javier.depto)
+FIUNER.Asignar_director_a_depto("Informática", Javier)
+print(Javier.director)
 
