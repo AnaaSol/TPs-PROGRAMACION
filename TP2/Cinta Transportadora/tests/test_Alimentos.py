@@ -16,7 +16,7 @@ class TestKiwi(unittest.TestCase):
         #Se prueba el cálculo correcto del aw de un kiwi 
         self.assertAlmostEqual(self.kiwi.Calcular_aw(), self.awk, places=2)
 
-        #Se prueba que el aw nunca sea mayor a 1
+        #Se prueba que el aw nunca sea mayor a 1 ;cosniderar los valores extremos
         for i in range(5):
             x=random.uniform(0.1,0.7)
             self.random.append(x)
@@ -27,7 +27,7 @@ class TestKiwi(unittest.TestCase):
 
         for kiwi in self.kiwis:
             kiwi.Calcular_aw()
-            assert(kiwi.Calcular_aw()<0.99)
+            assert(kiwi.Calcular_aw()<1)
 
     def crear_kiwi(self):
         """Prueba que no se creen alimentos con pesos nulo o negativo"""

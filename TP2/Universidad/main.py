@@ -53,6 +53,7 @@ print(Bruno.cursos)
 print(Avanzada.cátedra)
 print(Bruno.depto)
 
+#FIUNER.departamentos[0]=Departamento() ; rompe el encapsulamiento
 FIUNER.Agregar_profesor_a_depto("Informática", Bruno)
 print(Bruno.depto)
 #FIUNER.Asignar_director_a_depto("Informática", Javier) #funciona la excepción
