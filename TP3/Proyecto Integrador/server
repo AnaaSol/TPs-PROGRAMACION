@@ -1,31 +1,56 @@
 from modulos.classes import *
-from flask import Flask, render_template, request, redirect, url_for, flash, abort
-#from flask_login import login_user, login_required, current_user, logout_user
-#from werkzeug.security import generate_password_hash, check_password_hash
-import csv
-#from modulos.config import app, db, login_manager
+from flask import Flask, render_template, request, redirect, url_for, abort, flash
+#import csv
+from flask_login import login_user, login_required, current_user, logout_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
-app = Flask(__name__)
+from functools import wraps
+from modulos.config import app, db, login_manager
+from modulos.databases import Boss, User
 
-datos=[]
-try:
-    with open ("./data/usuarios.txt") as file:
-        file=csv.reader(file, delimiter=" ")
-        file=list(file)
-        for x in file:
-            # nombre=x[0]
-            # x[0]=Usuario()
-            # x[0].set_nombre(nombre)
-            # x[0].set_apellido(x[1])
-            # x[0].set_mail(x[2])
-            # x[0].set_usuario(x[3])
-            # x[0].set_claustro(x[4])
-            # x[0].set_contraseña(x[5])
-            datos.append(x)
-except FileNotFoundError:
-    with open("./data/usuarios.txt", "w") as archi:
-        pass
-print (datos)
+admin_list = [1]
+
+with app.app_context():
+    db.create_all()
+
+def admin_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated and current_user.id not in admin_list:
+            return abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+def is_admin():
+    if current_user.is_authenticated and current_user.id in admin_list:
+        return True
+    else:
+        return False
+
+
+@login_manager.user_loader
+def user_loader(user_id):
+    return User.query.get(user_id)
+
+# datos=[]
+# try:
+#     with open ("./data/usuarios.txt") as file:
+#         file=csv.reader(file, delimiter=" ")
+#         file=list(file)
+#         for x in file:
+#             nombre=x[0]
+#             x[0]=Usuario()
+#             x[0].set_nombre(nombre)
+#             x[0].set_apellido(x[1])
+#             x[0].set_mail(x[2])
+#             x[0].set_usuario(x[3])
+#             x[0].set_claustro(x[4])
+#             x[0].set_contraseña(x[5])
+#             datos.append(x)
+# except FileNotFoundError:
+#     with open("./data/usuarios.txt", "w") as archi:
+#         pass
+    
 @app.route("/", methods=['GET', 'POST'])
 def raiz():
     global datos  
@@ -33,7 +58,6 @@ def raiz():
     if request.method == 'POST':
         n=request.form["nombre"]
         c=request.form["contraseña"]
-        print(n,c)
         for x in datos:
             if x[3]==n and x[5]==c:
                 if x[4]=="jefe":
@@ -47,7 +71,6 @@ def raiz():
                 condicion=["Usuario o contraseña incorrecta, ingrese nuevamente", "nada"]
             else:
                 condicion=["Los datos ingresados son incorrectos o aún no te has registrado", "nada"]
-    print (condicion)
     return render_template("main.html", condicion=condicion)
 
 @app.route("/sing_up", methods=['GET', 'POST'])
@@ -55,20 +78,19 @@ def new_user():
     global datos
     condicion="nada"
     if request.method == 'POST':
-        user=request.form["name"]
         user=Usuario()
         name=user.set_nombre(request.form["name"])
         if " " in name:
-            indice=name.index(" ")
-            name=name.pop(indice)
+            name=name.replace(" ","")
         surname=user.set_apellido(request.form["apellido"])
         email=user.set_mail(request.form["email"])
         usr=user.set_usuario(request.form["nombre_usuario"])
         clautr=user.set_claustro(request.form["cloister"])
         contr=user.set_contraseña(request.form["contraseña"])
         contr2=request.form["contraseña_rep"]
+        id=user.__ID
         with open ("./data/usuarios.txt", "w") as archi:
-            print(name2, surname, email, usr, clautr, contr, file=archi)
+            print(name, surname, email, usr, clautr, contr, file=archi)
         if contr!=contr2:
             condicion="Las contraseñas ingresadas no coinciden"
         else:
@@ -84,16 +106,22 @@ def new_user():
                 condicion="Faltan ingresar datos"
             elif contr2=="":
                 condicion="Faltan ingresar datos"
-            elif email=="No es posible":
-                condicion="Ya existe una cuenta con este mail, iniciar sección o ingresar uno distinto"
-            elif usr=="No es posible":
-                condicion="Ya existe una cuenta con este nombre de usuario, iniciar sección o ingresar uno distinto"
+            # elif email=="No es posible":
+            #     condicion="Ya existe una cuenta con este mail, iniciar sección o ingresar uno distinto"
+            # elif usr=="No es posible":
+            #     condicion="Ya existe una cuenta con este nombre de usuario, iniciar sección o ingresar uno distinto"
             else:
-                datos.append([name, surname, email, usr, clautr, contr])
-                with open ("./data/usuarios.txt", "w") as archi:
-                    for x in range(len(datos)):
-                        print(datos[x][0], datos[x][1], datos[x][2], datos[x][3], datos[x][4], datos[x][5], file=archi)
-                return redirect(url_for("raiz"))
+                for x in datos:
+                    if email==x[2]:
+                        condicion="Ya existe una cuenta con este mail, iniciar sección o ingresar uno distinto"
+                    elif usr==x[3]:
+                        condicion="Ya existe una cuenta con este nombre de usuario, iniciar sección o ingresar uno distinto"
+                    else:
+                        datos.append([name, surname, email, usr, clautr, contr, id])
+                        with open ("./data/usuarios.txt", "w") as archi:
+                            for x in range(len(datos)):
+                                print(datos[x][0], datos[x][1], datos[x][2], datos[x][3], datos[x][4], datos[x][5], datos[x][6], file=archi)
+                        return redirect(url_for("raiz"))
     return render_template("sing_up.html", condicion=condicion)
 
 @app.route("/jefe", methods=['GET', 'POST'])

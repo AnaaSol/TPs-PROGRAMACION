@@ -5,43 +5,41 @@ from abc import ABC, abstractmethod
 class Persona(ABC):
     @abstractmethod
     def __init__(self):
-        self.nombre=""
-        self.apellido=""
-        self.usuario=""
-        self.contraseña=""
-        self.mail=""
-        self.claustro=""
+        self.__nombre=""
+        self.__apellido=""
+        self.__usuario=""
+        self.__contraseña=""
+        self.__mail=""
+        self.__claustro=""
 
     def set_nombre(self, nombre):
-        self.nombre=nombre
+        self.__nombre=nombre
         return nombre
 
     def set_apellido(self, apellido):
-        self.apellido=apellido
+        self.__apellido=apellido
         return apellido
     
     def set_usuario(self, usuario):
         if isinstance (usuario, Persona):
-            return "No es posible"
-            #raise Exception ("Ya existe un usario con este nombre, por favor, ingresar otro")
+            raise Exception ("Ya existe un usario con este nombre, por favor, ingresar otro")
         else:
-            self.usuario=usuario
+            self.__usuario=usuario
             return usuario
 
     def set_contraseña(self, contraseña):
-        self.contraseña=contraseña
+        self.__contraseña=contraseña
         return contraseña
 
     def set_mail(self, mail):
         if isinstance (mail, Persona):
-            return "No es posible"
-            #raise Exception ("Ya existe una cuenta con este mail, iniciar sección o ingresar uno distinto")
+            raise Exception ("Ya existe una cuenta con este mail, iniciar sección o ingresar uno distinto")
         else:
-            self.mail=mail
+            self.__mail=mail
             return mail
     
     def set_claustro(self, claustro):
-        self.usuario=claustro
+        self.__claustro=claustro
         return claustro
     
     def cambiar_datos(self, dato_a_cambiar, nuevo):
@@ -49,34 +47,36 @@ class Persona(ABC):
             if isinstance (nuevo, Persona):
                 raise Exception ("Ya existe una cuenta con este mail, iniciar sección o ingresar uno distinto")
             else:
-                self.mail=nuevo
+                self.__mail=nuevo
         elif dato_a_cambiar == "contraseña":
-            self.contraseña=nuevo
+            self.__contraseña=nuevo
         else:
             raise Exception ("No es posible modificar el tipo de dato ingresado")
 
 
 class Usuario(Persona):
     def __init__(self):
-        self.ID=random.randint(100000000, 999999999)
-        self.reclamos_adheridos=[]
-        self.reclamos_generados=[]
+        self.__ID=random.randint(100000000, 999999999)
+        while isinstance (self.__ID, Usuario):
+            self.__ID=random.randint(100000000, 999999999)
+        self.__reclamos_adheridos=[]
+        self.__reclamos_generados=[]
 
 
     def generar_reclamo(self, nombre_reclamo, descripcion):
-        self.reclamos_generados.append([nombre_reclamo, descripcion, (datetime.datetime.now())[:19]])
+        self.__reclamos_generados.append([nombre_reclamo, descripcion, (datetime.datetime.now())[:19]])
         reclamo=[nombre_reclamo, descripcion, (datetime.datetime.now())[:19]]
         return reclamo
     
     def adherirse_a_reclamo(self, nombre_reclamo):
-        self.reclamos_adheridos.append(nombre_reclamo)
+        self.__reclamos_adheridos.append(nombre_reclamo)
 
 class Jefes(Persona):
     def __init__(self):
-        self.departamento=""    # ¿puede pertenecer a más de un departamento?
+        self.__departamento=""    # ¿puede pertenecer a más de un departamento?
     
     def set_departamento(self, depto):
-        self.departamento=depto
+        self.__departamento=depto
 
     def leer_reclamo(self):
         pass
@@ -96,36 +96,36 @@ class Gestor_de_Reclamos:
 
 class Reclamo:
     def __init__(self):
-        self.ID=""
-        self.ID_usuario=""
-        self.descripcion=""
-        self.estado=""
-        self.departamento=""
-        self.fecha_hora=""
-        self.nro_adherentes=""
+        self.__ID=""
+        self.__ID_usuario=""
+        self.__descripcion=""
+        self.__estado=""
+        self.__departamento=""
+        self.__fecha_hora=""
+        self.__nro_adherentes=""
     def contar_adherentes(self):
         pass
 
 class Departamento:
     def __init__(self):
-        self.jefe=""
-        self.reclamos_depto=[]
-        self.nombre=""
+        self.__jefe=""
+        self.__reclamos_depto=[]
+        self.__nombre=""
 
     def crear_depto(self, nombre_departamento):
         self.nombre=""
 
     def asignar_jefe(self, jefe):
-        if self.jefe=="":
-            self.jefe=jefe
+        if self.__jefe=="":
+            self.__jefe=jefe
         else:
-            raise Exception (self.jefe, "es el jefe de este departamento, si desea cambiarlo, utilizar cambiar_jefe()")
+            raise Exception (self.__jefe, "es el jefe de este departamento, si desea cambiarlo, utilizar cambiar_jefe()")
 
     def cambiar_jefe(self, jefe):
-        if self.jefe=="":
+        if self.__jefe=="":
             raise Exception ("Este departamento no tiene jefe, asignarlo con asignar_jefe")
         else:
-            self.jefe=jefe
+            self.__jefe=jefe
 
     def reclamos(self, reclamo):
-        self.reclamos_depto.append(reclamo)
+        self.__reclamos_depto.append(reclamo)
