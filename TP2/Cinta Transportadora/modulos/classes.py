@@ -29,75 +29,19 @@ class DetectorAlimento:
     
 class Calculadora_Aw():
     """Calcula el promedio de la aw de un cajón por alimento y tipo de alimento"""
-    def Calcular_aws(self, cajón):
-   
-        if len(cajón)==0:
-            raise Exception("El cajón está vacío")
-        else: 
-            awk=0
-            kiwis=0
-            awm=0
-            manzanas=0
-            awp=0
-            papas=0
-            awz=0
-            zanahorias=0
-            awFrutas=0
-            awVerduras=0
-            awTot=0
-
-            for alimento in cajón:
-                aw=alimento.Calcular_aw()
-                awTot+=aw
-                if isinstance(alimento, Kiwi):
-                    kiwis+=1
-                    awk+=aw
-                    awFrutas+=aw
-                if isinstance(alimento, Manzana):
-                    manzanas+=1
-                    awm+=aw
-                    awFrutas+=aw
-                if isinstance(alimento, Papa):
-                    papas+=1
-                    awp+=aw
-                    awVerduras+=aw
-                if isinstance(alimento, Zanahoria):
-                    zanahorias+=1
-                    awz+=aw
-                    awVerduras+=aw
-
-            if zanahorias==0:
-                awz_prom=0
-            else:
-                awz_prom=round(awz/zanahorias, 2)
-
-            if papas==0:
-                awp_prom=0
-            else:
-                awp_prom=round(awp/papas, 2)
-
-            if kiwis==0:
-                awk_prom=0
-            else:
-                awk_prom=round(awk/kiwis, 2)
-
-            if manzanas==0:
-                awm_prom=0
-            else:
-                awm_prom=round(awm/manzanas, 2)
-
-            if kiwis+manzanas==0:
-                awFrutas=0
-            else:
-                awFrutas=round(awFrutas/(kiwis+manzanas), 2)
-
-            if papas+zanahorias==0:
-                awVerduras=0
-            else:
-                awVerduras=round(awVerduras/(papas+zanahorias), 2)
-
-            return awk_prom, awm_prom, awp_prom, awz_prom, awFrutas, awVerduras, awTot/(manzanas+kiwis+papas+zanahorias)
-
+    
+    def Calcular_aw_prom(self, cajón, tipo):
+        aws=0
+        cant=0
+        for alimento in cajón:
+            if isinstance(alimento, tipo):
+                aws+=alimento.Calcular_aw()
+                cant+=1
+        if cant!=0:
+            return round(aws/cant, 2)
+        else:
+            return aws
+        
 
 class Cinta():
     def __init__(self):
@@ -130,25 +74,47 @@ class Cinta():
         return cajón
         
 class Alimento(ABC):
-    def __init__(self, peso):
-        self.peso=peso
 
-class Kiwi(Alimento):
+    def __init__(self, peso):
+        self.peso=self.__control(peso)
+
+    def __control(self, peso):
+        if peso>0:
+            self.peso=peso
+            return self.peso
+        else:
+            raise Exception ("No se puede crear el alimento")
+
+    @abstractmethod
+    def Calcular_aw(self):
+        pass
+
+class Fruta(Alimento, ABC):
+    @abstractmethod
+    def Calcular_aw(self):
+        pass
+
+class Verdura(Alimento, ABC):
+    @abstractmethod
+    def Calcular_aw(self):
+        pass
+
+class Kiwi(Fruta):
     def Calcular_aw(self):
         aw=round(0.96*(1-(e)**((-18)*self.peso))/(1+(e)**((-18)*self.peso)), 3)
         return aw
 
-class Manzana(Alimento):
+class Manzana(Fruta):
     def Calcular_aw(self):
         aw=round(0.97*(((15)*self.peso)**2)/(1+((15)*self.peso)**2), 3)
         return aw
 
-class Papa(Alimento):
+class Papa(Verdura):
     def Calcular_aw(self):
         aw=round(0.66*atan((18)*self.peso), 3)
         return aw
 
-class Zanahoria(Alimento):
+class Zanahoria(Verdura):
     def Calcular_aw(self):
         aw=round(0.96*(1-exp(-10*self.peso)), 3)
         return aw

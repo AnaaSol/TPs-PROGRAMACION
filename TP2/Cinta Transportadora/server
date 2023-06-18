@@ -14,7 +14,13 @@ def raiz():
         Cajón=Tape.Llenar_cajón(N)
 
         Calcu=Calculadora_Aw()
-        awK, awM, awP, awZ, awFruta_prom, awVerdura_prom, awTot=Calcu.Calcular_aws(Cajón)
+        awK=Calcu.Calcular_aw_prom(Cajón, Kiwi)
+        awM=Calcu.Calcular_aw_prom(Cajón, Manzana)
+        awP=Calcu.Calcular_aw_prom(Cajón, Papa)
+        awZ=Calcu.Calcular_aw_prom(Cajón, Zanahoria)
+        awFruta_prom=Calcu.Calcular_aw_prom(Cajón, Fruta)
+        awVerdura_prom=Calcu.Calcular_aw_prom(Cajón, Verdura)
+        awTot=Calcu.Calcular_aw_prom(Cajón, Alimento)
 
     if N==0:
         awK="0.00"
@@ -29,3 +35,4 @@ def raiz():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
