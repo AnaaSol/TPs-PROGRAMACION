@@ -34,8 +34,9 @@ class Persona(ABC):
         self.__mail=mail
 
 #Galileo=Usuario()
+#Galileo.contraseña=ksjdsk
 #Galileo.set_contraseña(kajsks)
-    
+
     #getters
 
     def get_nombre(self):
@@ -77,8 +78,11 @@ class Usuario(Persona):
 
     def generar_reclamo(self, nombre_reclamo, descripcion):
         reclamo=[nombre_reclamo, descripcion, "(datetime.datetime.now())[:19]"]
-        self.__reclamos_generados.append(reclamo)
+        #self.__reclamos_generados.append(reclamo) ; self.__reclamos_generados debería guardar el ID de los objetos Reclamo (para después acceder a ellos con la base de datos)
         return reclamo.append(self.__id)
+    
+    def guardar_reclamo_generado(self, reclamo_ID):
+        self.__reclamos_generados.append(reclamo_ID)
     
     def adherirse_a_reclamo(self, reclamo): #recibe el objeto 
         self.__reclamos_adheridos.append(reclamo.get_title)
@@ -101,13 +105,18 @@ class Jefe(Persona):
     def derivar_reclamo(self): #sólo es función del secretario técnico
         pass
 
-    def generar_reporte(self): 
+    def generar_reporte(self):
         pass
 
+class Secretario(Jefe):
+    
+    def derivar_reclamo(self):
+        """Deriva el reclamo"""
+
 class Reclamo(): 
-    def __init__(self, title, description, fecha, user_id, ID): #todos estos datos se obtienen de Usuario.generar_reclamo()
+    def __init__(self, title, description, fecha, user_id): #todos estos datos se obtienen de Usuario.generar_reclamo()
         self.__title=title
-        self.__ID=ID #etiqueta única generado en databases con primary_key
+        self.__ID="" #etiqueta única generado en databases con primary_key; debería pasarse como atributo para crearlo, no arranca vacío
         self.__ID_usuario=user_id
         self.__descripcion=description
         self.__estado="Pendiente" #por default
@@ -177,10 +186,12 @@ class Clasificador():
 class Gestor_de_reclamos():
 
     def __init__(self):
-        self.__reclamos=[]
+        self.__clasificador=ClasificadorIA()
 
-    def crear_depto(self, data):
+    def crear_reclamo(self, data): # data=[title, descrip, fecha, id_user] +ID reclamo
         """Crea un reclamo con la información proporcionada por el usuario"""
+        claim=Reclamo(data)
+        return claim
 
     def asignar_a_depto(self, reclamo):
         if isinstance(reclamo, Reclamo):
@@ -188,6 +199,7 @@ class Gestor_de_reclamos():
             depto=self.__clasificador(texto)
             reclamo.set_depto=depto
             return depto
+
     
 
     def agregar_reclamo(self, reclamo):
