@@ -7,5 +7,5 @@ class TestDepartamento(unittest.TestCase):
     def setUp(self):
         self.depto = Departamento() 
 
-    def test_algo(self):
-        """Prueba"""
+    def test_cambiar_jefe(self):
+        pass

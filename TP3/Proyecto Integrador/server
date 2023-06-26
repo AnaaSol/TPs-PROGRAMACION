@@ -37,7 +37,7 @@ def raiz():
     if request.method == 'POST':
         n=request.form["nombre"]
         c=request.form["contraseña"]
-        usuario = User.query.filter_by(usuario.__user_name==n).first() #dudoso
+        usuario = Usuario.query.filter_by(usuario.__user_name==n).first() #dudoso
         if not usuario:
             condicion="No existe una cuenta que corresponda a este nombre"
 
@@ -58,8 +58,8 @@ def new_user():
         contraseña=request.form.get["contraseña"]
         rep_contraseña=request.form.get["contraseña_rep"]
 
-        mails = User.query.all('self.__email')
-        names = User.query.all('self.__user_name')
+        mails = Usuario.query.all('self.__email')
+        names = Usuario.query.all('self.__user_name')
 
         if not name or not apellido or not mail or not user_name or not cloister or not contraseña or not rep_contraseña:
             condicion="Faltan ingresar datos. Por favor complete todos los campos"

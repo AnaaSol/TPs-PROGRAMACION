@@ -101,7 +101,7 @@ class Jefe(Persona):
     def derivar_reclamo(self): #sólo es función del secretario técnico
         pass
 
-    def generar_reporte(self):
+    def generar_reporte(self): 
         pass
 
 class Reclamo(): 
@@ -165,7 +165,7 @@ class Departamento():
             reclamo.set_depto(self.__nombre)
 
 class Clasificador():
-   def __init__(self):
+    def __init__(self):
         self.clasificador=ClasificadorIA()
 
     def Clasifica(self, reclamo):
@@ -188,7 +188,6 @@ class Gestor_de_reclamos():
             depto=self.__clasificador(texto)
             reclamo.set_depto=depto
             return depto
-
     
 
     def agregar_reclamo(self, reclamo):
