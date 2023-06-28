@@ -21,24 +21,24 @@
 <body>
     <div>
         <form action="/sing_up" method="post">
-            <fieldset class="wd">
+            <fieldset>
                 <legend>Ingrese sus datos:</legend>
-                <label for="name">Nombre completo:</label>
-                <input type="text" id="name" name="name"><br><br>
+                <label for="nombre">Nombre completo:</label>
+                <input type="text" id="nombre" name="name"><br><br>
                 <label for="apellido">Apellido:</label>
-                <input type="text" id="apellido" name="apellido"><br><br>
+                <input type="text" id="apellido" name="surname"><br><br>
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email"><br><br>
                 <label for="nombre_usuario">Nombre de usuario:</label>
-                <input type="text" id="nombre_usuario" name="nombre_usuario"><br><br>
-                <label for="cloister">Claustro:</label>
-                <select id="cloister" name="cloister"> 
-                    <option value="Estudiante" id="cloister" name="cloister">Estudiante</option> 
-                    <option value="Docente" id="cloister" name="cloister">Docente</option> 
-                    <option value="PAyS" id="cloister" name="cloister">PAyS</option> 
+                <input type="text" id="nombre_usuario" name="username"><br><br>
+                <label for="claustro">Claustro:</label>
+                <select id="claustro" name="cloister"> 
+                    <option value="Estudiante">Estudiante</option> 
+                    <option value="Docente">Docente</option> 
+                    <option value="PAyS">PAyS</option> 
                 </select><br><br>
                 <label for="contraseña">Contraseña:</label>
-                <input type="password" id="contraseña" name="contraseña"><br><br>
+                <input type="password" id="contraseña" name="password"><br><br>
                 <label for="contraseña_rep">Repetir contraseña:</label>
                 <input type="password" id="contraseña_rep" name="contraseña_rep"><br><br>
                 <input type="submit" value="Continuar">
@@ -49,16 +49,6 @@
                 {% endif %}
             </fieldset>
         </form>
-        
-            <!-- {% if condicion=="nada": %}
-                <p style="font-size:14xp">Complete el formulario</p>
-            {% elif condicion=="correcto": %}
-            <form action="/">
-                <input type="submit" value="Continuar">
-            </form>
-            {% else:%}
-                <p style="color:rgb(206, 23, 23); font-size: 14px;">{{condicion}}</p>
-            {% endif %} -->
     </div>
 </body>
 </html>
