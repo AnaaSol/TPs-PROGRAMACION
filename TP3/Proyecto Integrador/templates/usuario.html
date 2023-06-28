@@ -24,21 +24,18 @@
 
 
     nav {
-        float: left;
-        width: 31%;
-        height: 400px; 
-        background: #ccc;
-        padding: 20px;
-    }
-
-    nav ul {
-    list-style-type: none;
-    padding: 45px;
+    float: left;
+    width: 31%;
+    height: 400px; 
+    background: #ccc;
+    padding: 20px;
+    text-align: left;
+    font-size: 15px;
     }
 
     article {
     float: left;
-    padding: 60px;
+    padding: 30px;
     width: 23%;
     background-color: #f1f1f1;
     height: 400px; 
@@ -50,8 +47,6 @@
     width: 23%;
     background-color: #f1f1f1;
     height: 400px;
-    text-align: left;
-    font-size: 15px;
     }
 
     ending {
@@ -60,15 +55,8 @@
     width: 23%;
     background-color: #f1f1f1;
     height: 400px;
-    text-align: left;
-    font-size: 15px;
     }
-
-    section::after {
-    content: "";
-    display: table;
-    }
-
+    
     @media (max-width: 600px) {
     nav, article, lateral, ending{
         width: 100%;
@@ -79,31 +67,29 @@
 </head>
 <body>
     <header>
-        <h5><i>Bienvenido/a al</i></h5>
+        <h5><i>Bienvenido al</i></h5>
         <h3>Servicio de reclamos FIUNER</h3>
     </header>
     <section>
         <nav>
-            <ul>
-                im not sure what to put here
-            </ul>
+            <h1>¿Qué desea hacer? </h1>
+            <form action="/main">
+              <input type="submit" value="Salir">
+             </form>
         </nav>
         <article>
-            <br><br>
             <form action="/reclamo">
-                <input type="submit" value="Crear reclamo"><br>
+                <input type="submit" value="Crear reclamo">
             </form>
         </article>
         <lateral>
-            <h1>¿Qué desea hacer?</h1>
             <form action="/reclamos_pendientes">
-                <input type="submit" value="Listar reclamos"><br>
+                <input type="submit" value="Listar reclamos">
             </form>
         </lateral>
         <ending>
-            <br><br>
             <form action="/reclamos_usuario">
-                <input type="submit" value="Mis reclamos"><br>
+                <input type="submit" value="Mis reclamos">
             </form>
         </ending>
     </section>

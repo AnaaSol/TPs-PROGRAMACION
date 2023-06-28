@@ -25,6 +25,16 @@
 </style>
 </head>
 <body>
-<!-- formulario generar reclamo -->
+<div>
+<form action="/reclamo" method="post" enctype="multipart/form-data">
+            <fieldset>
+                <legend>Nuevo reclamo</legend>
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="description" rows="4" cols="50"></textarea>
+  <label for="foto">Adjuntar foto:</label>
+  <input type="file" id="foto" name="image" accept="image/*">
+     <input type="submit" value="Crear">
+
+</div>
 </body>
 </html>
