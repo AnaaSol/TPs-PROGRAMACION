@@ -1,71 +1,49 @@
-from abc import ABC
-from modulos.config import db
+from abc import ABC, abstractmethod
 
-class Persona(ABC, db.Model):
-
-    __tablename__='personas'
-
-    __email= db.Column(db.String(100), unique=True, nullable=False)
-    __usuario= db.Column(db.String(100), unique=True, nullable=False)
-    __contraseña= db.Column(db.String(100), nullable=False)
-    __nombre= db.Column(db.String(100), nullable=False)
-    __apellido= db.Column(db.String(100), nullable=False)
-    __ID=db.Column(db.Integer, primary_key=True)
-
-    #setters
-
-    def set_nombre(self, nombre):
-        self.__nombre=nombre
-
-    def set_apellido(self, apellido):
-        self.__apellido=apellido
+class Persona(ABC):
     
-    def set_usuario(self, usuario):
-        #considerar control para que el usuario sea único
-        self.__usuario=usuario
+    @abstractmethod #los atributos son protegidos porque sino Usuario() y Jefe() no pueden acceder a ellos
+    def __init__(self, ID, nombre, apellido, usuario, email, contraseña):
+        self._ID=ID #¿cómo asegurar que sea única?
+        self._nombre=nombre
+        self._apellido=apellido
+        self._usuario=usuario
+        self._contraseña=contraseña
+        self._email=email
 
-    def set_contraseña(self, contraseña):
-        self.__contraseña=contraseña
+    #setters: compilados en la función cambiar_datos()
 
-    def set_email(self, email):
-        #considerar control para que el mail sea único
-        self.__email=email
-
-#Galileo=Usuario()
-#Galileo.contraseña=ksjdsk
-#Galileo.set_contraseña(kajsks)
+    def cambiar_datos(self, dato_a_cambiar, nuevo):
+        #debería pedir la contraseña antes de permtiir hacer cambios: controlado desde el HTML
+        if dato_a_cambiar == "email":
+            #debería chequear que el mail no esté ocupado
+            self._mail=nuevo
+        elif dato_a_cambiar == "contraseña":
+            self._contraseña=nuevo
+    
+    # def cambiar_contraseña(self, contraseña, contraseña_nueva):
+    #     if contraseña==self.__contraseña:
+    #         self.__contraseña=contraseña_nueva
+    #     else:
+    #         return "La contraseña ingresada no coincide."
 
     #getters
 
     def get_nombre(self):
-        return self.__nombre
+        return self._nombre
 
     def get_apellido(self):
-        return self.__apellido
+        return self._apellido
     
     def get_usuario(self):
-        return self.__usuario
+        return self._usuario
 
     def get_contraseña(self):
-        return self.__contraseña
+        return self._contraseña
 
     def get_email(self):
-        return self.__email
+        return self._email
 
-
-
-
-
-###control de errores
-
-from sqlalchemy.exc import IntegrityError
-
-new_user = User(name='John Doe', email='johndoe@example.com')
-
-try:
-    session.add(new_user)
-    session.commit()
-    print("Objeto guardado en la base de datos:", new_user)
-except IntegrityError:
-    session.rollback()
-    print("Error: El email ya está en uso.")
+#Galileo=Usuario()
+#Galileo.contraseña=ksjdsk
+#Galileo.set_contraseña(kajsks)

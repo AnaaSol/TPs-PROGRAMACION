@@ -1,26 +1,42 @@
-from modulos.persona import Persona
-from flask_login import UserMixin
-from modulos.config import db
+from persona import Persona
+import datetime
 
-class Usuario(Persona, UserMixin, db.Model):
-        
-    __tablename__ = 'users'
+class Usuario(Persona):
 
-    __claustro = db.Column(db.String(100), nullable=False)
-    __ID_user = db.Column(db.Integer(), db.ForeignKey("personas.__ID"), primary_key=True)
-    __reclamos_adheridos = db.Column(db.ARRAY())
-    __reclamos_generados = db.Column(db.ARRAY())
+    #los atributos también tienen que ser protegidos (a pesar de que Usuario no tenga subclases) porque los getters 
+    #están en Persona() y ahí están definidos como self._atributo (no se reconoce self.__atributo al llamar)
+    def __init__(self, ID, nombre, apellido, usuario, email, contraseña, claustro):
+        self._ID=ID #etiqueta única que se obtiene en databases con primary_key
+        self._nombre=nombre
+        self._apellido=apellido
+        self._usuario=usuario
+        self._contraseña=contraseña
+        self._email=email
+        self.__claustro=claustro
+        self.__reclamos_adheridos=[] #lista con el ID de los reclamos adheridos
+        self.__reclamos_generados=[] #lista con el ID de los reclamos generados
 
     def set_claustro(self, claustro):
         self.__claustro=claustro
 
     def get_claustro(self):
         return self.__claustro
-    
+
     def generar_reclamo(self, nombre_reclamo, descripcion):
-        reclamo=[nombre_reclamo, descripcion, "(datetime.datetime.now())[:19]"]
-        self.__reclamos_generados.append(reclamo)
-        return reclamo #reclamo tiene la información necesaria para crear un objeto reclamo
+        reclamo=[nombre_reclamo, descripcion, str(datetime.datetime.now())[:19], self.__id]
+        #¿Cómo guardar el ID del reclamo?
+        return reclamo
     
-    def adherirse_a_reclamo(self, nombre_reclamo):
-        self.__reclamos_adheridos.append(nombre_reclamo)
+    def guardar_reclamo_generado(self, reclamo_ID):
+        self.__reclamos_generados.append(reclamo_ID)
+    
+    def adherirse_a_reclamo(self, reclamo_ID): 
+        if reclamo_ID in self.__reclamos_adheridos:
+            raise Exception("Usted ya está adherido a este reclamo")
+        else: 
+            self.__reclamos_adheridos.append(reclamo_ID)
+        #cómo incrementadmos reclamo.adherentes?
+
+
+#print(datetime.datetime.now()) #formato: year-month-day h:min:s.ms 
+#print(str(datetime.datetime.now())[:19]) #pasamos el formato a str y hacemos un slice para sacar los milisegundos
