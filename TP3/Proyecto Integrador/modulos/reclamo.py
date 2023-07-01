@@ -1,49 +1,42 @@
-#from modulos.config import db #no encuentra modulos
-from flask import Flask
-from flask_bootstrap import Bootstrap
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+class Reclamo(): 
+    def __init__(self, title, description, fecha, user_id): #todos estos datos se obtienen de Usuario.generar_reclamo()
+        self.__title=title
+        self.__ID="" #etiqueta única generado en databases con primary_key; debería pasarse como atributo para crearlo, no arranca vacío
+        self.__ID_usuario=user_id
+        self.__descripcion=description
+        self.__estado="Pendiente" #por default
+        self.__departamento=""
+        self.__date=fecha
+        self.__adherentes=[] #lista con los ID de los usuarios adheridos
 
-app = Flask("server")
+    def set_depto(self, depto):
+        self.__departamento=depto
 
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-Bootstrap(app)
-db = SQLAlchemy(app)
-
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-class Reclamo(db.Model):
-
-    __tablename__='reclamos'
-
-    ID_reclamo = db.Column(db.Integer(), primary_key=True) #no los reconoce con doble guion bajo al principio
-    description = db.Column(db.String(10000), nullable=False)
-    estado = db.Column(db.String(10))
-    depto = db.Column(db.String(25))
-    timestap = db.Column(db.String(50))
-    adherentes = db.Column(db.String())
-    title = db.Column(db.String(100), nullable=False)
-    id_user = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    def cambiar_estado(self, estado):
+        self.__estado=estado
 
     #getters
 
+    def get_title(self):
+        return self.__title
+
+    def get_descricion(self):
+        return self.__descripcion
+    
     def get_ID(self):
-        return self.ID_reclamo #somehow works
+        return self.__ID
+    
+    def get_estado(self):
+        return self.__estado
+    
+    def get_ID_usuario(self):
+        return self.__ID_usuario
+    
+    def get_departamento(self):
+        return self.__departamento
+
+    def sumar_adherente(self, adherente):
+        self.__adherentes.append(adherente)
 
     def contar_adherentes(self):
-        pass
-
-nuevo_reclamo=Reclamo(
-    ID_reclamo=90, 
-    description="No hay papel higiénico en el módulo 1 durante toda la mañana", 
-    estado="Pendiente", 
-    depto="", 
-    timestap="13/07/23", 
-    adherentes="",
-    title="Prueba", 
-    id_user=92)
-print(nuevo_reclamo.get_ID())
+        return len(self.__adherentes)

@@ -1,8 +1,8 @@
 import datetime
 from abc import ABC, abstractmethod
 import pickle
-from ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador as ClasificadorIA
-from ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
+# from ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador as ClasificadorIA
+# from ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
 
 class Persona(ABC):
     @abstractmethod #debería ser abstracto si no varía en las clases hijas?
