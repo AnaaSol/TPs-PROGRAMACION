@@ -26,6 +26,19 @@ class Gestor_de_reclamos():
 class Gestor_de_base_de_datos():
     """El gestor de base de datos consultaría y modificaría la información almacenada en la base de datos en función de los requerimientos de demás clases"""
     
+    def __get_user_by_email(self, email_det):
+        user=db.session.query(Persona_db).filter_by(email=email_det).one()
+        return user
+    
+    def get_dato_user(self, email, dato):
+        if dato in ["ID", "email", "username", "password", "name", "surname", "depto", "claustro"]:
+            user=self.__get_user_by_email(email)
+            attribute=getattr(user, dato, None)
+            return attribute
+        else:
+            print("El dato ingresado no corresponde a ningún atributo")
+
+
     def consultar_bd(self, atributo, clase):
         """Retorna el valor del atributo consultado"""
         value=db.session.query(clase.atributo).all()

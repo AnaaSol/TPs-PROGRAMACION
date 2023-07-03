@@ -37,7 +37,7 @@ def raiz():
     if request.method == 'POST':
         n=request.form["nombre"]
         c=request.form["contraseña"]
-        usuario = User.query.filter_by(usuario.__user_name==n).first() #dudoso
+        usuario = Persona_db.query.filter_by(usuario.username==n).first() #dudoso
         if not usuario:
             condicion="No existe una cuenta que corresponda a este nombre"
 

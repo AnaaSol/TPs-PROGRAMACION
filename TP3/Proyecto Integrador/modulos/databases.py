@@ -14,7 +14,7 @@ class Persona_db(db.Model):
     ID=db.Column(db.Integer(), primary_key=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     username = db.Column(db.String(100), unique=True, nullable=False)
-    __password = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     surname= db.Column(db.String(100), nullable=False)
     #atributos de usuario
@@ -27,16 +27,13 @@ class Persona_db(db.Model):
     #columna discriminante
     #type=db.Column(db.String(50)) #¿es necesaria? podríamos filtrar por depto ; if depto=None, persona es un usuario final
 
-    def __init__(self, ID, email, username, password, name, surname):
+    def __init__(self, ID, email, username, password, name, surname): #cuando instancio utilizo estos nombres
         self.ID=ID
         self.email=email
         self.username=username
-        self.__password=password
+        self.password=password
         self.name=name
         self.surname=surname
-
-    def get_password(self):
-        return self.__password
 
 class Reclamo_db(db.Model):
 
@@ -88,14 +85,34 @@ with app.app_context():
     db.session.commit()
     db.session.add(Ana)
     db.session.commit()
-
-    # print(db.session.query(Persona_db).all()) #no sé por qué los imprime con coma al final
-    # print(db.session.query(Persona_db.email).all())
-    # print(db.session.get(Persona_db, 1))
-    user=db.session.get(Persona_db, 1)
-    print(user.name) #primera vez que carga de base de datos
-    print(user.surname)
-    print(user.get_password())
+    
+    #si query recibe el nombre de la clase devuelve objetos, si recibe el nombre de atributos devuelve tuplas
+    #print(db.session.query(Persona_db).all()) #no sé por qué los imprime con coma al final
+    #print(db.session.query(Persona_db.email).all())
+    #print(db.session.get(Persona_db, 1))
+    user_by_email=db.session.query(Persona_db).filter_by(password="tuqui").one() #query puede acceder a atributos 
+    #protegidos pero estos también se pueden acceder por fuera (es como si fueran públicos)
+    print(user_by_email.name)
+    print(user_by_email.password)
+    user_by_email.password="hell no"
+    print(user_by_email.password)
+    from sqlalchemy.orm.exc import NoResultFound
+    try:
+        user_by_email=db.session.query(Persona_db).filter_by(password="tuqui").one()
+    except NoResultFound:
+        print("well shit")
+    user_by_email2=db.session.query(Persona_db).filter_by(email="paulabelendemartini2@gmail.com").one()
+    print(user_by_email2.password)
+    user_by_email2.depto="holis"
+    print(user_by_email2.depto)
+    #print(user_by_email.get_password())
+    #print(user_by_email.ID)
+    #user_1_password=db.session.query(Persona_db.get_password()).filter(Persona_db.ID==1) #get_password() requiere la instancia (self)
+    #user=db.session.get(Persona_db, 1) #sólo acepta como identificador la clave primaria
+    #print(user.name) #primera vez que carga de base de datos
+    #print(user.surname)
+    #print(user.get_password())
+          
     # print(user.claustro)
     # print("La contaseña original es:", user.password)
     # user.password="estamos en problemas" #rompí el encapsulamiento
@@ -123,3 +140,6 @@ def is_admin():
         return False
 
 
+#para obtener los reclamos creados por un usuario específico
+#ID_required_user="ID del usuario solicitado"
+#reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==ID_required_user) #sólo se puede hacer si los atributos son públicos
