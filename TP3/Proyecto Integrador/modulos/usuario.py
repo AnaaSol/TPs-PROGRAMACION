@@ -23,7 +23,7 @@ class Usuario(Persona):
         return self.__claustro
 
     def generar_reclamo(self, nombre_reclamo, descripcion):
-        reclamo=[nombre_reclamo, descripcion, str(datetime.datetime.now())[:19], self.__id]
+        reclamo=[nombre_reclamo, descripcion, str(datetime.datetime.now())[:19], self._ID]
         #¿Cómo guardar el ID del reclamo?
         return reclamo
     

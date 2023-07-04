@@ -1,6 +1,5 @@
 class Reclamo(): 
-    def __init__(self, title, description, fecha, user_id): #todos estos datos se obtienen de Usuario.generar_reclamo()
-        self.__title=title
+    def __init__(self, description, fecha, user_id): #todos estos datos se obtienen de Usuario.generar_reclamo()
         self.__ID="" #etiqueta única generado en databases con primary_key; debería pasarse como atributo para crearlo, no arranca vacío
         self.__ID_usuario=user_id
         self.__descripcion=description
@@ -40,3 +39,11 @@ class Reclamo():
 
     def contar_adherentes(self):
         return len(self.__adherentes)
+
+type=None
+
+if not type:
+    print("Type es igual a None")
+    print(type)
+else:
+    print("Type tiene un valor distinto de None")

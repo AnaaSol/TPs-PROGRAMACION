@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class Persona(ABC):
     
-    @abstractmethod #los atributos son protegidos porque sino Usuario() y Jefe() no pueden acceder a ellos
+    @abstractmethod #los atributos protegidos y no privados porque sino Usuario() y Jefe() no pueden acceder a ellos
     def __init__(self, ID, nombre, apellido, usuario, email, contraseña):
         self._ID=ID #¿cómo asegurar que sea única?
         self._nombre=nombre
@@ -28,6 +28,9 @@ class Persona(ABC):
     #         return "La contraseña ingresada no coincide."
 
     #getters
+
+    def get_ID(self):
+        return self._ID
 
     def get_nombre(self):
         return self._nombre
