@@ -1,55 +1,51 @@
-from modulos.departamento import *
 from flask import Flask, render_template, request, redirect, url_for, abort, flash
-#import csv
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from modulos.gestores import Gestor_de_base_de_datos, Gestor_de_reclamos
 
 from functools import wraps
 from modulos.config import app, db, login_manager
 from modulos.databases import *
+
+from sqlalchemy.orm.exc import NoResultFound
+
+GestorDB=Gestor_de_base_de_datos()
+GestorR=Gestor_de_reclamos()
 
 admin_list = [1]
 
 with app.app_context():
     db.create_all()
 
-def admin_only(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if current_user.is_authenticated and current_user.id not in admin_list:
-            return abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
-
-def is_admin():
-    if current_user.is_authenticated and current_user.id in admin_list:
-        return True
-    else:
-        return False
-
-@login_manager.user_loader
-def user_loader(user_id):
-    return User.query.get(user_id)
+# @login_manager.user_loader
+# def user_loader(user_id):
+#     return User.query.get(user_id)
     
 @app.route("/", methods=['GET', 'POST'])
 def raiz():  
     condicion=""
     if request.method == 'POST':
-        n=request.form["nombre"]
-        c=request.form["contraseña"]
-        usuario = Persona_db.query.filter_by(usuario.username==n).first() #dudoso
-        if not usuario:
-            condicion="No existe una cuenta que corresponda a este nombre"
-
+        u=request.form["usuario"]
+        c=request.form["contraseña"] 
+        try:
+            actual_password=GestorDB.get_dato_user(u, "password") #contraseña correcta del usuario
+            type=GestorDB.get_dato_user(u, "depto")
+            if actual_password==c: #compara la contraseña correcta con la ingresada
+                if not type: #es decir, type=None
+                    return redirect(url_for('usuario', user=u))
+                else:
+                    return redirect(url_for('jefe', depto=type))
+            else:
+                condicion="La contraseña es incorrecta"
+        except Exception as e: #either el usuario no existe o el dato es inválido
+            condicion=e
     return render_template("main.html", condicion=condicion)
 
 @app.route("/sing_up", methods=['GET', 'POST'])
 def new_user():
-    global datos
     condicion=""
     if request.method == 'POST':
         condicion=""
-
         name=request.form.get["name"]
         apellido=request.form.get["apellido"]
         mail=request.form.get["email"]
@@ -58,7 +54,7 @@ def new_user():
         contraseña=request.form.get["contraseña"]
         rep_contraseña=request.form.get["contraseña_rep"]
 
-        mails = User.query.all('self.__email')
+        mails = User.query.all('self.__email') #hacer con método de GestorDB
         names = User.query.all('self.__user_name')
 
         if not name or not apellido or not mail or not user_name or not cloister or not contraseña or not rep_contraseña:
@@ -92,12 +88,12 @@ def new_user():
     return render_template("sing_up.html", condicion=condicion)
 
 @app.route("/jefe", methods=['GET', 'POST'])
-def jefe():
-    return render_template("jefe.html")
+def jefe(depto):
+    return render_template("jefe.html", depto=depto)
 
 @app.route("/usuario", methods=['GET', 'POST'])
-def usuario():
-    return render_template("usuario.html")
+def usuario(user):
+    return render_template("usuario.html", user=user)
 
 @app.route("/reclamo", methods=['GET', 'POST'])
 def crear():

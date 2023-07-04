@@ -1,8 +1,9 @@
 #import pickle
-from config import db
-from databases import Reclamo_db, Persona_db
-from reclamo import Reclamo
-from ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador as ClasificadorIA
+from modulos.config import db
+from modulos.databases import Reclamo_db, Persona_db
+from modulos.reclamo import Reclamo
+from modulos.ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador as ClasificadorIA
+from sqlalchemy.orm.exc import NoResultFound
 #from ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
 
 class Gestor_de_reclamos():
@@ -22,30 +23,62 @@ class Gestor_de_reclamos():
     def asignar_a_depto(self, reclamo, depto):
             """Se obtiene el departamento correspondiente de la base de datos con depto y se le asigna el reclamo"""
 
+    def cargar_de_db(self, datos_reclamos): #datos_reclamos se obtiene de 
+        for reclamo in datos_reclamos:
+            claim=Reclamo(reclamo[0], reclamo[1], reclamo[2])
+            claim.set_depto(reclamo[3])
+
 
 class Gestor_de_base_de_datos():
-    """El gestor de base de datos consultaría y modificaría la información almacenada en la base de datos en función de los requerimientos de demás clases"""
+    """El gestor de base de datos consulta y modifica la información almacenada en la base de datos"""
     
-    def __get_user_by_email(self, email_det):
-        user=db.session.query(Persona_db).filter_by(email=email_det).one()
-        return user
+    def __get_user_by_username(self, username):
+        try:
+            user=db.session.query(Persona_db).filter_by(username=username).one()
+            return user
+        except NoResultFound:
+            raise Exception("El usuario no existe")
+
+    # def __get_user_by_email(self, email_det):
+    #     try:
+    #         user=db.session.query(Persona_db).filter_by(email=email_det).one()
+    #         return user
+    #     except NoResultFound:
+    #         raise Exception("El usuario no existe")
     
-    def get_dato_user(self, email, dato):
-        if dato in ["ID", "email", "username", "password", "name", "surname", "depto", "claustro"]:
-            user=self.__get_user_by_email(email)
+    def get_dato_user(self, username, dato):
+        """Recibe el nombre de usuario y el dato a consultar y devuelve el valor del mismo, si el usuario existe y el dato es válido"""
+        if dato in ["ID", "email", "username", "password", "name", "surname", "depto", "claustro", "reclamos_adheridos", "reclamos_generados"]:
+            user=self.__get_user_by_username(username)
             attribute=getattr(user, dato, None)
             return attribute
         else:
-            print("El dato ingresado no corresponde a ningún atributo")
+            raise Exception("El dato ingresado no corresponde a ningún atributo de user")
 
-
-    def consultar_bd(self, atributo, clase):
-        """Retorna el valor del atributo consultado"""
-        value=db.session.query(clase.atributo).all()
-        return value
+    def reclamos_de_user(self, username):
+        """Devuelve los reclamos generados por el usuario de interés"""
+        ID_required_user=self.get_dato_user(username, "ID")
+        reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==ID_required_user).all() #sólo se puede hacer si los atributos son públicos
+        datos_reclamos=[]
+        for reclamo in reclamos:
+            datos=(reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.depto, reclamo.adherentes, reclamo.estado)
+            datos_reclamos.append(datos)
+        return datos_reclamos  
     
-    def cambiar_valor_atributo(self, nuevo_valor):
+    def reclamos_pendientes(self):
         pass
+
+    def reclamos_pendientes_depto(self):
+        pass
+
+
+    # def consultar_bd(self, atributo, clase):
+    #     """Retorna el valor del atributo consultado"""
+    #     value=db.session.query(clase.atributo).all()
+    #     return value
+    
+    # def cambiar_valor_atributo(self, nuevo_valor):
+    #     pass
 
 #dato=[claim.get_ID(), claim.get_descripcion()...] ; claim=Reclamo()
     def guardar_nuevo_objeto(self, clase, dato): #dato debería ser una lista con el "formato" del objeto

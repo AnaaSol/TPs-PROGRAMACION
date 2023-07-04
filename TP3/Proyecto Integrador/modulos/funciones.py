@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import nltk as nltk
-from nltk.corpus import stopwords
 
 def graficar_nube(texto):
     nltk.download('stopwords') #descarga las stopwords

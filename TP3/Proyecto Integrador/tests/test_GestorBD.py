@@ -1,6 +1,5 @@
 import unittest
-from modulos.classes import *
-#from modulos.databases import *
+from modulos.gestores import Gestor_de_base_de_datos
 
 class TestGestorBD(unittest.TestCase):
     
