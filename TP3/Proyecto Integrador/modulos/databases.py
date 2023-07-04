@@ -21,8 +21,8 @@ class Persona_db(db.Model):
     #atributos de usuario
     claustro = db.Column(db.String(100))
     #tuve problemas con los ARRAY y no pude descubrir por qué
-    reclamos_adheridos = db.Column(db.String(1000)) #arreglo (lista) de enteros
-    reclamos_generados = db.Column(db.String(1000))
+    #reclamos_adheridos = db.Column(db.ARRAY(db.Integer())) #arreglo (lista) de enteros
+    #reclamos_generados = db.Column(db.ARRAY(db.Integer()))
     #atributos de jefe
     depto = db.Column(db.String(100))
     #columna discriminante
