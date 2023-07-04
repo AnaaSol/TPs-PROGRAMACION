@@ -3,7 +3,7 @@ class Reclamo():
         self.__ID="" #etiqueta única generado en databases con primary_key; debería pasarse como atributo para crearlo, no arranca vacío
         self.__ID_usuario=user_id
         self.__descripcion=description
-        self.__estado="Pendiente" #por default
+        self.__estado="pendiente" #por default
         self.__departamento=""
         self.__date=fecha
         self.__adherentes=[] #lista con los ID de los usuarios adheridos

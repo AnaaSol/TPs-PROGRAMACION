@@ -1,16 +1,16 @@
-#import pickle
-from config import db
-from databases import Reclamo_db, Persona_db
-from reclamo import Reclamo
-#from ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador as ClasificadorIA
-from ClasificadorSk.clasificadorsk.modules.clasificador import cls #pruebo importar el objeto en lugar del modulo
+import pickle
+from modulos.config import db
+from modulos.databases import Reclamo_db, Persona_db
+from modulos.reclamo import Reclamo
+#from modulos.ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
 from sqlalchemy.orm.exc import NoResultFound
-#from ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
+#from modulos.ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
 
 class Gestor_de_reclamos():
 
-    def __init__(self):
-        self.__clasificador=cls
+    def __init__(self, ruta):
+        with open(ruta, 'rb') as archivo:
+           self.__clasificador = pickle.load(archivo)
 
     def crear_reclamo(self, data): # data=[title, descrip, fecha, id_user] 
         """Crea un reclamo con la información proporcionada por el usuario"""
@@ -18,8 +18,23 @@ class Gestor_de_reclamos():
         return claim #¿cómo se entera usuario?
 
     def clasificar_reclamo(self, claim):
-        depto=self.__clasificador.clasificar(claim.get_descripcion)
-        claim.set_depto(depto)
+         depto=self.__clasificador.clasificar(claim.get_descripcion)
+         claim.set_depto(depto)
+
+    def filtrar_reclamos(self, filtro, valor_filtro, reclamos):
+        """Filtra los reclamos que recibe según un estado o departamento específico"""
+        if filtro in ["depto", "estado"]:
+            #chequea que el filtro y su valor se correspondan:
+            if filtro=="depto" and valor_filtro in ["maestranza", "soporte informático"] or filtro=="estado" and valor_filtro in ["pendiente", "resuelto", "inválido", "en proceso"]:
+                reclamos_filtrados=[]
+                for reclamo in reclamos:
+                    if getattr(reclamo, filtro)==valor_filtro:
+                        reclamos_filtrados.append(reclamo)
+                return reclamos_filtrados
+            else:
+                raise Exception("El valor del filtro no es válido")
+        else:
+            raise Exception("Sólo se puede filtrar por departamento o estado")
 
     def asignar_a_depto(self, reclamo, depto):
             """Se obtiene el departamento correspondiente de la base de datos con depto y se le asigna el reclamo"""
@@ -39,7 +54,18 @@ class Gestor_de_base_de_datos():
             return user
         except NoResultFound:
             raise Exception("El usuario no existe")
-
+        
+    def __get_reclamo_by_filtro(self, filtro): #filtra los reclamos por depto o estado
+        filtro=filtro.lower()
+        if filtro in ["pendiente", "resuelto", "en proceso", "inválido"]:
+            reclamos=db.session.query(Reclamo_db).filter(estado=filtro).all()
+            return reclamos
+        elif filtro in ["soporte informático", "maestranza"]:
+            reclamos=db.session.query(Reclamo_db).filter(depto=filtro).all()
+            return reclamos
+        else:
+            raise Exception("Filtro inválido. Ingrese un departamento o estado.")
+    
     def chequear_disponibilidad(self, respecto_de, valor):
         """Chequea la disponibilidad de un email o nombre de usuario"""
         respecto_de=respecto_de.lower()
@@ -54,13 +80,6 @@ class Gestor_de_base_de_datos():
                 return "Email/usuario disponible"
         else:
             print("El dato no necesita ser único")
-
-    # def __get_user_by_email(self, email_det):
-    #     try:
-    #         user=db.session.query(Persona_db).filter_by(email=email_det).one()
-    #         return user
-    #     except NoResultFound:
-    #         raise Exception("El usuario no existe")
     
     def get_dato_user(self, username, dato):
         """Recibe el nombre de usuario y el dato a consultar y devuelve el valor del mismo, si el usuario existe y el dato es válido"""
@@ -80,21 +99,6 @@ class Gestor_de_base_de_datos():
             datos=(reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.depto, reclamo.adherentes, reclamo.estado)
             datos_reclamos.append(datos)
         return datos_reclamos  
-    
-    def reclamos_pendientes(self):
-        pass
-
-    def reclamos_pendientes_depto(self):
-        pass
-
-
-    # def consultar_bd(self, atributo, clase):
-    #     """Retorna el valor del atributo consultado"""
-    #     value=db.session.query(clase.atributo).all()
-    #     return value
-    
-    # def cambiar_valor_atributo(self, nuevo_valor):
-    #     pass
 
 #dato=[claim.get_ID(), claim.get_descripcion()...] ; claim=Reclamo()
     def guardar_nuevo_objeto(self, clase, dato): #dato debería ser una lista con el "formato" del objeto
@@ -143,8 +147,20 @@ class Gestor_de_base_de_datos():
         else:
             print("No existe esa base de datos.")
     
-    def modificar_dato(self, dato, clase): #por ejemplo, un usuario cambia la contraseña
-        pass
+    def modificar_dato(self, dato, nuevo_valor, clase, ID): 
+        if clase in ["jefe", "usuario", "reclamo"]:
+            if clase=="reclamo":
+                objeto=db.session.get(Reclamo_db, ID)
+            else:
+                objeto=db.session.get(Persona_db, ID)
+
+            if objeto is not None:
+                setattr(objeto, dato, nuevo_valor)
+                db.session.commit()
+                print("Cambio guardado")
+        else:
+            raise Exception("No existe una base de datos para esa clase")
+
 
 #consultar query en : 
 # https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjSpfHw3Oz_AhXmrJUCHZxeC18QFnoECA4QAQ&url=https%3A%2F%2Fdocs.sqlalchemy.org%2F14%2Form%2Fquery.html&usg=AOvVaw3Gtd4wgYBsOHKGfN3V9ZO2&opi=89978449

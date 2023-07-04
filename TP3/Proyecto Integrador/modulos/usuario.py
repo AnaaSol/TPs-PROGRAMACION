@@ -1,4 +1,4 @@
-from persona import Persona
+from modulos.persona import Persona
 import datetime
 
 class Usuario(Persona):
