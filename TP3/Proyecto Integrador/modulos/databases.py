@@ -14,14 +14,14 @@ class Persona_db(db.Model):
     ID=db.Column(db.Integer(), primary_key=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     username = db.Column(db.String(100), unique=True, nullable=False)
-    __password = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     surname= db.Column(db.String(100), nullable=False)
     #atributos de usuario
     claustro = db.Column(db.String(100))
     #tuve problemas con los ARRAY y no pude descubrir por qué
-    #reclamos_adheridos = db.Column(db.ARRAY(db.Integer())) #arreglo (lista) de enteros
-    #reclamos_generados = db.Column(db.ARRAY(db.Integer()))
+    # reclamos_adheridos = db.Column(db.ARRAY(db.Integer())) #arreglo (lista) de enteros
+    # reclamos_generados = db.Column(db.ARRAY(db.Integer()))
     #atributos de jefe
     depto = db.Column(db.String(100))
     #columna discriminante
@@ -31,7 +31,7 @@ class Persona_db(db.Model):
         self.ID=ID
         self.email=email
         self.username=username
-        self.__password=password
+        self.password=password
         self.name=name
         self.surname=surname
 
