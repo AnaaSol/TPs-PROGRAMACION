@@ -2,14 +2,15 @@
 from config import db
 from databases import Reclamo_db, Persona_db
 from reclamo import Reclamo
-from ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador as ClasificadorIA
+#from ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador as ClasificadorIA
+from ClasificadorSk.clasificadorsk.modules.clasificador import cls #pruebo importar el objeto en lugar del modulo
 from sqlalchemy.orm.exc import NoResultFound
 #from ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
 
 class Gestor_de_reclamos():
 
     def __init__(self):
-        self.__clasificador=ClasificadorIA()
+        self.__clasificador=cls
 
     def crear_reclamo(self, data): # data=[title, descrip, fecha, id_user] 
         """Crea un reclamo con la información proporcionada por el usuario"""
