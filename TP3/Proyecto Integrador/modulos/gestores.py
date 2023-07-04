@@ -39,6 +39,21 @@ class Gestor_de_base_de_datos():
         except NoResultFound:
             raise Exception("El usuario no existe")
 
+    def chequear_disponibilidad(self, respecto_de, valor):
+        """Chequea la disponibilidad de un email o nombre de usuario"""
+        respecto_de=respecto_de.lower()
+        if respecto_de in ["email", "username"]:
+            users=db.session.query(Persona_db).all()
+            atributos=[]
+            for user in users:
+                atributos.append(getattr(user, respecto_de))
+            if valor in atributos:
+                return "Email/usuario ocupado"
+            else:
+                return "Email/usuario disponible"
+        else:
+            print("El dato no necesita ser único")
+
     # def __get_user_by_email(self, email_det):
     #     try:
     #         user=db.session.query(Persona_db).filter_by(email=email_det).one()

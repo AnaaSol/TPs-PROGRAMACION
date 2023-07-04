@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, abort, fla
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from modulos.gestores import Gestor_de_base_de_datos, Gestor_de_reclamos
+from modulos.usuario import Usuario
 
 from functools import wraps
 from modulos.config import app, db, login_manager
@@ -45,7 +46,6 @@ def raiz():
 def new_user():
     condicion=""
     if request.method == 'POST':
-        condicion=""
         name=request.form.get["name"]
         apellido=request.form.get["apellido"]
         mail=request.form.get["email"]
@@ -54,36 +54,22 @@ def new_user():
         contraseña=request.form.get["contraseña"]
         rep_contraseña=request.form.get["contraseña_rep"]
 
-        mails = User.query.all('self.__email') #hacer con método de GestorDB
-        names = User.query.all('self.__user_name')
-
         if not name or not apellido or not mail or not user_name or not cloister or not contraseña or not rep_contraseña:
             condicion="Faltan ingresar datos. Por favor complete todos los campos"
 
-        elif mail in mails:
-            condicion="Este mail ya está asociado a una cuenta existente"
+        elif GestorDB.chequear_disponibilidad("email", mail)=="Email/usuario ocupado":
+            condicion="Ya existe una cuenta con ese email"
 
-        elif user_name in names:
-            condicion="Este nombre de usuario ya esta en uso"
+        elif GestorDB.chequear_disponibilidad("usuario", user_name)=="Email/usuario ocupado":
+            condicion="Ya existe una cuenta con ese nombre de usuario"
         
         elif contraseña!=rep_contraseña:
             condicion="Las contraseñas ingresadas no coinciden"
 
         else:
-            user=User()
-            user.set_nombre(name)
-            user.set_apellido(apellido)
-            user.set_mail(mail)
-            user.set_usuario(user_name)
-            user.set_claustro(cloister)
-            user.set_contraseña(contraseña)
-            db.session.add(user)
-            db.session.commit()
-
-            if cloister=="Jefe":
-                return redirect(url_for("jefe"))
-            else:
-                return redirect(url_for("usuario"))
+            user=Usuario(name, apellido, user_name, mail, contraseña, cloister)
+            datos_user=[user.get_ID, user.get_nombre, user.get_apellido, user.get_email, user.get_contraseña, user.get_claustro, adheridos, generados]
+            GestorDB.guardar_nuevo_objeto("usuario", datos_user)
     
     return render_template("sing_up.html", condicion=condicion)
 
