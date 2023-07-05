@@ -1,6 +1,8 @@
 import unittest
 from modulos.gestores import Gestor_de_base_de_datos
 
+#¿Cómo crear una base de datos de prueba?
+
 class TestGestorBD(unittest.TestCase):
     
     def setUp(self):

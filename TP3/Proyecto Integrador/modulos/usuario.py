@@ -1,12 +1,12 @@
-from modulos.persona import Persona
+from persona import Persona
 import datetime
 
 class Usuario(Persona):
 
     #los atributos también tienen que ser protegidos (a pesar de que Usuario no tenga subclases) porque los getters 
     #están en Persona() y ahí están definidos como self._atributo (no se reconoce self.__atributo al llamar)
-    def __init__(self, nombre, apellido, usuario, email, contraseña, claustro):
-        self._ID="" #etiqueta única que se obtiene en databases con primary_key
+    def __init__(self, ID, nombre, apellido, usuario, email, contraseña, claustro):
+        self._ID=ID #etiqueta única que se obtiene en databases con primary_key
         self._nombre=nombre
         self._apellido=apellido
         self._usuario=usuario
@@ -48,6 +48,7 @@ class Usuario(Persona):
         else: 
             self.__reclamos_adheridos.append(reclamo_ID)
         #cómo incrementadmos reclamo.adherentes?
+
 
 
 #print(datetime.datetime.now()) #formato: year-month-day h:min:s.ms 

@@ -26,11 +26,21 @@ def user_loader(user_id):
 def raiz():  
     condicion=""
     if request.method == 'POST':
-        n=request.form["nombre"]
-        c=request.form["contraseña"]
-        usuario = Persona_db.query.filter_by(usuario.__user_name==n).first() #dudoso
-        if not usuario:
-            condicion="No existe una cuenta que corresponda a este nombre"
+        u=request.form["usuario"]
+        c=request.form["contraseña"] 
+        try:
+            actual_password=GestorDB.get_dato_user(u, "password") #contraseña correcta del usuario
+        except Exception as e: #either el usuario no existe o el dato es inválido (el dato es válido, está chequeado)
+            condicion=e
+        else: #bloque que se ejecuta si en try no hubo excepción
+            if actual_password==c: #compara la contraseña correcta con la ingresada
+                type=GestorDB.get_dato_user(u, "depto") 
+                if not type: #es decir, type=None
+                    return redirect(url_for('usuario', user=u)) 
+                else:
+                    return redirect(url_for('jefe', depto=type))
+            else:
+                condicion="La contraseña es incorrecta"
 
     return render_template("main.html", condicion=condicion)
 
@@ -44,7 +54,7 @@ def new_user():
         user_name=request.form["username"]
         cloister=request.form["cloister"]
         contraseña=request.form["password"]
-        rep_contraseña=request.form["contraseña_rep"]
+        rep_contraseña=request.form["password_again"]
 
         if not name or not apellido or not mail or not user_name or not cloister or not contraseña or not rep_contraseña:
             condicion="Faltan ingresar datos. Por favor complete todos los campos"
@@ -59,9 +69,12 @@ def new_user():
             condicion="Las contraseñas ingresadas no coinciden"
 
         else:
-            user=Usuario(name, apellido, user_name, mail, contraseña, cloister)
-            datos_user=[user.get_ID, user.get_nombre, user.get_apellido, user.get_email, user.get_usuario, user.get_contraseña, user.get_claustro, user.get_reclamos_adheridos, user.get_reclamos_generados]
+            ID_inicializador=0 #no se guarda, la base de datos le asigna uno al guardar el usuario
+            user=Usuario(ID_inicializador, name, apellido, user_name, mail, contraseña, cloister)
+            #estructura de desglose del método= name, surname, username, email, password +claustro/depto
+            datos_user=[user.get_nombre, user.get_apellido, user.get_usuario, user.get_email, user.get_contraseña, user.get_claustro]
             GestorDB.guardar_nuevo_objeto("usuario", datos_user)
+            #¿deberíamos mostrar un mensaje de registro o direccionar a usuario directamente?
     
     return render_template("sing_up.html", condicion=condicion)
 
@@ -74,7 +87,13 @@ def usuario(user):
     return render_template("usuario.html", user=user)
 
 @app.route("/reclamo", methods=['GET', 'POST'])
-def crear():
+def crear(user):
+    if request.method == "POST":
+        texto=request.form["description"]
+        imagen=request.form["image"]
+        #¿cómo obtengo el nombre de usuario?
+        #clasificar reclamo y proponer similares (¿la función debería estar en funciones o en GestorDB?)
+
     return render_template("reclamo.html")
 
 @app.route("/reclamos_pendientes", methods=['GET', 'POST'])

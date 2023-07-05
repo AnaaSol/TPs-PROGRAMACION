@@ -16,6 +16,16 @@
     div {margin-left: 200px;
         margin-right: 200px;
         margin-top: 50px}
+
+    .btn {
+        background-color: #34495e ;
+        color: white;
+        padding: 5px 10px;
+        text-decoration: none;}
+
+    .btn:hover {
+         background-color: #0056b3;}
+
 </style>
 </head>
 <body>
@@ -40,12 +50,14 @@
                 <label for="contraseña">Contraseña:</label>
                 <input type="password" id="contraseña" name="password"><br><br>
                 <label for="contraseña_rep">Repetir contraseña:</label>
-                <input type="password" id="contraseña_rep" name="contraseña_rep"><br><br>
+                <input type="password" id="contraseña_rep" name="password_again"><br><br>
                 <input type="submit" value="Continuar">
-                {% if condicion=="nada": %}
-                    <p style="font-size:14xp">Complete el formulario</p>
-                {% else:%}
+                {% if condicion!="": %}
                     <p style="color:rgb(206, 23, 23); font-size: 14px;">{{condicion}}</p>
+                    {%if condicion=="Ya existe una cuenta con ese nombre de usuario" or condicion=="Ya existe una cuenta con ese email"%}
+                    <label for="button">¿Log in instead?</label>
+                    <a href="{{ url_for('raiz') }}" class="btn" id="button">Logearse</a>
+                    {% endif %}
                 {% endif %}
             </fieldset>
         </form>

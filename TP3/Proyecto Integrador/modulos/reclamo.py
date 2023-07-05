@@ -1,6 +1,6 @@
 class Reclamo(): 
-    def __init__(self, description, fecha, user_id): #todos estos datos se obtienen de Usuario.generar_reclamo()
-        self.__ID="" #etiqueta única generado en databases con primary_key; debería pasarse como atributo para crearlo, no arranca vacío
+    def __init__(self, ID, description, fecha, user_id): #todos estos datos se obtienen de Usuario.generar_reclamo()
+        self.__ID=ID #etiqueta única generado en databases con primary_key; debería pasarse como atributo para crearlo, no arranca vacío
         self.__ID_usuario=user_id
         self.__descripcion=description
         self.__estado="pendiente" #por default
@@ -16,9 +16,6 @@ class Reclamo():
 
     #getters
 
-    def get_title(self):
-        return self.__title
-
     def get_descricion(self):
         return self.__descripcion
     
@@ -33,6 +30,9 @@ class Reclamo():
     
     def get_departamento(self):
         return self.__departamento
+    
+    def get_fecha(self):
+        return self.__date
 
     def sumar_adherente(self, adherente):
         self.__adherentes.append(adherente)
