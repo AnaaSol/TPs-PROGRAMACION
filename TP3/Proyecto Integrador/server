@@ -38,13 +38,13 @@ def raiz():
 def new_user():
     condicion=""
     if request.method == 'POST':
-        name=request.form.get["name"]
-        apellido=request.form.get["apellido"]
-        mail=request.form.get["email"]
-        user_name=request.form.get["nombre_usuario"]
-        cloister=request.form.get["cloister"]
-        contraseña=request.form.get["contraseña"]
-        rep_contraseña=request.form.get["contraseña_rep"]
+        name=request.form["name"]
+        apellido=request.form["surname"]
+        mail=request.form["email"]
+        user_name=request.form["username"]
+        cloister=request.form["cloister"]
+        contraseña=request.form["password"]
+        rep_contraseña=request.form["contraseña_rep"]
 
         if not name or not apellido or not mail or not user_name or not cloister or not contraseña or not rep_contraseña:
             condicion="Faltan ingresar datos. Por favor complete todos los campos"
@@ -60,7 +60,7 @@ def new_user():
 
         else:
             user=Usuario(name, apellido, user_name, mail, contraseña, cloister)
-            datos_user=[user.get_ID, user.get_nombre, user.get_apellido, user.get_email, user.get_contraseña, user.get_claustro, adheridos, generados]
+            datos_user=[user.get_ID, user.get_nombre, user.get_apellido, user.get_email, user.get_usuario, user.get_contraseña, user.get_claustro, user.get_reclamos_adheridos, user.get_reclamos_generados]
             GestorDB.guardar_nuevo_objeto("usuario", datos_user)
     
     return render_template("sing_up.html", condicion=condicion)
