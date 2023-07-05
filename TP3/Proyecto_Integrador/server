@@ -12,7 +12,7 @@ from modulos.databases import *
 from sqlalchemy.orm.exc import NoResultFound
 
 GestorDB=Gestor_de_base_de_datos()
-#GestorR=Gestor_de_reclamos('/modulos/ClasificadorSk/clasificadorsk/objeto_clasificador.pkl') #no encuentra la ruta
+#GestorR=Gestor_de_reclamos('modulos/ClasificadorSk/clasificadorsk/objeto_clasificador.pkl') #no encuentra la ruta
 
 admin_list = [1]
 

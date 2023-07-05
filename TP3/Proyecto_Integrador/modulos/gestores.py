@@ -1,5 +1,5 @@
 import pickle
-from .config import db
+from .config import db, app
 from .databases import Reclamo_db, Persona_db
 from .reclamo import Reclamo
 from .ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
@@ -43,7 +43,6 @@ class Gestor_de_reclamos():
         for reclamo in datos_reclamos:
             claim=Reclamo(reclamo[0], reclamo[1], reclamo[2])
             claim.set_depto(reclamo[3])
-
 
 class Gestor_de_base_de_datos():
     """El gestor de base de datos consulta y modifica la información almacenada en la base de datos"""
@@ -162,7 +161,8 @@ class Gestor_de_base_de_datos():
                 print("Cambio guardado")
         else:
             raise Exception("No existe una base de datos para esa clase")
-
-
-#consultar query en : 
-# https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjSpfHw3Oz_AhXmrJUCHZxeC18QFnoECA4QAQ&url=https%3A%2F%2Fdocs.sqlalchemy.org%2F14%2Form%2Fquery.html&usg=AOvVaw3Gtd4wgYBsOHKGfN3V9ZO2&opi=89978449
+        
+    def get_posibles_similares(self, ID):
+        """Devuelve una lista de ID's de posibles reclamos similares"""
+        reclamo_objetivo=db.session.get(Reclamo_db, ID)
+        pass

@@ -1,4 +1,4 @@
-from persona import Persona
+from modulos.persona import Persona
 
 class Jefe(Persona):
 
