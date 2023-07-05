@@ -16,7 +16,7 @@ class Reclamo():
 
     #getters
 
-    def get_descricion(self):
+    def get_descripcion(self):
         return self.__descripcion
     
     def get_ID(self):

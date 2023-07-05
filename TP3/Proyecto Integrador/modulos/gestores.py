@@ -1,10 +1,10 @@
 import pickle
-from modulos.config import db
-from modulos.databases import Reclamo_db, Persona_db
-from modulos.reclamo import Reclamo
-#from modulos.ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
+from .config import db
+from .databases import Reclamo_db, Persona_db
+from .reclamo import Reclamo
+from .ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
 from sqlalchemy.orm.exc import NoResultFound
-#from modulos.ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
+from .ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
 
 class Gestor_de_reclamos():
 
@@ -12,14 +12,14 @@ class Gestor_de_reclamos():
         with open(ruta, 'rb') as archivo:
            self.__clasificador = pickle.load(archivo)
 
-    def crear_reclamo(self, data): # data=[title, descrip, fecha, id_user] 
+    def crear_reclamo(self, data): # data=[descrip, fecha, id_user] 
         """Crea un reclamo con la información proporcionada por el usuario"""
         claim=Reclamo(data)
         return claim #¿cómo se entera usuario?
 
     def clasificar_reclamo(self, claim):
-         depto=self.__clasificador.clasificar(claim.get_descripcion)
-         claim.set_depto(depto)
+        depto=self.__clasificador.clasificar(claim.get_descripcion)
+        claim.set_depto(depto)
 
     def filtrar_reclamos(self, filtro, valor_filtro, reclamos):
         """Filtra los reclamos que recibe según un estado o departamento específico"""
@@ -65,6 +65,14 @@ class Gestor_de_base_de_datos():
             return reclamos
         else:
             raise Exception("Filtro inválido. Ingrese un departamento o estado.")
+
+    def get_reclamos_filtrados_data(self, filtro):
+        reclamos=self.__get_reclamo_by_filtro(filtro)
+        data=[]
+        for reclamo in reclamos:
+            t=(reclamo.ID, reclamo.description)
+            data.append(t)
+        return data
     
     def chequear_disponibilidad(self, respecto_de, valor):
         """Chequea la disponibilidad de un email o nombre de usuario"""

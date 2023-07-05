@@ -34,6 +34,12 @@ class Persona_db(db.Model):
         self.password=password
         self.name=name
         self.surname=surname
+        self.depto=""
+        self.reclamos_generados=""
+        self.reclamos_adheridos=""
+
+    def set_depto(self, depto):
+        self.depto=depto
 
 class Reclamo_db(db.Model):
 
@@ -46,6 +52,7 @@ class Reclamo_db(db.Model):
     timestap = db.Column(db.String(50), nullable=False)
     adherentes = db.Column(db.String())
     ID_user = db.Column(db.Integer(), db.ForeignKey('personas.ID'))
+    imagen = db.Column(db.LargeBinary)
 
     def __init__(self, description, depto, timestap, adherentes, estado, ID_user): #cuando instancio utilizo estos nombres
         self.depto=depto
@@ -54,7 +61,10 @@ class Reclamo_db(db.Model):
         self.adherentes=adherentes
         self.estado=estado
         self.ID_user=ID_user
+        self.image=None
 
+    def add_image(self, image):
+        self.image=image
 
     #print(user_by_email.get_password())
     #print(user_by_email.ID)
