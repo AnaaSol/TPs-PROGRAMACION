@@ -1,10 +1,10 @@
 import pickle
-from .config import db
-from .databases import Reclamo_db, Persona_db
-from .reclamo import Reclamo
-from .ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
+from modulos.config import db
+from modulos.databases import Reclamo_db, Persona_db
+from modulos.reclamo import Reclamo
+#from modulos.ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
 from sqlalchemy.orm.exc import NoResultFound
-from .ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
+#from modulos.ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
 
 class Gestor_de_reclamos():
 

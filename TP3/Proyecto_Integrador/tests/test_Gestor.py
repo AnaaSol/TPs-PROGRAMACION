@@ -1,6 +1,7 @@
 import unittest
-from modulos.classes import *
+from modulos.gestores import Gestor_de_reclamos
 #from modulos.databases import *
+
 
 class TestGestor(unittest.TestCase):
     

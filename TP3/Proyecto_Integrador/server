@@ -1,0 +1,128 @@
+from flask import Flask, render_template, request, redirect, url_for, abort, flash, session
+from flask_login import login_user, login_required, current_user, logout_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from modulos.gestores import Gestor_de_base_de_datos, Gestor_de_reclamos
+from modulos.usuario import Usuario
+import datetime
+
+from functools import wraps
+from modulos.config import app, db, login_manager
+from modulos.databases import *
+
+from sqlalchemy.orm.exc import NoResultFound
+
+GestorDB=Gestor_de_base_de_datos()
+#GestorR=Gestor_de_reclamos('modulos/ClasificadorSk/clasificadorsk/objeto_clasificador.pkl') #no encuentra la ruta
+
+admin_list = [1]
+
+with app.app_context():
+    db.create_all()
+
+@login_manager.user_loader
+def user_loader(user_id):
+    return Persona_db.query.get(user_id)
+    
+@app.route("/", methods=['GET', 'POST'])
+def raiz():  
+    condicion=""
+    if request.method == 'POST':
+        u=request.form["usuario"]
+        c=request.form["contraseña"] 
+        if not u or not c:
+            condicion="Complete ambos campos"
+        else:
+            try:
+                actual_password=GestorDB.get_dato_user(u, "password") #contraseña correcta del usuario
+            except Exception as e: #either el usuario no existe o el dato es inválido (el dato es válido, está chequeado)
+                condicion=str(e)
+            else: #bloque que se ejecuta si en try no hubo excepción
+                if actual_password==c: #compara la contraseña correcta con la ingresada
+                    type=GestorDB.get_dato_user(u, "depto") 
+                    if not type: #es decir, type=None
+                        return redirect(url_for('usuario', user=u)) 
+                    else:
+                        return redirect(url_for('jefe', depto=type))
+                else:
+                    condicion="La contraseña es incorrecta"
+
+    return render_template("main.html", condicion=condicion)
+
+@app.route("/sing_up", methods=['GET', 'POST'])
+def new_user():
+    condicion=""
+    if request.method == 'POST':
+        name=request.form["name"]
+        apellido=request.form["surname"]
+        mail=request.form["email"]
+        user_name=request.form["username"]
+        cloister=request.form["cloister"]
+        contraseña=request.form["password"]
+        rep_contraseña=request.form["password_again"]
+
+        if not name or not apellido or not mail or not user_name or not cloister or not contraseña or not rep_contraseña:
+            condicion="Faltan ingresar datos. Por favor complete todos los campos"
+
+        elif GestorDB.chequear_disponibilidad("email", mail)=="Email/usuario ocupado":
+            condicion="Ya existe una cuenta con ese email"
+
+        elif GestorDB.chequear_disponibilidad("usuario", user_name)=="Email/usuario ocupado":
+            condicion="Ya existe una cuenta con ese nombre de usuario"
+        
+        elif contraseña!=rep_contraseña:
+            condicion="Las contraseñas ingresadas no coinciden"
+
+        else:
+            ID_inicializador=0 #no se guarda, la base de datos le asigna uno al guardar el usuario
+            user=Usuario(ID_inicializador, name, apellido, user_name, mail, contraseña, cloister)
+            #estructura de desglose del método= name, surname, username, email, password +claustro/depto
+            datos_user=[user.get_nombre, user.get_apellido, user.get_usuario, user.get_email, user.get_contraseña, user.get_claustro]
+            GestorDB.guardar_nuevo_objeto("usuario", datos_user)
+            #¿deberíamos mostrar un mensaje de registro o direccionar a usuario directamente?
+    
+    return render_template("sing_up.html", condicion=condicion)
+
+@app.route("/jefe", methods=['GET', 'POST'])
+def jefe(depto):
+    return render_template("jefe.html", depto=depto)
+
+@app.route("/usuario", methods=['GET', 'POST'])
+def usuario(user):
+    #Almacena el nombre de usuario en la sesión
+    session['username']=user #chequear
+    return render_template("usuario.html", user=user)
+
+@app.route("/reclamo", methods=['GET', 'POST'])
+def crear():
+    if request.method == "POST":
+        user=session.get('username')
+        usuario=Usuario(GestorDB.get_dato_user(user, "ID"), GestorDB.get_dato_user(user, "name"), GestorDB.get_dato_user(user, "surname"), GestorDB.get_dato_user(user, "username"), GestorDB.get_dato_user(user, "email"), GestorDB.get_dato_user(user, "password"), GestorDB.get_dato_user(user, "cloister"))
+        texto=request.form["description"]
+        imagen=request.files["image"]
+        if imagen:
+            imagen_data = imagen.read()
+        form=usuario.generar_reclamo(texto)
+        form.insert(0, 0) #guarda un ID provisorio en form para poder crear el reclamo
+        reclamo=GestorR.crear_reclamo(form)
+        GestorR.clasificar_reclamo(reclamo)
+        reclamos_same_depto=GestorDB.get_reclamos_filtrados_data(reclamo.get_departamento())
+        #llamar a función que muestre similares
+        
+        #clasificar reclamo y proponer similares (¿la función debería estar en funciones o en GestorDB?)
+
+    return render_template("reclamo.html")
+
+@app.route("/reclamos_pendientes", methods=['GET', 'POST'])
+def pendientes():
+    return render_template("reclamos_pendientes.html")
+
+@app.route("/reclamos_usuario", methods=['GET', 'POST'])
+def recl():
+    return render_template("reclamo_usuario.html")
+
+@app.route("/reclamos_departamento", methods=['GET', 'POST'])
+def responder():
+    return render_template("reclamo_depto.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)

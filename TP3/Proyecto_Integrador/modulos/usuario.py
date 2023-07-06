@@ -5,8 +5,8 @@ class Usuario(Persona):
 
     #los atributos también tienen que ser protegidos (a pesar de que Usuario no tenga subclases) porque los getters 
     #están en Persona() y ahí están definidos como self._atributo (no se reconoce self.__atributo al llamar)
-    def __init__(self, nombre, apellido, usuario, email, contraseña, claustro):
-        self._ID="" #etiqueta única que se obtiene en databases con primary_key
+    def __init__(self, ID, nombre, apellido, usuario, email, contraseña, claustro):
+        self._ID=ID #etiqueta única que se obtiene en databases con primary_key
         self._nombre=nombre
         self._apellido=apellido
         self._usuario=usuario
@@ -34,8 +34,8 @@ class Usuario(Persona):
     # def agregar_reclamo_adherido(self, ID):
     #     self.__reclamos_adheridos.append(ID)
 
-    def generar_reclamo(self, nombre_reclamo, descripcion):
-        reclamo=[nombre_reclamo, descripcion, str(datetime.datetime.now())[:19], self._ID]
+    def generar_reclamo(self, descripcion):
+        reclamo=[descripcion, str(datetime.datetime.now())[:19], self._ID]
         #¿Cómo guardar el ID del reclamo?
         return reclamo
     
@@ -48,6 +48,7 @@ class Usuario(Persona):
         else: 
             self.__reclamos_adheridos.append(reclamo_ID)
         #cómo incrementadmos reclamo.adherentes?
+
 
 
 #print(datetime.datetime.now()) #formato: year-month-day h:min:s.ms 
