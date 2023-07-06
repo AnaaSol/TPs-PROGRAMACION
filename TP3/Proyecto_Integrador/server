@@ -34,8 +34,10 @@ def raiz():
         else:
             try:
                 actual_password=GestorDB.get_dato_user(u, "password") #contraseña correcta del usuario
-            except Exception as e: #either el usuario no existe o el dato es inválido (el dato es válido, está chequeado)
-                condicion=str(e)
+            # except Exception as e: #either el usuario no existe o el dato es inválido (el dato es válido, está chequeado)
+            #     condicion=str(e)
+            except:
+                condicion="El usuario no existe"
             else: #bloque que se ejecuta si en try no hubo excepción
                 if actual_password==c: #compara la contraseña correcta con la ingresada
                     type=GestorDB.get_dato_user(u, "depto") 
@@ -73,11 +75,12 @@ def new_user():
             condicion="Las contraseñas ingresadas no coinciden"
 
         else:
-            ID_inicializador=0 #no se guarda, la base de datos le asigna uno al guardar el usuario
-            user=Usuario(ID_inicializador, name, apellido, user_name, mail, contraseña, cloister)
+            #ID_inicializador=0 #no se guarda, la base de datos le asigna uno al guardar el usuario
+            #user=Usuario(ID_inicializador, name, apellido, user_name, mail, contraseña, cloister)
             #estructura de desglose del método= name, surname, username, email, password +claustro/depto
-            datos_user=[user.get_nombre, user.get_apellido, user.get_usuario, user.get_email, user.get_contraseña, user.get_claustro]
+            datos_user=[name, apellido, mail, user_name, contraseña, cloister, "", ""]
             GestorDB.guardar_nuevo_objeto("usuario", datos_user)
+            return redirect(url_for('raiz'))
             #¿deberíamos mostrar un mensaje de registro o direccionar a usuario directamente?
     
     return render_template("sing_up.html", condicion=condicion)

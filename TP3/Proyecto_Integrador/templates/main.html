@@ -118,7 +118,7 @@
             {% if condicion=="El usuario no existe" or condicion=="La contraseña es incorrecta" or condicion=="Complete ambos campos": %}
                 <p style="color:rgb(206, 23, 23); font-size: 14px;">{{condicion}}</p>
                 {% if condicion!="Complete ambos campos" %}
-                <p>¿Está seguro de que ingresó los datos correctamente?</p>
+                <p style="color:rgb(31, 24, 24); font-size: 14px;">¿Está seguro de que ingresó los datos correctamente?</p>
                 {% endif %}
             {% endif %}
         </article>

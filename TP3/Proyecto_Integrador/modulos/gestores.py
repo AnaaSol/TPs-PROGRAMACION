@@ -118,7 +118,7 @@ class Gestor_de_base_de_datos():
             
         elif clase=="usuario":
             nuevo_usuario=Persona_db(
-                ID=dato[0], 
+                #ID=dato[0], 
                 name=dato[1],
                 surname=dato[2],
                 email=dato[3],
