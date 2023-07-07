@@ -104,43 +104,39 @@ class Gestor_de_base_de_datos():
     def guardar_nuevo_objeto(self, clase, dato): #dato debería ser una lista con el "formato" del objeto
         if clase=="reclamo":
             nuevo_reclamo=Reclamo_db(
-                ID_reclamo=dato[0], #int
-                description=dato[1], #str
-                estado=dato[2], #str
-                depto=dato[3], #str
-                timestap=dato[4], #str
-                adherentes=dato[5], #str
-                title=dato[6], #str
-                id_user=dato[7] #int
+                description=dato[0], #str
+                estado=dato[1], #str
+                depto=dato[2], #str
+                timestap=dato[3], #str
+                adherentes=dato[4], #str
+                id_user=dato[5] #int
                 ) 
             db.session.add(nuevo_reclamo)
             db.session.commit()
             
         elif clase=="usuario":
             nuevo_usuario=Persona_db(
-                #ID=dato[0], 
-                name=dato[1],
-                surname=dato[2],
-                email=dato[3],
-                username=dato[4], 
-                password=dato[5],
-                claustro=dato[6],
-                reclamos_adheridos=dato[7],
-                reclamos_generados=dato[8]
+                name=dato[0],
+                surname=dato[1],
+                email=dato[2],
+                username=dato[3], 
+                password=dato[4],
                 )
+            nuevo_usuario.set_claustro(dato[5])
+            nuevo_usuario.set_reclamos(dato[6], "generados")
+            nuevo_usuario.set_reclamos(dato[7], "adheridos")
             db.session.add(nuevo_usuario)
             db.session.commit()
 
-        elif clase=="jefes":
-            nuevo_jefe=Persona_db(
-                ID=dato[0], 
-                name=dato[1],
-                surname=dato[2],
-                username=dato[3],
-                email=dato[4], 
-                password=dato[5],
-                depto=dato[6],
+        elif clase=="jefe":
+            nuevo_jefe=Persona_db( #se inicializa con elementos del __init__
+                name=dato[0],
+                surname=dato[1],
+                username=dato[2],
+                email=dato[3], 
+                password=dato[4],
                 )
+            nuevo_jefe.set_depto(dato[5]) #se utilizan setters para atributos particulares
             db.session.add(nuevo_jefe)
             db.session.commit()
 

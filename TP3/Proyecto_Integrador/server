@@ -9,7 +9,7 @@ from functools import wraps
 from modulos.config import app, db, login_manager
 from modulos.databases import *
 
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound 
 
 GestorDB=Gestor_de_base_de_datos()
 #GestorR=Gestor_de_reclamos('modulos/ClasificadorSk/clasificadorsk/objeto_clasificador.pkl') #no encuentra la ruta
@@ -87,12 +87,14 @@ def new_user():
 
 @app.route("/jefe", methods=['GET', 'POST'])
 def jefe(depto):
+    depto=depto
     return render_template("jefe.html", depto=depto)
 
 @app.route("/usuario", methods=['GET', 'POST'])
 def usuario(user):
     #Almacena el nombre de usuario en la sesión
-    session['username']=user #chequear
+    #session['username']=user #chequear
+    user=user
     return render_template("usuario.html", user=user)
 
 @app.route("/reclamo", methods=['GET', 'POST'])

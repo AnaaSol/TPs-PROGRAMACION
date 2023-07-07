@@ -12,7 +12,7 @@ datos_jefe2=[Jefe2.get_nombre(), Jefe2.get_apellido(), Jefe2.get_usuario(), Jefe
 datos_jefe3=[Jefe3.get_nombre(), Jefe3.get_apellido(), Jefe3.get_usuario(), Jefe3.get_email(), Jefe3.get_contraseña(), Jefe3.get_departamento()]
 
 with app.app_context():
-    db.create_all()
+    db.create_all() #¿deberíamos crear la BD acá o en server?
     GestorDB=Gestor_de_base_de_datos()
     GestorDB.guardar_nuevo_objeto("jefe", datos_jefe1)
     GestorDB.guardar_nuevo_objeto("jefe", datos_jefe2)
