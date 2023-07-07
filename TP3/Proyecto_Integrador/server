@@ -85,12 +85,12 @@ def new_user():
     
     return render_template("sing_up.html", condicion=condicion)
 
-@app.route("/jefe", methods=['GET', 'POST'])
+@app.route("/jefe/<depto>", methods=['GET', 'POST'])
 def jefe(depto):
-    depto=depto
+    depto=depto.capitalize()
     return render_template("jefe.html", depto=depto)
 
-@app.route("/usuario", methods=['GET', 'POST'])
+@app.route("/usuario/<user>", methods=['GET', 'POST'])
 def usuario(user):
     #Almacena el nombre de usuario en la sesión
     #session['username']=user #chequear
