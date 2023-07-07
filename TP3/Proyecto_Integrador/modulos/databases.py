@@ -28,7 +28,7 @@ class Persona_db(db.Model):
     #columna discriminante
     #type=db.Column(db.String(50)) #¿es necesaria? podríamos filtrar por depto ; if depto=None, persona es un usuario final
 
-    def __init__(self, email, username, password, name, surname): #cuando instancio utilizo estos nombres
+    def __init__(self, email, username, password, name, surname): #cuando instancio utilizo estos nombres (keyword argument)
         self.email=email
         self.username=username
         self.password=password
@@ -40,6 +40,17 @@ class Persona_db(db.Model):
 
     def set_depto(self, depto):
         self.depto=depto
+
+    def set_claustro(self, claustro):
+        self.claustro=claustro
+
+    def set_reclamos(self, reclamos, relationship):
+        if relationship=="adheridos":
+            self.reclamos_adheridos=reclamos
+        elif relationship=="generados":
+            self.reclamos_generados=reclamos
+        else:
+            print("Sólo puede cargar los reclamos generados por el usuario o aquellos a los que adhirió")
 
 class Reclamo_db(db.Model):
 
