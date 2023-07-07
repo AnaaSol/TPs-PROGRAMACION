@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Generar Reclamo</title>
 <style>
-    fieldset {background-color: #d9e3e9;}
+    fieldset {background-color: #d9e3e9;
+            padding: 20px;}
         
     legend {
         background-color: rgb(80, 126, 145);
@@ -27,13 +28,14 @@
 <body>
 <div>
 <form action="/reclamo" method="post" enctype="multipart/form-data">
-            <fieldset>
-                <legend>Nuevo reclamo</legend>
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="description" rows="4" cols="50"></textarea>
-  <label for="foto">Adjuntar foto:</label>
-  <input type="file" id="foto" name="image" accept="image/*">
-     <input type="submit" value="Crear">
+    <fieldset>
+        <legend>Nuevo reclamo</legend>
+        <label for="descripcion">Descripción:</label><br>
+        <textarea id="descripcion" name="description" rows="4" cols="50"></textarea><br><br>
+    <label for="foto">Adjuntar foto:</label>
+    <input type="file" id="foto" name="image" accept="image/*">
+    <br><br>
+    <input type="submit" value="Crear">
 
 </div>
 </body>

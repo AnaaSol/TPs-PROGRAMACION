@@ -1,8 +1,9 @@
 class Reclamo(): 
-    def __init__(self, ID, description, fecha, user_id): #todos estos datos se obtienen de Usuario.generar_reclamo()
+    def __init__(self, ID, description, fecha, user_id): #despues agregar imagen
         self.__ID=ID #etiqueta única generado en databases con primary_key; debería pasarse como atributo para crearlo, no arranca vacío
         self.__ID_usuario=user_id
         self.__descripcion=description
+        #self.__imagen=imagen
         self.__estado="pendiente" #por default
         self.__departamento=""
         self.__date=fecha

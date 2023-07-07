@@ -63,7 +63,7 @@ class Reclamo_db(db.Model):
     timestap = db.Column(db.String(50), nullable=False)
     adherentes = db.Column(db.String())
     ID_user = db.Column(db.Integer(), db.ForeignKey('personas.ID'))
-    imagen = db.Column(db.LargeBinary)
+    #imagen = db.Column(db.LargeBinary)
 
     def __init__(self, description, depto, timestap, adherentes, estado, ID_user): #cuando instancio utilizo estos nombres
         self.depto=depto

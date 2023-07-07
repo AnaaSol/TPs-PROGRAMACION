@@ -12,7 +12,7 @@ class Gestor_de_reclamos():
         with open(ruta, 'rb') as archivo:
            self.__clasificador = pickle.load(archivo)
 
-    def crear_reclamo(self, data): # data=[title, descrip, fecha, id_user] 
+    def crear_reclamo(self, data):
         """Crea un reclamo con la información proporcionada por el usuario"""
         claim=Reclamo(data)
         return claim #¿cómo se entera usuario?
@@ -21,20 +21,20 @@ class Gestor_de_reclamos():
          depto=self.__clasificador.clasificar(claim.get_descripcion)
          claim.set_depto(depto)
 
-    def filtrar_reclamos(self, filtro, valor_filtro, reclamos):
-        """Filtra los reclamos que recibe según un estado o departamento específico"""
-        if filtro in ["depto", "estado"]:
-            #chequea que el filtro y su valor se correspondan:
-            if filtro=="depto" and valor_filtro in ["maestranza", "soporte informático"] or filtro=="estado" and valor_filtro in ["pendiente", "resuelto", "inválido", "en proceso"]:
-                reclamos_filtrados=[]
-                for reclamo in reclamos:
-                    if getattr(reclamo, filtro)==valor_filtro:
-                        reclamos_filtrados.append(reclamo)
-                return reclamos_filtrados
-            else:
-                raise Exception("El valor del filtro no es válido")
-        else:
-            raise Exception("Sólo se puede filtrar por departamento o estado")
+    # def filtrar_reclamos(self, filtro, valor_filtro, reclamos):
+    #     """Filtra los reclamos que recibe según un estado o departamento específico"""
+    #     if filtro in ["depto", "estado"]:
+    #         #chequea que el filtro y su valor se correspondan:
+    #         if filtro=="depto" and valor_filtro in ["maestranza", "soporte informático"] or filtro=="estado" and valor_filtro in ["pendiente", "resuelto", "inválido", "en proceso"]:
+    #             reclamos_filtrados=[]
+    #             for reclamo in reclamos:
+    #                 if getattr(reclamo, filtro)==valor_filtro:
+    #                     reclamos_filtrados.append(reclamo)
+    #             return reclamos_filtrados
+    #         else:
+    #             raise Exception("El valor del filtro no es válido")
+    #     else:
+    #         raise Exception("Sólo se puede filtrar por departamento o estado")
 
     def asignar_a_depto(self, reclamo, depto):
             """Se obtiene el departamento correspondiente de la base de datos con depto y se le asigna el reclamo"""
@@ -55,7 +55,7 @@ class Gestor_de_base_de_datos():
         except NoResultFound:
             raise Exception("El usuario no existe")
         
-    def __get_reclamo_by_filtro(self, filtro): #filtra los reclamos por depto o estado
+    def get_reclamo_by_filtro(self, filtro="nada"): #filtra los reclamos por depto o estado (por default es nada, por lo que devuelve todos los reclamos)
         filtro=filtro.lower()
         if filtro in ["pendiente", "resuelto", "en proceso", "inválido"]:
             reclamos=db.session.query(Reclamo_db).filter(estado=filtro).all()
@@ -63,6 +63,8 @@ class Gestor_de_base_de_datos():
         elif filtro in ["soporte informático", "maestranza"]:
             reclamos=db.session.query(Reclamo_db).filter(depto=filtro).all()
             return reclamos
+        elif filtro=="nada":
+            reclamos=db.session.query(Reclamo_db).all()
         else:
             raise Exception("Filtro inválido. Ingrese un departamento o estado.")
     
@@ -89,6 +91,10 @@ class Gestor_de_base_de_datos():
             return attribute
         else:
             raise Exception("El dato ingresado no corresponde a ningún atributo de user")
+        
+    def get_dato_reclamo(self, reclamo, dato): #reclamo es el objeto reclamo de la DB
+        if dato in ["ID_reclamo", "description", "estado", "depto", "timestap", "adherentes", "ID_user"]:
+            attribute=getattr(reclamo, dato, None) #despues incluir imagen
 
     def reclamos_de_user(self, username):
         """Devuelve los reclamos generados por el usuario de interés"""
