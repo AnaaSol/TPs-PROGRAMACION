@@ -68,7 +68,7 @@ def new_user():
         elif GestorDB.chequear_disponibilidad("email", mail)=="Email/usuario ocupado":
             condicion="Ya existe una cuenta con ese email"
 
-        elif GestorDB.chequear_disponibilidad("usuario", user_name)=="Email/usuario ocupado":
+        elif GestorDB.chequear_disponibilidad("username", user_name)=="Email/usuario ocupado":
             condicion="Ya existe una cuenta con ese nombre de usuario"
         
         elif contraseña!=rep_contraseña:
@@ -85,12 +85,11 @@ def new_user():
     
     return render_template("sing_up.html", condicion=condicion)
 
-@app.route("/jefe", methods=['GET', 'POST'])
+@app.route("/jefe/<depto>", methods=['GET', 'POST'])
 def jefe(depto):
-    depto=depto
     return render_template("jefe.html", depto=depto)
 
-@app.route("/usuario", methods=['GET', 'POST'])
+@app.route("/usuario/<user>", methods=['GET', 'POST'])
 def usuario(user):
     #Almacena el nombre de usuario en la sesión
     #session['username']=user #chequear
