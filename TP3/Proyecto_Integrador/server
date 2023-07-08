@@ -92,6 +92,7 @@ def jefe(depto):
 @app.route("/usuario/<user>", methods=['GET', 'POST'])
 def usuario(user):
     #Almacena el nombre de usuario en la sesión
+    
     session['username']=user #chequear
     username=user
     return render_template("usuario.html", user=username)
