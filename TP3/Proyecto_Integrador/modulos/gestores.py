@@ -12,14 +12,18 @@ class Gestor_de_reclamos():
         with open(ruta, 'rb') as archivo:
            self.__clasificador = pickle.load(archivo)
 
-    def crear_reclamo(self, data):
+    def crear_reclamo(self, data): #data=[ID, description, fecha, user_id] + imagen 
         """Crea un reclamo con la información proporcionada por el usuario"""
-        claim=Reclamo(data)
+        claim=Reclamo(data[0], data[1], data[2], data[3])
+        try:
+            claim.cargar_imagen(data[4])
+        except:
+            pass
         return claim #¿cómo se entera usuario?
 
     def clasificar_reclamo(self, claim):
-         depto=self.__clasificador.clasificar(claim.get_descripcion)
-         claim.set_depto(depto)
+        depto=self.__clasificador.clasificar(claim.get_descripcion)
+        claim.set_depto(depto)
 
     # def filtrar_reclamos(self, filtro, valor_filtro, reclamos):
     #     """Filtra los reclamos que recibe según un estado o departamento específico"""
@@ -50,8 +54,6 @@ class Gestor_de_reclamos():
             reclamos.append(claim)
         return reclamos
         
-
-
 class Gestor_de_base_de_datos():
     """El gestor de base de datos consulta y modifica la información almacenada en la base de datos"""
     
@@ -61,6 +63,13 @@ class Gestor_de_base_de_datos():
             return user
         except NoResultFound:
             raise Exception("El usuario no existe")
+        
+    # def __get_reclamo_by_ID(self, ID):
+    #     try:
+    #         reclamo=db.session.query(Reclamo_db).filter_by(ID_reclamo=ID).one()
+    #         return reclamo
+    #     except NoResultFound:
+    #         raise Exception("El reclamo no existe")
         
     def get_reclamos_by_filtro(self, type="all", filtro="ninguno"): 
         """Filtra los reclamos por departamento, estado o ID de usuario. Si no se especifica el tipo de filtro ni el
@@ -120,9 +129,13 @@ class Gestor_de_base_de_datos():
         else:
             raise Exception("El dato ingresado no corresponde a ningún atributo de user")
         
-    def get_dato_reclamo(self, reclamo, dato): #reclamo es el objeto reclamo de la DB
-        if dato in ["ID_reclamo", "description", "estado", "depto", "timestap", "adherentes", "ID_user"]:
-            attribute=getattr(reclamo, dato, None) #despues incluir imagen
+    # def get_dato_reclamo(self, ID_reclamo, dato): 
+    #     if dato in ["ID_reclamo", "description", "estado", "depto", "timestap", "adherentes", "ID_user"]:
+    #         reclamo=self.__get_reclamo_by_ID(ID_reclamo)
+    #         attribute=getattr(reclamo, dato, None)
+    #         return attribute
+    #     else:
+    #         raise Exception("Dato inválido")
 
 #este método podría formar parte de get_reclamo_by_filtro
     # def reclamos_de_user(self, username):

@@ -144,22 +144,29 @@ def usuario(user):
 @app.route("/reclamo", methods=['GET', 'POST'])
 def crear():
     if request.method == "POST":
-        username=session.get('username') #chequear
-        id_user=GestorDB.get_dato_user(username, "ID")
+        user=request.form["username"]
+        #creación del objeto
+        usser=Usuario(GestorDB.get_dato_user(user, "ID"), GestorDB.get_dato_user(user, "name"), GestorDB.get_dato_user(user, "surname"), user, GestorDB.get_dato_user(user, "email"), GestorDB.get_dato_user(user, "password"), GestorDB.get_dato_user(user, "claustro"))
+        #creación del formulario para el reclamo
         texto=request.form["description"]
+        formulario=usser.generar_reclamo(texto)
+        #imagen
         imagen=request.files["image"]
-        data=[texto, "pendiente", "", str(datetime.datetime.now())[:19], 0, id]
         if imagen: #es decir, imagen no es None
             imagen_data = imagen.read()
-        reclamo=GestorDB.guardar_nuevo_objeto("reclamo", data) #sin clasificar
-        id_reclamo=GestorDB.get_dato_reclamo(reclamo, "ID_reclamo")
-        fecha=GestorDB.get_dato_reclamo(reclamo, "timestap")
-        form=[id_reclamo, texto, fecha, id_user]
-        recl=GestorR.crear_reclamo(form)
-        GestorR.clasificar_reclamo(recl)
-        reclamos_same_depto=GestorDB.get_reclamos_filtrados_data(recl.get_departamento())
-        
-        #clasificar reclamo y proponer similares (¿la función debería estar en funciones o en GestorDB?)
+            formulario.append(imagen_data)
+        #se añade un ID provisorio para poder crear el reclamo
+        formulario.insert(0, 1)
+        #se crea el reclamo
+        reclamo=GestorR.crear_reclamo(formulario)
+        #se clasifica
+        GestorR.clasificar_reclamo(reclamo)
+        #se guarda en la base de datos
+        data=[reclamo.get_descripcion(), reclamo.get_estado(), reclamo.get_departamento(), reclamo.get_fecha(), reclamo.get_adherentes(), reclamo.get_ID_usuario()]
+        GestorDB.guardar_nuevo_objeto(data)
+        #ID_oficial=GestorDB.get_dato_reclamo() #no sé cómo obtener el ID oficial para pasárselo al usuario creador
+        #se comunica al usuario de la creación
+        #usser.agregar_reclamo_creado(ID_oficial)
 
     return render_template("reclamo.html")
 

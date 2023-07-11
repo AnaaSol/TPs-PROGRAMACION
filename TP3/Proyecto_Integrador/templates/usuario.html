@@ -58,8 +58,9 @@
         <nav>
             <h1>¿Qué desea hacer? </h1>
             <br>
-             <form action="/reclamo">
+             <form action="/reclamo" method="post">
                 <input type="submit" value="Crear reclamo">
+                <input type="hidden" name="username" value="{{user}}">
             </form>
             <br>
             <form action="/reclamos_pendientes" method="post">
