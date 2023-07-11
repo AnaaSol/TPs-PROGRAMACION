@@ -114,13 +114,13 @@
             </form>
         </nav>
         <article>
-            <form action="/analítica">
-                <input type="submit" value="Analítica">
+            <form action="/jefe/{{depto}}" method="post">
+                <input type="submit" value="Analítica" name="button_value">
             </form>
         </article>
         <lateral>
-            <form action="/reclamos_por_depto">
-                <input type="submit" value="Manejar reclamos">
+            <form action="/jefe/{{depto}}" method="post">
+                <input type="submit" value="Manejar reclamos" name="button_value">
             </form>
         </lateral>
         <ending>

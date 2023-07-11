@@ -51,7 +51,7 @@
 </head>
 <body>
     <header>
-        <h5><i>Bienvenido {{user}} al</i></h5>
+        <h5><i>Bienvenid@ {{user}} al</i></h5>
         <h3>Servicio de reclamos FIUNER</h3>
     </header>
     <section>
@@ -62,12 +62,14 @@
                 <input type="submit" value="Crear reclamo">
             </form>
             <br>
-            <form action="/reclamos_pendientes">
+            <form action="/reclamos_pendientes" method="post">
                 <input type="submit" value="Listar reclamos">
+                <input type="hidden" name="username" value="{{user}}">
             </form>
             <br>
-            <form action="/reclamos_usuario">
+            <form action="/reclamos_usuario" method="post">
                 <input type="submit" value="Mis reclamos">
+                <input type="hidden" name="username" value="{{user}}">
             </form>
             <br>
             <form action="/">
@@ -83,7 +85,7 @@
             <ul>
                 <li>Crear reclamo: podrá realizar un reclamo fácilmente utilizando esta opción</li><br>
                 <li>Listar reclamos: usted podrá visualizar todos los reclamos que se han realizado y se encuentran pendientes pudiendo adherirse a alguno si es de su interés</li><br>
-                <li>Mis reclamos: en esta opción podrá ver todos los reclamos historicos realizados por usted junto con su estado actual</li><br>
+                <li>Mis reclamos: en esta opción podrá ver todos los reclamos históricos realizados por usted junto con su estado actual</li><br>
                 <li>Salir: esta es la opción para el cierre de sesión</li>
             </ul>
         </article>

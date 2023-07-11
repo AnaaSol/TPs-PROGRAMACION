@@ -1,7 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+      <meta charset="UTF-8">
+      <title>Reclamos pendientes</title>
   <style>
+
+      header {
+        background-color: #666;
+        padding: 8px;
+        text-align: center;
+        font-size: 27px;
+        color: white;
+      }
+
      .button {
           background-color: #009999;
           border: none;
@@ -63,28 +74,34 @@
           display: inline-block;
           margin-top: 0.5;
           }
-    
   </style>
 </head>
 <body>
+      <header>
+            <h5><i>Reclamos pendientes del</i></h5>
+            <h3>Servicio de reclamos FIUNER</h3>
+        </header>
+{% for claim in reclamos: %}
   <div class="dropdown">
     <button class="button button1">Reclamo</button>
     <div class="dropdown-content">
       <p class="etiquetas">ID:</p>
-      <p class="content">0994830</p><br>
+      <p class="content">{{claim.get_ID}}</p><br>
       <p class="etiquetas">Descripción</p>
-      <p class="content">No hay papel higiénico en el baño del módulo 1 durante toda la mañana</p>
+      <p class="content">{{claim.get_descripcion}}</p>
       <p class="etiquetas">Estado:</p>
-      <p class="content">Pendiente</p><br>
+      <p class="content">{{claim.get_estado}}</p><br>
       <p class="etiquetas"> Fecha de creación: </p>
-      <p class="content"> 12/03/23 </p>
+      <p class="content">{{claim.get_fecha}}</p>
       <p class="etiquetas">Departamento:</p>
-      <p class="content">Alumnado</p>
-      <p class="etiquetas"> 53 adherentes </p><br><br>
-      <form action=/listar_reclamos>
-      <input type="submit" value="Adherir" class="botoncito">
+      <p class="content">{{claim.get_departamento}}</p>
+      <p class="etiquetas">{{claim.contar_adherentes}} adherentes</p><br><br>
+      <form action=/reclamos_pendientes method="post">
+            <input type="hidden" name="ID_reclamo" value="{{claim.get_ID}}">
+            <input type="submit" value="Adherir" class="botoncito">
       </form>
     </div>
   </div>
+{% endfor %}
 </body>
 </html>

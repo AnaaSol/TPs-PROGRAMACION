@@ -39,10 +39,17 @@ class Gestor_de_reclamos():
     def asignar_a_depto(self, reclamo, depto):
             """Se obtiene el departamento correspondiente de la base de datos con depto y se le asigna el reclamo"""
 
-    def cargar_de_db(self, datos_reclamos): #datos_reclamos se obtiene de 
-        for reclamo in datos_reclamos:
-            claim=Reclamo(reclamo[0], reclamo[1], reclamo[2])
-            claim.set_depto(reclamo[3])
+    def cargar_de_db(self, datos_reclamos): #datos_reclamos se obtiene de get_reclamos_by_filtro
+        reclamos=[]
+        #datos_reclamos es una lista de datos donde datos=[ID_reclamo, description, timestap, ID_user, estado, depto, imagen]
+        for datos in datos_reclamos:
+            claim=Reclamo(datos[0], datos[1], datos[2], datos[3])
+            claim.cambiar_estado(datos[4])
+            claim.set_depto(datos[5])
+            claim.cargar_imagen(datos[6])
+            reclamos.append(claim)
+        return reclamos
+        
 
 
 class Gestor_de_base_de_datos():
@@ -50,23 +57,44 @@ class Gestor_de_base_de_datos():
     
     def __get_user_by_username(self, username):
         try:
-            user=db.session.query(Persona_db).filter_by(username=username).one()
+            user=db.session.query(Persona_db).filter_by(username=username).one() #one() lanza error si encuentra más de uno o ninguno
             return user
         except NoResultFound:
             raise Exception("El usuario no existe")
         
-    def get_reclamo_by_filtro(self, filtro="nada"): #filtra los reclamos por depto o estado (por default es nada, por lo que devuelve todos los reclamos)
-        filtro=filtro.lower()
-        if filtro in ["pendiente", "resuelto", "en proceso", "inválido"]:
-            reclamos=db.session.query(Reclamo_db).filter(estado=filtro).all()
-            return reclamos
-        elif filtro in ["soporte informático", "maestranza"]:
-            reclamos=db.session.query(Reclamo_db).filter(depto=filtro).all()
-            return reclamos
-        elif filtro=="nada":
+    def get_reclamos_by_filtro(self, type="all", filtro="ninguno"): 
+        """Filtra los reclamos por departamento, estado o ID de usuario. Si no se especifica el tipo de filtro ni el
+        valor del mismo, tomarán los valores default y se devolverán todos los reclamos en la base de datos"""
+        type=type.lower()
+        if type=="all" and filtro=="nada": #valores default
             reclamos=db.session.query(Reclamo_db).all()
+        elif type=="usuario":
+            reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==filtro).all() #filtro es el ID del usuario
+            #si está vacía, either no existe un usuario con ese ID o no ha generado reclamos
+            #(el primer caso se puede controlar con la obtención previa del ID)
+        elif type=="estado":
+            if filtro.lower() in ["pendiente", "resuelto", "inválido", "en proceso"]:
+                reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.estado==filtro).all() 
+            else:
+                raise Exception("Filtro inválido")
+        elif type=="departamento":
+            if filtro.lower() in ["soporte informático", "maestranza", "secretaría técnica"]:
+                reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.depto==filtro).all()
+            else:
+                raise Exception("Filtro inválido")
         else:
-            raise Exception("Filtro inválido. Ingrese un departamento o estado.")
+            raise Exception("Sólo puede filtrar por usuario, departamento o estado")
+        #este bloque de código no se ejecuta si ocurre alguna excepción
+
+        if len(reclamos)==0:
+            raise Exception("No se encontraron reclamos")
+        else:
+            #con un return reclamos corremos el riesgo de que se modifique la base de datos por afuera
+            datos_reclamos=[]
+            for reclamo in reclamos:
+                    datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen]
+                    datos_reclamos.append(datos)
+            return datos_reclamos
     
     def chequear_disponibilidad(self, respecto_de, valor):
         """Chequea la disponibilidad de un email o nombre de usuario"""
@@ -96,15 +124,19 @@ class Gestor_de_base_de_datos():
         if dato in ["ID_reclamo", "description", "estado", "depto", "timestap", "adherentes", "ID_user"]:
             attribute=getattr(reclamo, dato, None) #despues incluir imagen
 
-    def reclamos_de_user(self, username):
-        """Devuelve los reclamos generados por el usuario de interés"""
-        ID_required_user=self.get_dato_user(username, "ID")
-        reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==ID_required_user).all() #sólo se puede hacer si los atributos son públicos
-        datos_reclamos=[]
-        for reclamo in reclamos:
-            datos=(reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.depto, reclamo.adherentes, reclamo.estado)
-            datos_reclamos.append(datos)
-        return datos_reclamos  
+#este método podría formar parte de get_reclamo_by_filtro
+    # def reclamos_de_user(self, username):
+    #     """Devuelve los reclamos generados por el usuario de interés"""
+    #     ID_required_user=self.get_dato_user(username, "ID")
+    #     reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==ID_required_user).all() #sólo se puede hacer si los atributos son públicos
+    #     if not reclamos: #es decir, reclamos es una lista vacía
+    #         raise Exception("No hay reclamos generados por ese usuario")
+    #     else:
+    #         datos_reclamos=[]
+    #         for reclamo in reclamos:
+    #             datos=(reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.depto, reclamo.adherentes, reclamo.estado, reclamo.imagen)
+    #             datos_reclamos.append(datos)
+    #         return datos_reclamos  
 
 #dato=[claim.get_ID(), claim.get_descripcion()...] ; claim=Reclamo()
     def guardar_nuevo_objeto(self, clase, dato): #dato debería ser una lista con el "formato" del objeto
@@ -162,7 +194,3 @@ class Gestor_de_base_de_datos():
                 print("Cambio guardado")
         else:
             raise Exception("No existe una base de datos para esa clase")
-
-
-#consultar query en : 
-# https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjSpfHw3Oz_AhXmrJUCHZxeC18QFnoECA4QAQ&url=https%3A%2F%2Fdocs.sqlalchemy.org%2F14%2Form%2Fquery.html&usg=AOvVaw3Gtd4wgYBsOHKGfN3V9ZO2&opi=89978449

@@ -1,14 +1,22 @@
+#flask
 from flask import Flask, render_template, request, redirect, url_for, abort, flash, session
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+
+#clases
 from modulos.gestores import Gestor_de_base_de_datos, Gestor_de_reclamos
 from modulos.usuario import Usuario
-import datetime
+from modulos.reclamo import Reclamo
 
-from functools import wraps
-from modulos.config import app, db, login_manager
+#clases modelo (tablas de db)
 from modulos.databases import *
 
+#otros módulos
+import datetime
+from functools import wraps
+from modulos.config import app, db, login_manager
+
+#excepciones
 from sqlalchemy.orm.exc import NoResultFound 
 
 GestorDB=Gestor_de_base_de_datos()
@@ -71,6 +79,9 @@ def new_user():
         elif GestorDB.chequear_disponibilidad("username", user_name)=="Email/usuario ocupado":
             condicion="Ya existe una cuenta con ese nombre de usuario"
         
+        elif len(contraseña)<6:
+            condicion="Por favor ingrese una contraseña con, al menos, cinco dígitos"
+
         elif contraseña!=rep_contraseña:
             condicion="Las contraseñas ingresadas no coinciden"
 
@@ -88,24 +99,57 @@ def new_user():
 @app.route("/jefe/<depto>", methods=['GET', 'POST'])
 def jefe(depto):
     depto=depto.capitalize()
+    if request.method == 'POST':
+        direction=request.form["button_value"] #it's either "Manejar reclamos" o "Analítica"
+        print(direction)
+        if direction=="Manejar reclamos":
+            return redirect(url_for('manejar', depto=depto))
+        elif direction=="Analítica":
+            return redirect(url_for('analitica', depto=depto))
+        
     return render_template("jefe.html", depto=depto)
+
+@app.route("/manejar/<depto>", methods=['GET', 'POST'])
+def manejar(depto):
+
+    if request.method == 'POST':
+        ID=request.form["ID"]
+        nuevo_depto=request.form["nuevo_depto"]
+        nuevo_estado=request.form["nuevo_estado"]
+        GestorDB.modificar_dato("depto", nuevo_depto, "reclamo", ID)
+        GestorDB.modificar_dato("estado", nuevo_estado, "reclamo", ID)
+
+    reclamos_de_depto_data=GestorDB.get_reclamo_by_filtro(depto) #se obtienen los datos de los reclamos del depto de bd
+    reclamos=GestorR.cargar_de_db(reclamos_de_depto_data) #lista de objetos Reclamo
+    # así como está abajo funciona, pero los reclamos tienen que manipularse desde GestorR (que no anda jaja)
+    # reclamos=[] #lista de objetos Reclamo
+    # for datos in reclamos_de_depto_data: #datos=[ID_reclamo, description, timestap, ID_user, estado, depto, imagen]
+    #     claim=Reclamo(datos[0], datos[1], datos[2], datos[3])
+    #     claim.set_depto(datos[5])
+    #     claim.cambiar_estado(datos[4])
+    #     claim.cargar_imagen(datos[6])
+    #     reclamos.append(claim)
+    length=len(reclamos)
+
+    return render_template("reclamo_depto.html", depto=depto, reclamos=reclamos, len=length)
+
+@app.route("/analitica/<depto>", methods=['GET', 'POST'])
+def analitica(depto):
+    return render_template("analitica.html")
 
 @app.route("/usuario/<user>", methods=['GET', 'POST'])
 def usuario(user):
-    #Almacena el nombre de usuario en la sesión
-    session['username']=user 
-    username=user
-    return render_template("usuario.html", user=username)
+    return render_template("usuario.html", user=user)
 
 @app.route("/reclamo", methods=['GET', 'POST'])
 def crear():
     if request.method == "POST":
-        username=session.get('username')
+        username=session.get('username') #chequear
         id_user=GestorDB.get_dato_user(username, "ID")
         texto=request.form["description"]
         imagen=request.files["image"]
         data=[texto, "pendiente", "", str(datetime.datetime.now())[:19], 0, id]
-        if imagen:
+        if imagen: #es decir, imagen no es None
             imagen_data = imagen.read()
         reclamo=GestorDB.guardar_nuevo_objeto("reclamo", data) #sin clasificar
         id_reclamo=GestorDB.get_dato_reclamo(reclamo, "ID_reclamo")
@@ -121,31 +165,29 @@ def crear():
 
 @app.route("/reclamos_pendientes", methods=['GET', 'POST'])
 def pendientes():
-    username=session.get('username')
-    reclamos = GestorDB.get_reclamo_by_filtro() #al no pasarle un parametro devuelve todos los reclamos
-    return render_template("reclamos_pendientes.html", reclamos=reclamos)
+    reclamos_pendientes=[]
+    if request.method == 'POST':
+        user=request.form["username"]
+    try:
+        reclamos_pendientes = GestorDB.get_reclamos_by_filtro("estado", "pendiente")
+    except Exception as e:
+        condicion=str(e) #No se encontraron reclamos
+    return render_template("reclamos_pendientes.html", reclamos_pendientes=reclamos_pendientes)
 
 @app.route("/reclamos_usuario", methods=['GET', 'POST'])
-def recl():
-    username=session.get('username')
-    # id=GestorDB.get_dato_user(username, "ID")
-    # name=GestorDB.get_dato_user(username, "name")
-    # apellido=GestorDB.get_dato_user(username, "surname")
-    # user_name=GestorDB.get_dato_user(username, "username")
-    # mail=GestorDB.get_dato_user(username, "email")
-    # contraseña=GestorDB.get_dato_user(username, "password")
-    # cloister=GestorDB.get_dato_user(username, "claustro")
-    # user=Usuario(id, name, apellido, user_name, mail, contraseña, cloister)
-    reclamos_usuario=GestorDB.reclamos_de_user(username)
-    return render_template("reclamo_usuario.html", reclamos_usuario=reclamos_usuario)
-
-@app.route("/reclamos_departamento", methods=['GET', 'POST'])
-def responder():
-    return render_template("reclamo_depto.html")
-
-@app.route("/analitica", methods=['GET', 'POST'])
-def analitica():
-    return render_template("analitica.html")
+def reclamos_user():
+    condicion=""
+    reclamos=[]
+    if request.method == 'POST': #post que viene desde /usuario, ¿qué pasa con el que redirecciona desde /reclamos_usuario?
+        user=request.form["username"]
+        ID_user=GestorDB.get_dato_user(user, "ID") #no va a lanzar excepción porque user existe y ID es un atributo 
+        try:
+            reclamos_data=GestorDB.get_reclamos_by_filtro("usuario", ID_user) 
+        except Exception as e:
+            condicion=str(e) #no se encontraron reclamos, es decir, user no creó ninguno todavía
+        else:
+            reclamos=GestorR.cargar_de_db(reclamos_data)
+    return render_template("reclamos_usuario.html", condicion=condicion,  reclamos=reclamos, user=user)
 
 if __name__ == "__main__":
     app.run(debug=True)

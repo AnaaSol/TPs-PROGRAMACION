@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Reclamos de {{depto}}</title>
+    <title>Reclamos de {{user}}</title>
   <style>
 
-      header {
+    header {
         background-color: #666;
         padding: 8px;
         text-align: center;
         font-size: 27px;
         color: white;
     }
-    
+
      .button {
           background-color: #009999;
           border: none;
@@ -85,45 +85,28 @@
   </style>
 </head>
 <body>
-      <header>
-            <h5><i>Reclamos para {{depto}} del</i></h5>
-            <h3>Servicio de reclamos FIUNER</h3>
-        </header>
-    {% if len==0 %}
-    <h3>¡Vaya! No hay reclamos que correspondan a {{depto}} aún.</h3>
-    <a href="/jefe/{{depto}}" class="botoncito">Volver</a>
+    <header>
+        <h5><i>Reclamos generados por</i></h5>
+        <h3>{{user}}</h3>
+    </header>
+    {% if condicion=="No se encontraron reclamos" %}
+    <h3>Por lo visto aún no has creado ningún reclamo, {{user}}</h3>
+    <a href="/usuario/{{user}}" class="botoncito">Volver</a>
     {% endif %}
    {% for claim in reclamos %} 
   <div class="dropdown">
     <button class="button button1">Reclamo {{claim.get_ID}}</button>
     <div class="dropdown-content">
-      <p class="etiquetas">Usuario creador:</p>
-      <p class="content">{{claim.get_ID_user}}</p>
+      <p class="etiquetas">Descripción: </p>
+      <p class="content">{{claim.get_descripcion}}</p>
       <p class="etiquetas"> Fecha de creación: </p>
       <p class="content">{{claim.get_fecha}}</p><br>
       <p class="etiquetas">Adherentes:</p>
-      <p class="content">{{claim.get_adherentes}}</p><br>
+      <p class="content">{{claim.contar_adherentes}}</p><br>
       <p class="etiquetas">Estado:</p>
       <p class="content">{{claim.get_estado}}</p>
       <p class="etiquetas">Departamento:</p>
       <p class="content">{{claim.get_departamento}}</p>
-      <form action="/manejar/{{depto}}" method="post">
-      <input type="hidden" name="ID" value="{{claim.get_ID}}">
-      <label for="cambiar">Cambiar estado</label>
-      <select id="cambiar" name="nuevo_estado"> 
-           <option value="pendiente">Pendiente</option> 
-           <option value="inválido">Inválido</option> 
-           <option value="en proceso">En proceso</option> 
-           <option value="resuelto">Resuelto</option>
-      </select><br><br>
-      {% if depto=="Secretaría técnica": %}
-      <label for="derivar">Derivar</label>
-      <select id="derivar" name="nuevo_depto"> 
-           <option value="maestranza">Maestranza</option> 
-           <option value="soporte informático">Soporte informático</option>
-      </select><br><br>
-      {% endif %}
-      </form>
     </div>
   </div>
   {% endfor %}
