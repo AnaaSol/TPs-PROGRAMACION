@@ -34,7 +34,7 @@ class Usuario(Persona):
     def agregar_reclamo_adherido(self, ID):
         self.__reclamos_adheridos.append(ID)
 
-    def generar_reclamo(self, descripcion):
+    def generar_datos_reclamo(self, descripcion):
         reclamo=[descripcion, str(datetime.datetime.now())[:19], self._ID]
         #¿Cómo guardar el ID del reclamo?
         return reclamo

@@ -91,6 +91,9 @@ class Gestor_de_base_de_datos():
                 reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.depto==filtro).all()
             else:
                 raise Exception("Filtro inválido")
+        elif type=="descripcion":
+            reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.description==filtro).one()
+            #agregar control el reclamos similares para evitar dos descripciones identicas
         else:
             raise Exception("Sólo puede filtrar por usuario, departamento o estado")
         #este bloque de código no se ejecuta si ocurre alguna excepción
@@ -129,13 +132,13 @@ class Gestor_de_base_de_datos():
         else:
             raise Exception("El dato ingresado no corresponde a ningún atributo de user")
         
-    # def get_dato_reclamo(self, ID_reclamo, dato): 
-    #     if dato in ["ID_reclamo", "description", "estado", "depto", "timestap", "adherentes", "ID_user"]:
-    #         reclamo=self.__get_reclamo_by_ID(ID_reclamo)
-    #         attribute=getattr(reclamo, dato, None)
-    #         return attribute
-    #     else:
-    #         raise Exception("Dato inválido")
+    def get_dato_reclamo(self, ID_reclamo, dato): 
+        if dato in ["ID_reclamo", "description", "estado", "depto", "timestap", "adherentes", "ID_user"]:
+            reclamo=self.__get_reclamo_by_ID(ID_reclamo)
+            attribute=getattr(reclamo, dato, None)
+            return attribute
+        else:
+            raise Exception("Dato inválido")
 
 #este método podría formar parte de get_reclamo_by_filtro
     # def reclamos_de_user(self, username):

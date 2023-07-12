@@ -34,7 +34,9 @@ def reclamos_similares (reclamos_same_depto, texto_objetivo): #reclamos_same_dep
         if prom>=70:
             indice=lista_comparacion.index(i)
             similares.append(reclamos_same_depto[indice])
+        elif prom==100:
+            pass #agregar control
         #comparar las palabras significativas que aparecen y compararlas con el texto objetivo
-    return similares
+    return similares #devuelve la descripcion del/los reclamo/s similar/es
 
 print(reclamos_similares(["esto es es una prueba una prueba prueba para evaluar el correcto funcionamiento de reclamos para evaluar reclamos similares"], "prueba evaluar el correcto funcionamiento")) #podriamos agregar un flitro para sinonimos
