@@ -23,6 +23,56 @@
     td, th {border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;}
+
+    
+            .popup-hidden {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fefefe;
+      padding: 20px;
+      border: 3px solid #283747  ; 
+      z-index: 9999;
+      transition: opacity 0.3s;
+    }
+
+    .dropdown {
+          position: relative;
+          display: inline-block;
+          width: 250px; 
+    	  }
+
+    .dropdown-content {
+          display: none;
+          position: absolute;
+          z-index: 1;
+          background-color: #f1f1f1;
+          }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+      
+    .botoncito {
+    	  background-color: #CCCC99;
+    }
+    
+    .etiquetas {
+          color: #000000;
+          text-align: left;
+          background-color: #f1f1f1;
+          text-decoration: underline;
+          padding-right: 5px;
+          display: inline-block; 
+          margin-bottom: 0.001;
+          }
+          
+    .content {
+          display: inline-block;
+          margin-top: 0.5;
+          }
 </style>
 </head>
 <body>
@@ -35,7 +85,38 @@
     <label for="foto">Adjuntar foto:</label>
     <input type="file" id="foto" name="image" accept="image/*">
     <br><br>
-    <input type="submit" value="Crear">
+    {% if reclamos_similares=="todavia no buscados": %}
+        <input type="submit" value="Continuar">
+    </fieldset>
+</form>
+    {% endif %}
+    {% if reclamos_similares=="no hay reclamos similares": %}
+    <form action="/usuario">
+        <h3>Su reclamos fue creado con éxito</h3>
+        <br>
+        <input type="submit" value="Continuar">
+    </form>
+    {% else: %}
+        <h3>Se han encontrados reclamos similares.</h3>
+        <h3>Si así lo desea puede adherirse a alguno, caso contrario haga click en el botón continuar.</h3>
+        {% for claim in reclamos_similares: %}
+            <div class="dropdown">
+                <button class="button button1">Reclamo</button>
+                <div class="dropdown-content">
+                <p class="etiquetas">Descripción del reclamo:</p>
+                <p class="content">{{claim[0]}}</p><br>
+                <p class="etiquetas">Nro. de adherentes: {{claim[1]}}</p>
+                <form action=/usuario method="post">
+                        <input type="hidden" name="ID_reclamo" value={{claim[2]}}>
+                        <input type="submit" value="Adherir" class="botoncito">
+                </form>
+                </div>
+            </div>
+            <form action="/usuario">
+                <input type="submit" value="Continuar">
+                <!-- agregar popup o algun aviso de que el reclamos fue creado con exito -->
+            </form>
+
 </div>
 </body>
 </html>

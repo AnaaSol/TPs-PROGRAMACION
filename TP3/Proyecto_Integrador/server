@@ -168,21 +168,26 @@ def crear():
         similares_filtrados=GestorDB.get_reclamos_by_filtro("departamento", data[2]) #obtiene los reclamos con el mismo departamento que el reclamo objetivo
         lista_filtrados=[]
         for x in range(len(similares_filtrados)):
-            lista_filtrados.append(similares_filtrados[x].description) #teoricamente agrega en la lista la descripcion del onjeto guardado en cada posicion de similares_filtrados
+            #teoricamente agrega en la lista la descripcion del objeto guardado en cada posicion de similares_filtrados y su id
+            #comprobar
+            lista_filtrados.append((similares_filtrados[x].description, similares_filtrados[x].ID_reclamo)) 
         similares_finales=reclamos_similares(lista_filtrados, texto) #busca los similares
         if len(similares_finales)==0:
-            return render_template("reclamo.html")
+            return render_template("reclamo.html", reclamos_similares="no hay reclamos similares")
+            #crear reclamo
         else:
             lista_similares=[]
             #busca los objetos correspondientes a la descripcion de los reclamos similares y los guarda en la lista
-            for x in range(len(similares_finales)):
-                lista_similares.append(GestorDB.get_reclamos_by_filtro("descripcion", similares_finales[x]))
-            #ID_oficial=GestorDB.get_dato_reclamo() #no sé cómo obtener el ID oficial para pasárselo al usuario creador
-            #se comunica al usuario de la creación
-            #usser.agregar_reclamo_creado(ID_oficial)
+            for i in range(len(similares_finales)):
+                lista_similares.append([GestorDB.get_dato_reclamo(similares_finales[i], "description"), GestorDB.get_dato_reclamo(similares_finales[i], "adherentes"), GestorDB.get_dato_reclamo(similares_finales[i], "ID_reclamo") ])
             return render_template("reclamo.html", reclamos_similares=lista_similares)
+        try:
+            id=request.form["ID_reclamo"]
+            #añadir adherente al reclamo correspondiente a ese id
+        except:
+            pass
     else:
-        return render_template("reclamo.html")
+        return render_template("reclamo.html", reclamos_similares="todavia no buscados")
 
 @app.route("/reclamos_pendientes", methods=['GET', 'POST'])
 def pendientes():

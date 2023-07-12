@@ -1,6 +1,7 @@
 #from usuario import *
 import nltk as nltk
 import collections
+import operator
 
 def reclamos_similares (reclamos_same_depto, texto_objetivo): #reclamos_same_depto es una lista de tuplas con la descripcion de los reclamos y su ID (descrip, ID)
     
@@ -32,20 +33,24 @@ def reclamos_similares (reclamos_same_depto, texto_objetivo): #reclamos_same_dep
 
     #comparar las palabras significativas que aparecen y compararlas con el texto objetivo
     for i in lista_comparacion:
+        cont=0
         for x in lista_objetivo:
             if x in i[0]:
                 cont+=1
-            #print (x, i)
-        prom=(cont/len(i))*100
-        if prom>=70:
-            similares.append(i[1])
-        
-    if len(similares)==0:
-        print("No se han encontrado similitudes")
-    else:
-        return similares #devuelve una lista con los ID del/los reclamo/s similar/es
+                #print(cont)
+            #print (x, i[0])
+        prom=(cont/len(lista_objetivo))*100 #promedio respecto al texto objetivo
+        prom2=(cont/len(i[0])*100) #promedio respecto al posible reclamos similar
+        if prom>=70 and prom2>=65:
+            similares.append([i[1], prom])
+    similares.sort(key=operator.itemgetter(1), reverse=True) #los ordena de mayor a menor similitud
+    lista_IDs=[]
+    for j in range(len(similares)):
+        lista_IDs.append(similares[j][0])
+    return lista_IDs #devuelve una lista con los ID del/los reclamo/s similar/es
 
-#print(reclamos_similares(["esto es es una prueba una prueba prueba para evaluar el correcto funcionamiento de reclamos para evaluar reclamos similares"], "prueba evaluar el correcto funcionamiento")) #podriamos agregar un flitro para sinonimos
-lista_de_tuplas=[("tuqui", 37, "alapucha", 999), (1, 2), (1,3), (8, "boe ya basta")]
-print(lista_de_tuplas[0][0])
-print(lista_de_tuplas[3][1])
+if __name__== "__main__": 
+    print(reclamos_similares([("hola prueba reclamos similares encontrados", 1), ("hola prueba", 2), ("hola prueba completa reclamos similares encontrados", 3)], "hola prueba completa reclamos similares encontrados"))
+    # lista_de_tuplas=[("tuqui", 37, "alapucha", 999), (1, 2), (1,3), (8, "boe ya basta")]
+    # print(lista_de_tuplas[0][0])
+    # print(lista_de_tuplas[3][1])
