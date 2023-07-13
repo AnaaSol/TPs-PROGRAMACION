@@ -47,7 +47,7 @@ def reclamos_similares (reclamos_same_depto, texto_objetivo): #reclamos_same_dep
     lista_IDs=[]
     for j in range(len(similares)):
         lista_IDs.append(similares[j][0])
-    return lista_IDs #devuelve una lista con los ID del/los reclamo/s similar/es
+    return lista_IDs #devuelve una lista con los ID del/los reclamo/s similar/es 
 
 if __name__== "__main__": 
     print(reclamos_similares([("hola prueba reclamos similares encontrados", 1), ("hola prueba", 2), ("hola prueba completa reclamos similares encontrados", 3)], "hola prueba completa reclamos similares encontrados"))

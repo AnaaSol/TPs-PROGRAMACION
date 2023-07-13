@@ -81,6 +81,9 @@
             <h5><i>Reclamos pendientes del</i></h5>
             <h3>Servicio de reclamos FIUNER</h3>
         </header>
+{% if cant==0: %}
+        <h5>No hay reclamos pendientes por el momento.</h5>
+{% endif %}
 {% for claim in reclamos: %}
   <div class="dropdown">
     <button class="button button1">Reclamo</button>

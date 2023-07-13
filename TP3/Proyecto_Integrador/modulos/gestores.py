@@ -91,22 +91,23 @@ class Gestor_de_base_de_datos():
                 reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.depto==filtro).all()
             else:
                 raise Exception("Filtro inválido")
-        elif type=="descripcion":
-            reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.description==filtro).one()
-            #agregar control el reclamos similares para evitar dos descripciones identicas
+        elif type=="ID":
+            try: 
+                reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.ID_reclamo==filtro).one()
+            except NoResultFound:
+                raise Exception("El reclamo no existe")
         else:
-            raise Exception("Sólo puede filtrar por usuario, departamento o estado")
+            raise Exception("Sólo puede filtrar por usuario, departamento, estado o ID")
+        
         #este bloque de código no se ejecuta si ocurre alguna excepción
-
-        if len(reclamos)==0:
-            raise Exception("No se encontraron reclamos")
-        else:
-            #con un return reclamos corremos el riesgo de que se modifique la base de datos por afuera
-            datos_reclamos=[]
-            for reclamo in reclamos:
-                    datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen]
-                    datos_reclamos.append(datos)
-            return datos_reclamos
+        # if len(reclamos)==0:
+        #     raise Exception("No se encontraron reclamos") #no tendría por qué saltar una excepción si no encuentra nada
+        #con un return reclamos corremos el riesgo de que se modifique la base de datos por afuera
+        datos_reclamos=[]
+        for reclamo in reclamos:
+            datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen]
+            datos_reclamos.append(datos)
+        return datos_reclamos
     
     def chequear_disponibilidad(self, respecto_de, valor):
         """Chequea la disponibilidad de un email o nombre de usuario"""
@@ -132,13 +133,13 @@ class Gestor_de_base_de_datos():
         else:
             raise Exception("El dato ingresado no corresponde a ningún atributo de user")
         
-    def get_dato_reclamo(self, ID_reclamo, dato): 
-        if dato in ["ID_reclamo", "description", "estado", "depto", "timestap", "adherentes", "ID_user"]:
-            reclamo=self.__get_reclamo_by_ID(ID_reclamo)
-            attribute=getattr(reclamo, dato, None)
-            return attribute
-        else:
-            raise Exception("Dato inválido")
+    # def get_dato_reclamo(self, ID_reclamo, dato): 
+    #     if dato in ["ID_reclamo", "description", "estado", "depto", "timestap", "adherentes", "ID_user"]:
+    #         reclamo=self.__get_reclamo_by_ID(ID_reclamo)
+    #         attribute=getattr(reclamo, dato, None)
+    #         return attribute
+    #     else:
+    #         raise Exception("Dato inválido")
 
 #este método podría formar parte de get_reclamo_by_filtro
     # def reclamos_de_user(self, username):

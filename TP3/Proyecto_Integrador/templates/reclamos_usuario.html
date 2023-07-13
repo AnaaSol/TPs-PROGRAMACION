@@ -89,7 +89,7 @@
         <h5><i>Reclamos generados por</i></h5>
         <h3>{{user}}</h3>
     </header>
-    {% if condicion=="No se encontraron reclamos" %}
+    {% if cant==0: %}
     <h3>Por lo visto aún no has creado ningún reclamo, {{user}}</h3>
     <a href="/usuario/{{user}}" class="botoncito">Volver</a>
     {% endif %}

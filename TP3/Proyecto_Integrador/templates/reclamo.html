@@ -92,26 +92,34 @@
     {% endif %}
     {% if reclamos_similares=="no hay reclamos similares": %}
     <form action="/usuario">
-        <h3>Su reclamos fue creado con éxito</h3>
+        <h3>Su reclamo fue creado con éxito</h3>
         <br>
         <input type="submit" value="Continuar">
     </form>
     {% else: %}
         <h3>Se han encontrados reclamos similares.</h3>
-        <h3>Si así lo desea puede adherirse a alguno, caso contrario haga click en el botón continuar.</h3>
+        <h3>¿Preferiría adherirse a alguno o prefiere continuar con la creación de su reclamo?</h3>
         {% for claim in reclamos_similares: %}
-            <div class="dropdown">
-                <button class="button button1">Reclamo</button>
-                <div class="dropdown-content">
-                <p class="etiquetas">Descripción del reclamo:</p>
-                <p class="content">{{claim[0]}}</p><br>
-                <p class="etiquetas">Nro. de adherentes: {{claim[1]}}</p>
-                <form action=/usuario method="post">
-                        <input type="hidden" name="ID_reclamo" value={{claim[2]}}>
-                        <input type="submit" value="Adherir" class="botoncito">
-                </form>
-                </div>
+        <div class="dropdown">
+            <button class="button button1">Reclamo similar</button>
+            <div class="dropdown-content">
+              <p class="etiquetas">ID:</p>
+              <p class="content">{{claim.get_ID}}</p><br>
+              <p class="etiquetas">Descripción</p>
+              <p class="content">{{claim.get_descripcion}}</p>
+              <p class="etiquetas">Estado:</p>
+              <p class="content">{{claim.get_estado}}</p><br>
+              <p class="etiquetas"> Fecha de creación: </p>
+              <p class="content">{{claim.get_fecha}}</p>
+              <p class="etiquetas">Departamento:</p>
+              <p class="content">{{claim.get_departamento}}</p>
+              <p class="etiquetas">{{claim.contar_adherentes}} adherentes</p><br><br>
+              <form action=/reclamo method="post">
+                    <input type="hidden" name="ID_reclamo" value="{{claim.get_ID}}">
+                    <input type="submit" value="Adherir" class="botoncito">
+              </form>
             </div>
+          </div>
             <form action="/usuario">
                 <input type="submit" value="Continuar">
                 <!-- agregar popup o algun aviso de que el reclamos fue creado con exito -->
