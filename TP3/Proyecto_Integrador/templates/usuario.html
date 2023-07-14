@@ -58,21 +58,18 @@
         <nav>
             <h1>¿Qué desea hacer? </h1>
             <br>
-             <form action="/reclamo" method="post">
-                <input type="submit" value="Crear reclamo">
-                <input type="hidden" name="username" value="{{user}}">
-            </form>
-            <br>
-            <form action="/reclamos_pendientes" method="post">
-                <input type="submit" value="Listar reclamos">
-                <input type="hidden" name="username" value="{{user}}">
-            </form>
-            <br>
-            <form action="/reclamos_usuario" method="post">
-                <input type="submit" value="Mis reclamos">
-                <input type="hidden" name="username" value="{{user}}">
-            </form>
-            <br>
+            <a href="/reclamo">
+                <button type="button">Crear reclamo</button>
+            </a>
+            <br><br><br>
+            <a href="/reclamos_pendientes">
+                <button type="button">Listar reclamos</button>
+            </a>
+            <br><br><br>
+            <a href="/reclamos_usuario">
+                <button type="button">Mis reclamos</button>
+            </a>
+            <br><br><br>
             <form action="/">
                 <input type="submit" value="Salir">
             </form>

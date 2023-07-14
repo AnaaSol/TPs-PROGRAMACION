@@ -77,6 +77,7 @@
 </head>
 <body>
 <div>
+    {% if reclamos_similares=="todavia no buscados": %}
 <form action="/reclamo" method="post" enctype="multipart/form-data">
     <fieldset>
         <legend>Nuevo reclamo</legend>
@@ -85,12 +86,10 @@
     <label for="foto">Adjuntar foto:</label>
     <input type="file" id="foto" name="image" accept="image/*">
     <br><br>
-    {% if reclamos_similares=="todavia no buscados": %}
         <input type="submit" value="Continuar">
     </fieldset>
 </form>
-    {% endif %}
-    {% if reclamos_similares=="no hay reclamos similares": %}
+    {% elif reclamos_similares=="no hay reclamos similares": %}
     <form action="/usuario">
         <h3>Su reclamo fue creado con éxito</h3>
         <br>
@@ -120,11 +119,12 @@
               </form>
             </div>
           </div>
+          {% endfor %}
+    {% endif %}
             <form action="/usuario">
                 <input type="submit" value="Continuar">
                 <!-- agregar popup o algun aviso de que el reclamos fue creado con exito -->
             </form>
-
 </div>
 </body>
 </html>

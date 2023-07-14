@@ -79,9 +79,6 @@ def new_user():
 
         elif GestorDB.chequear_disponibilidad("username", user_name)=="Email/usuario ocupado":
             condicion="Ya existe una cuenta con ese nombre de usuario"
-        
-        elif len(contraseña)<6:
-            condicion="Por favor ingrese una contraseña con, al menos, cinco dígitos"
 
         elif contraseña!=rep_contraseña:
             condicion="Las contraseñas ingresadas no coinciden"
@@ -136,16 +133,17 @@ def manejar(depto):
 
 @app.route("/analitica/<depto>", methods=['GET', 'POST'])
 def analitica(depto):
-    return render_template("analitica.html")
+    return render_template("analitica.html", depto=depto)
 
 @app.route("/usuario/<user>", methods=['GET', 'POST'])
 def usuario(user):
+    session['username'] = user
     return render_template("usuario.html", user=user)
 
 @app.route("/reclamo", methods=['GET', 'POST'])
 def crear():
+    user=session.get('username')
     if request.method == "POST":
-        user=request.form["username"]
         #creación del objeto Usuario
         usser=Usuario(GestorDB.get_dato_user(user, "ID"), GestorDB.get_dato_user(user, "name"), GestorDB.get_dato_user(user, "surname"), user, GestorDB.get_dato_user(user, "email"), GestorDB.get_dato_user(user, "password"), GestorDB.get_dato_user(user, "claustro"))
         #creación del formulario para el reclamo
@@ -175,7 +173,7 @@ def crear():
         else:
             lista_similares=[]
             for i in range(len(similares)):
-                reclamo_data=GestorDB.get_reclamo_by_filtro("ID", similares[i]) #seguro existen los reclamos con ese ID
+                reclamo_data=GestorDB.get_reclamo_by_filtro("ID", similares[i]) #seguro existen los reclamos con ese ID porque vienen de una consulta a la bd
                 reclamo=GestorR.cargar_de_db(reclamo_data)
                 lista_similares.append(reclamo)
             return render_template("reclamo.html", reclamos_similares=lista_similares)
@@ -190,8 +188,7 @@ def crear():
 @app.route("/reclamos_pendientes", methods=['GET', 'POST'])
 def pendientes():
     reclamos_pendientes=[]
-    if request.method == 'POST':
-        user=request.form["username"]
+    user=session.get('username')
     reclamos_pendientes_data = GestorDB.get_reclamos_by_filtro("estado", "pendiente")
     cant=len(reclamos_pendientes_data)
     if cant!=0:
@@ -200,14 +197,17 @@ def pendientes():
 
 @app.route("/reclamos_usuario", methods=['GET', 'POST'])
 def reclamos_user():
+    user=session.get('username')
     reclamos=[]
-    if request.method == 'POST': #post que viene desde /usuario, ¿qué pasa con el que redirecciona desde /reclamos_usuario?
-        user=request.form["username"]
-        ID_user=GestorDB.get_dato_user(user, "ID") #no va a lanzar excepción porque user existe y ID es un atributo 
-        reclamos_data=GestorDB.get_reclamos_by_filtro("usuario", ID_user) 
-        cant=len(reclamos_data)
-        if cant!=0:
-            reclamos=GestorR.cargar_de_db(reclamos_data)
+    cant=0
+    #ya no viene ningún post desde /usuario
+    # if request.method == 'POST': #post que viene desde /usuario, ¿qué pasa con el que redirecciona desde /reclamos_usuario?
+    #     user=request.form["username"]
+    #     ID_user=GestorDB.get_dato_user(user, "ID") #no va a lanzar excepción porque user existe y ID es un atributo 
+    #     reclamos_data=GestorDB.get_reclamos_by_filtro("usuario", ID_user) 
+    #     cant=len(reclamos_data)
+    #     if cant!=0:
+    #         reclamos=GestorR.cargar_de_db(reclamos_data)
     return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user, cant=cant)
 
 if __name__ == "__main__":
