@@ -4,6 +4,15 @@
       <meta charset="UTF-8">
       <title>Reclamos pendientes</title>
   <style>
+      input {margin: 5px;}
+
+      * {
+      box-sizing: border-box;
+      }
+
+      body {
+      font-family: Arial, Helvetica, sans-serif;
+      }
 
       header {
         background-color: #666;
@@ -13,7 +22,32 @@
         color: white;
       }
 
-     .button {
+      nav {
+      float: left;
+      width: 90%;
+      height: 600px; 
+      background: #f1f1f1;
+      padding: 20px;
+      text-align: left;
+      font-size: 15px;
+      }
+
+      article {
+      float: left;
+      padding: 20px;
+      width: 10%;
+      height: 600px;
+      background-color: #f1f1f1; 
+      }
+
+      @media (max-width: 600px) {
+      nav, article{
+            width: 100%;
+            height: auto;
+      }
+      }
+
+      .button {
           background-color: #009999;
           border: none;
           color: white;
@@ -27,16 +61,42 @@
           cursor: pointer;
           }
 
-    .button1 {
-          background-color: white; 
+      .button1 {
+          background-color: #f1f1f1; 
           color: black; 
-          border: 2px solid #009999;
+          border: 2px solid #666;
           width: 250px; 
           }
 
-    .button1:hover {
-          background-color: #009999;
-          color: white;
+      .button1:hover {
+          background-color: rgb(80, 126, 145);
+          color: black;
+          }
+
+      .button2 {
+      background-color: #f1f1f1;
+      border: none;
+      color: white;
+      padding: 8px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      transition-duration: 0.2s;
+      cursor: pointer;
+      }
+      
+    .button3 {
+          background-color: #f1f1f1; 
+          color: black; 
+          border: 2px solid #666; 
+          width: auto;
+          }
+ 
+    .button3:hover {
+          background-color: rgb(80, 126, 145);
+          color: black;
           }
   
     .dropdown {
@@ -54,11 +114,14 @@
 
     .dropdown:hover .dropdown-content {
       display: block;
+      border: 2px solid #666;
+      padding: 10px
     }
     
     .botoncito { 
     	  background-color: #CCCC99;
     }
+
 
     .etiquetas {
           color: #000000;
@@ -90,9 +153,15 @@
             <h5><i>Reclamos pendientes del</i></h5>
             <h3>Servicio de reclamos FIUNER</h3>
         </header>
+      <section>
+            <nav>
 {% if cant==0: %}
         <h3>No hay reclamos pendientes por el momento.</h3>
-{% endif %}
+      </nav>
+      <article>
+        <a href="/usuario/{{user}}" class="button2 button3">Volver</a>
+      </article>
+{% else: %}
 {% for claim in reclamos_pendientes: %}
   <div class="dropdown">
     <button class="button button1">Reclamo</button>
@@ -119,5 +188,11 @@
     </div>
   </div>
 {% endfor %}
+</nav>
+<article>
+<a href="/usuario/{{user}}" class="button2 button3">Volver</a>
+</article>
+</section>
+{% endif %}
 </body>
 </html>

@@ -58,7 +58,14 @@ class Gestor_de_reclamos():
         
 class Gestor_de_base_de_datos():
     """El gestor de base de datos consulta y modifica la información almacenada en la base de datos"""
-    
+
+    def __get_username_by_ID(self, id):
+        try:
+            user=db.session.query(Persona_db).filter_by(ID=id).one() #one() lanza error si encuentra más de uno o ninguno
+            return user.username
+        except NoResultFound:
+            raise Exception("El usuario no existe")
+
     def __get_user_by_username(self, username):
         try:
             user=db.session.query(Persona_db).filter_by(username=username).one() #one() lanza error si encuentra más de uno o ninguno
