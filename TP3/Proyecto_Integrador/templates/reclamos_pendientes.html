@@ -56,10 +56,10 @@
       display: block;
     }
     
-    .botoncito {
+    .botoncito { 
     	  background-color: #CCCC99;
     }
-    
+
     .etiquetas {
           color: #000000;
           text-align: left;
@@ -74,6 +74,15 @@
           display: inline-block;
           margin-top: 0.5;
           }
+
+      .tag {
+          background-color: white; 
+          color: black; 
+          border: 2px solid #009999;
+          width: 70px; 
+          text-align: center;
+          }
+
   </style>
 </head>
 <body>
@@ -84,7 +93,7 @@
 {% if cant==0: %}
         <h3>No hay reclamos pendientes por el momento.</h3>
 {% endif %}
-{% for claim in reclamos: %}
+{% for claim in reclamos_pendientes: %}
   <div class="dropdown">
     <button class="button button1">Reclamo</button>
     <div class="dropdown-content">
@@ -95,14 +104,18 @@
       <p class="etiquetas">Estado:</p>
       <p class="content">{{claim.get_estado}}</p><br>
       <p class="etiquetas"> Fecha de creación: </p>
-      <p class="content">{{claim.get_fecha}}</p>
+      <p class="content">{{claim.get_fecha}}</p><br>
       <p class="etiquetas">Departamento:</p>
       <p class="content">{{claim.get_departamento}}</p>
       <p class="etiquetas">{{claim.contar_adherentes}} adherentes</p><br><br>
+      {% if ID_user not in claim.get_adherentes: %}
       <form action=/reclamos_pendientes method="post">
             <input type="hidden" name="ID_reclamo" value="{{claim.get_ID}}">
             <input type="submit" value="Adherir" class="botoncito">
       </form>
+      {% else: %}
+            <p class="tag"><i>Adherido</i></p>
+      {% endif %}
     </div>
   </div>
 {% endfor %}

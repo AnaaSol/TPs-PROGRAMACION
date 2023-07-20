@@ -1,10 +1,10 @@
 import pickle
-from modulos.config import db
-from modulos.databases import Reclamo_db, Persona_db
-from modulos.reclamo import Reclamo
-#from modulos.ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
+from .config import db
+from .databases import Reclamo_db, Persona_db
+from .reclamo import Reclamo
+#from .ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
 from sqlalchemy.orm.exc import NoResultFound
-#from modulos.ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
+#from .ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
 
 class Gestor_de_reclamos():
 
@@ -45,12 +45,14 @@ class Gestor_de_reclamos():
 
     def cargar_de_db(self, datos_reclamos): #datos_reclamos se obtiene de get_reclamos_by_filtro
         reclamos=[]
-        #datos_reclamos es una lista de datos donde datos=[ID_reclamo, description, timestap, ID_user, estado, depto, imagen]
+        #datos_reclamos es una lista de datos donde datos=[ID_reclamo, description, timestap, ID_user, estado, depto, imagen, adherentes]
         for datos in datos_reclamos:
             claim=Reclamo(datos[0], datos[1], datos[2], datos[3])
             claim.cambiar_estado(datos[4])
             claim.set_depto(datos[5])
             claim.cargar_imagen(datos[6])
+            for adh in datos[7].split(" "):
+                claim.sumar_adherente(adh)
             reclamos.append(claim)
         return reclamos
         
@@ -91,9 +93,9 @@ class Gestor_de_base_de_datos():
                 reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.depto==filtro).all()
             else:
                 raise Exception("Filtro inválido")
-        elif type=="ID":
+        elif type=="id":
             try: 
-                reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.ID_reclamo==filtro).one()
+                reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.ID_reclamo==filtro).one()
             except NoResultFound:
                 raise Exception("El reclamo no existe")
         else:
@@ -104,9 +106,13 @@ class Gestor_de_base_de_datos():
         #     raise Exception("No se encontraron reclamos") #no tendría por qué saltar una excepción si no encuentra nada
         #con un return reclamos corremos el riesgo de que se modifique la base de datos por afuera
         datos_reclamos=[]
-        for reclamo in reclamos:
-            datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen]
+        if type=="id":
+            datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen, reclamo.adherentes]
             datos_reclamos.append(datos)
+        else:
+            for reclamo in reclamos: #TypeError: 'Reclamo_db' object is not iterable (one() devuelve el objeto, no dentro de una lista)
+                datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen, reclamo.adherentes]
+                datos_reclamos.append(datos)
         return datos_reclamos
     
     def chequear_disponibilidad(self, respecto_de, valor):
@@ -128,7 +134,8 @@ class Gestor_de_base_de_datos():
         """Recibe el nombre de usuario y el dato a consultar y devuelve el valor del mismo, si el usuario existe y el dato es válido"""
         if dato in ["ID", "email", "username", "password", "name", "surname", "depto", "claustro", "reclamos_adheridos", "reclamos_generados"]:
             user=self.__get_user_by_username(username)
-            attribute=getattr(user, dato, None)
+            attribute=getattr(user, dato, "El atributo no existe") 
+            #el valor default nunca debería devolverse por el control previo, pero lo dejo para prevenir un AttributeError
             return attribute
         else:
             raise Exception("El dato ingresado no corresponde a ningún atributo de user")
@@ -163,8 +170,7 @@ class Gestor_de_base_de_datos():
                 estado=dato[1], #str
                 depto=dato[2], #str
                 timestap=dato[3], #str
-                adherentes=dato[4], #str
-                id_user=dato[5] #int
+                ID_user=dato[4] #int
                 ) 
             db.session.add(nuevo_reclamo)
             db.session.commit()
@@ -198,16 +204,40 @@ class Gestor_de_base_de_datos():
         else:
             print("No existe esa base de datos.")
     
-    def modificar_dato(self, dato, nuevo_valor, clase, ID): 
-        if clase in ["jefe", "usuario", "reclamo"]:
+    #hay que controlar externamente nuevo_valor o pueden pasar cosas malas
+    def modificar_dato(self, dato, nuevo_valor, clase, ID):  #dato y clase son siempre strs, el ID es del objeto cuyo dato se quiere modificar
+        if clase.lower() in ["usuario", "reclamo"]:
             if clase=="reclamo":
-                objeto=db.session.get(Reclamo_db, ID)
+                if dato in ["estado", "depto", "adherentes"]:
+                    objeto=db.session.get(Reclamo_db, ID)
+                else:
+                    raise Exception("No puede modificar este atributo del reclamo")
             else:
-                objeto=db.session.get(Persona_db, ID)
-
+                if dato in ["reclamos_adheridos", "reclamos_generados"]: #cambios de email, username y contraseña escapan de los requerimientos funcionales
+                    objeto=db.session.get(Persona_db, ID)
+                else:
+                    raise Exception("No puede modificar este atributo del usuario")
             if objeto is not None:
-                setattr(objeto, dato, nuevo_valor)
+                setattr(objeto, dato, nuevo_valor) #sólo funciona si el atributo es público
+               #objeto.dato=nuevo_valor ; si dato no existe como atributo, lo crea y le asigna nuevo_valor
                 db.session.commit()
                 print("Cambio guardado")
         else:
-            raise Exception("No existe una base de datos para esa clase")
+            raise Exception("No existe una base de datos para esa clase o no se permite modificarla")
+
+        def eliminar(self, ID, tipo):
+            if tipo=="reclamo":
+                reclamo = db.session.get(Reclamo_db, ID)
+                if reclamo:
+                    db.session.delete(reclamo)  
+                    db.session.commit()
+                    print("Se ha eliminado con éxito")
+            elif tipo=="jefe" or tipo=="usuario":
+                persona = db.session.get(Persona_db, ID)
+                if persona:
+                    db.session.delete(persona)
+                    db.session.commit()
+                    print("Se ha eliminado con éxito")
+
+        
+

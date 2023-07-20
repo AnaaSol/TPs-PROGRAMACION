@@ -1,6 +1,7 @@
 #from modulos.config import db #no encuentra modulos
 from modulos.config import db, app #como los archivos están dentro de la misma carpeta, no pongo el nombre de la misma ("modulos")
 from flask_login import UserMixin
+from sqlalchemy.dialects.postgresql import ARRAY
 
 
 #los valores de los atributos para cada instancia se pueden inicializar gracias a un posible "__init__" dentro de db.Model;
@@ -20,23 +21,25 @@ class Persona_db(db.Model):
     surname= db.Column(db.String(100), nullable=False)
     #atributos de usuario
     claustro = db.Column(db.String(100))
-    #tuve problemas con los ARRAY y no pude descubrir por qué
-    reclamos_adheridos = db.Column(db.String()) 
-    reclamos_generados = db.Column(db.String())
+    # reclamos_adheridos = db.Column(db.String()) #string de ID's separados por comas o espacios
+    # reclamos_generados = db.Column(db.String())
     #atributos de jefe
     depto = db.Column(db.String(100))
     #columna discriminante
     #type=db.Column(db.String(50)) #¿es necesaria? podríamos filtrar por depto ; if depto=None, persona es un usuario final
 
+#al init pasarle sólo atributos comunes
     def __init__(self, email, username, password, name, surname): #cuando instancio utilizo estos nombres (keyword argument)
         self.email=email
         self.username=username
         self.password=password
         self.name=name
         self.surname=surname
-        self.depto=""
-        self.reclamos_generados=""
-        self.reclamos_adheridos=""
+        #atributos característicos = None a menos que se cambien después
+        self.depto=None
+        self.claustro=None
+        # self.reclamos_generados=None
+        # self.reclamos_adheridos=None
 
     def set_depto(self, depto):
         self.depto=depto
@@ -61,15 +64,15 @@ class Reclamo_db(db.Model):
     estado = db.Column(db.String(10))
     depto = db.Column(db.String(25))
     timestap = db.Column(db.String(50), nullable=False)
-    adherentes = db.Column(db.String())
+    adherentes = db.Column(db.String()) #string de ID's separados por comas o espacios
     ID_user = db.Column(db.Integer(), db.ForeignKey('personas.ID'))
     imagen = db.Column(db.LargeBinary)
 
-    def __init__(self, description, depto, timestap, adherentes, estado, ID_user): #cuando instancio utilizo estos nombres
+    def __init__(self, description, depto, timestap, estado, ID_user): #cuando instancio utilizo estos nombres
         self.depto=depto
         self.description=description
         self.timestap=timestap
-        self.adherentes=adherentes
+        self.adherentes=""
         self.estado=estado
         self.ID_user=ID_user
         self.image=None

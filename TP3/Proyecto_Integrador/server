@@ -187,13 +187,41 @@ def crear():
 
 @app.route("/reclamos_pendientes", methods=['GET', 'POST'])
 def pendientes():
+    #GestorDB.modificar_dato("adherentes", "", "reclamo", 1) :lo arrancaba en cero adherentes para probar
+
     reclamos_pendientes=[]
     user=session.get('username')
+    ID_user=str(GestorDB.get_dato_user(user, "ID"))
+
+    if request.method== 'POST':
+        ID_reclamo=int(request.form["ID_reclamo"])
+        adherentes_actuales=GestorDB.get_reclamos_by_filtro("ID", ID_reclamo)[0][7]
+        if adherentes_actuales=="":
+            adherentes_actualizados=ID_user
+        else:
+            adherentes_actualizados=adherentes_actuales+" "+ID_user
+        GestorDB.modificar_dato("adherentes", adherentes_actualizados, "reclamo", ID_reclamo)
+        # adheridos_actuales=GestorDB.get_dato_user(int(ID_user),"reclamos_adheridos")
+        # adheridos_actualizados=adheridos_actuales+" "+str(ID)
+        # GestorDB.modificar_dato("reclamos_adheridos", reclamos_actualizados, "usuario", int(ID_user))
+
     reclamos_pendientes_data = GestorDB.get_reclamos_by_filtro("estado", "pendiente")
     cant=len(reclamos_pendientes_data)
+
     if cant!=0:
-        reclamos_pendientes=GestorR.cargar_de_db(reclamos_pendientes_data)
-    return render_template("reclamos_pendientes.html", reclamos_pendientes=reclamos_pendientes, cant=cant)
+        #reclamos_pendientes=GestorR.cargar_de_db(reclamos_pendientes_data)
+        datos=reclamos_pendientes_data
+        claim=Reclamo(datos[0][0], datos[0][1], datos[0][2], datos[0][3])
+        claim.set_depto(datos[0][5])
+        claim.cambiar_estado(datos[0][4])
+        print(claim)
+        print(claim.get_adherentes)
+        print(claim.contar_adherentes)
+        for adherente in datos[0][7].split(" "): #datos[0][7].split(" ")=lista de strings
+            claim.sumar_adherente(adherente)
+        reclamos_pendientes=[claim]
+
+    return render_template("reclamos_pendientes.html", reclamos_pendientes=reclamos_pendientes, cant=cant, user=user, ID_user=ID_user)
 
 @app.route("/reclamos_usuario", methods=['GET', 'POST'])
 def reclamos_user():
