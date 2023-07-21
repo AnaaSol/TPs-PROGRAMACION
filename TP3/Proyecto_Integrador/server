@@ -194,13 +194,18 @@ def pendientes():
     ID_user=str(GestorDB.get_dato_user(user, "ID"))
 
     if request.method== 'POST':
-        ID_reclamo=int(request.form["ID_reclamo"])
-        adherentes_actuales=GestorDB.get_reclamos_by_filtro("ID", ID_reclamo)[0][7]
-        if adherentes_actuales=="":
-            adherentes_actualizados=ID_user
-        else:
-            adherentes_actualizados=adherentes_actuales+" "+ID_user
-        GestorDB.modificar_dato("adherentes", adherentes_actualizados, "reclamo", ID_reclamo)
+        try:
+            ID_reclamo=request.form["ID_reclamo"]
+            ID_reclamo=int(ID_reclamo)
+            adherentes_actuales=GestorDB.get_reclamos_by_filtro("ID", ID_reclamo)
+            adherentes_actuales=adherentes_actuales[7]
+            if adherentes_actuales=="":
+                adherentes_actualizados=ID_user
+            else:
+                adherentes_actualizados=adherentes_actuales+" "+ID_user
+            GestorDB.modificar_dato("adherentes", adherentes_actualizados, "reclamo", ID_reclamo)
+        except:
+            pass
         # name=GestorDB.__get_username_by_ID(int(ID_user))
         # print(name)
         # print(GestorDB.get_dato_user(name,"reclamos_adheridos"))
@@ -208,21 +213,44 @@ def pendientes():
         # GestorDB.modificar_dato("reclamos_adheridos", reclamos_actualizados, "usuario", int(ID_user))
 
     reclamos_pendientes_data = GestorDB.get_reclamos_by_filtro("estado", "pendiente")
-    print(reclamos_pendientes_data)
+    # print(reclamos_pendientes_data)
     cant=len(reclamos_pendientes_data)
+    # print(cant)
 
+    filtro="todos"
+    if request.method== 'POST':
+        try:
+            filtro=request.form["filtro"]
+        except:
+            pass
     if cant!=0:
         #reclamos_pendientes=GestorR.cargar_de_db(reclamos_pendientes_data)
         datos=reclamos_pendientes_data
+        # print(datos)
         reclamos_pendientes=[]
         for i in range(len(datos)):
-            claim=Reclamo(datos[i][0], datos[i][1], datos[i][2], datos[i][3])
-            claim.set_depto(datos[i][5])
-            claim.cambiar_estado(datos[i][4])
-            for adherente in datos[i][7].split(" "): #datos[0][7].split(" ")=lista de strings
-                claim.sumar_adherente(adherente)
-            reclamos_pendientes.append(claim)
+            if filtro==datos[i][5]:
+                claim=Reclamo(datos[i][0], datos[i][1], datos[i][2], datos[i][3])
+                claim.set_depto(datos[i][5])
+                claim.cambiar_estado(datos[i][4])
+                if datos[i][7]!="":
+                    for adherente in datos[i][7].split(" "): #datos[0][7].split(" ")=lista de strings
+                        claim.sumar_adherente(int(adherente)) #lista de enteros 
+                    reclamos_pendientes.append(claim)
+                else:
+                    reclamos_pendientes.append(claim)
+            elif filtro=="todos":
+                claim=Reclamo(datos[i][0], datos[i][1], datos[i][2], datos[i][3])
+                claim.set_depto(datos[i][5])
+                claim.cambiar_estado(datos[i][4])
+                if datos[i][7]!="":
+                    for adherente in datos[i][7].split(" "): #datos[0][7].split(" ")=lista de strings
+                        claim.sumar_adherente(int(adherente)) #lista de enteros 
+                    reclamos_pendientes.append(claim)
+                else:
+                    reclamos_pendientes.append(claim)
 
+    ID_user=int(ID_user) 
     return render_template("reclamos_pendientes.html", reclamos_pendientes=reclamos_pendientes, cant=cant, user=user, ID_user=ID_user)
 
 @app.route("/reclamos_usuario", methods=['GET', 'POST'])

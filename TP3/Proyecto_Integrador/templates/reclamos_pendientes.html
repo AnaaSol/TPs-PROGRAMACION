@@ -24,7 +24,7 @@
 
       nav {
       float: left;
-      width: 90%;
+      width: 82%;
       height: 600px; 
       background: #f1f1f1;
       padding: 20px;
@@ -35,7 +35,7 @@
       article {
       float: left;
       padding: 20px;
-      width: 10%;
+      width: 18%;
       height: 600px;
       background-color: #f1f1f1; 
       }
@@ -119,7 +119,7 @@
     }
     
     .botoncito { 
-    	  background-color: #CCCC99;
+    	  background-color: #f1f1f1;
     }
 
 
@@ -141,7 +141,7 @@
       .tag {
           background-color: white; 
           color: black; 
-          border: 2px solid #009999;
+          border: 2px solid #666;
           width: 70px; 
           text-align: center;
           }
@@ -153,8 +153,20 @@
             <h5><i>Reclamos pendientes del</i></h5>
             <h3>Servicio de reclamos FIUNER</h3>
         </header>
-      <section>
-            <nav>
+<section>          
+<article>
+      <form action="/reclamos_pendientes" method="post">
+      <select id="filtro" name="filtro" class="button2 button3"> 
+            <option value="todos">Todos</option> 
+            <option value="maestranza">Maestranza</option> 
+            <option value="informático">Soporte Informático</option> 
+            <option value="secretaría técnica">Secretaría Técnica</option> 
+        </select>
+        <input type="submit" value="Aplicar filtro" class="botoncito"><br><br><br>
+      </form>
+      <a href="/usuario/{{user}}" class="button2 button3">Volver</a>
+</article>
+      <nav>
 {% if cant==0: %}
         <h3>No hay reclamos pendientes por el momento.</h3>
       </nav>
@@ -162,36 +174,39 @@
         <a href="/usuario/{{user}}" class="button2 button3">Volver</a>
       </article>
 {% else: %}
-{% for claim in reclamos_pendientes: %}
-  <div class="dropdown">
-    <button class="button button1">Reclamo</button>
-    <div class="dropdown-content">
-      <p class="etiquetas">ID:</p>
-      <p class="content">{{claim.get_ID}}</p><br>
-      <p class="etiquetas">Descripción</p>
-      <p class="content">{{claim.get_descripcion}}</p>
-      <p class="etiquetas">Estado:</p>
-      <p class="content">{{claim.get_estado}}</p><br>
-      <p class="etiquetas"> Fecha de creación: </p>
-      <p class="content">{{claim.get_fecha}}</p><br>
-      <p class="etiquetas">Departamento:</p>
-      <p class="content">{{claim.get_departamento}}</p>
-      <p class="etiquetas">{{claim.contar_adherentes}} adherentes</p><br><br>
-      {% if ID_user not in claim.get_adherentes: %}
-      <form action=/reclamos_pendientes method="post">
-            <input type="hidden" name="ID_reclamo" value="{{claim.get_ID}}">
-            <input type="submit" value="Adherir" class="botoncito">
-      </form>
-      {% else: %}
-            <p class="tag"><i>Adherido</i></p>
-      {% endif %}
-    </div>
-  </div>
-{% endfor %}
+      {% for claim in reclamos_pendientes: %}
+      <div class="dropdown">
+      <button class="button button1">Reclamo</button>
+      <div class="dropdown-content">
+            <p class="etiquetas">ID:</p>
+            <p class="content">{{claim.get_ID}}</p><br>
+            <p class="etiquetas">Descripción</p>
+            <p class="content">{{claim.get_descripcion}}</p>
+            <p class="etiquetas">Estado:</p>
+            <p class="content">{{claim.get_estado}}</p><br>
+            <p class="etiquetas"> Fecha de creación: </p>
+            <p class="content">{{claim.get_fecha}}</p><br>
+            <p class="etiquetas">Departamento:</p>
+            <p class="content">{{claim.get_departamento}}</p><br>
+            <p class="etiquetas">{{claim.contar_adherentes}} adherentes</p><br><br>
+            <!-- <p>{{claim.get_ID_usuario}}</p>
+                  <p>{{ID_user}}</p> -->
+            {% if ID_user==claim.get_ID_usuario: %}
+                  <p class="tag"><i>Adherido</i></p>
+            {% else: %}
+                  {% if ID_user not in claim.get_adherentes: %}
+                  <form action=/reclamos_pendientes method="post">
+                        <input type="hidden" name="ID_reclamo" value="{{claim.get_ID}}">
+                        <input type="submit" value="Adherir" class="botoncito">
+                  </form>
+                  {% else: %}
+                        <p class="tag"><i>Adherido</i></p>
+                  {% endif %}
+            {% endif %}
+      </div>
+      </div>
+      {% endfor %}
 </nav>
-<article>
-<a href="/usuario/{{user}}" class="button2 button3">Volver</a>
-</article>
 </section>
 {% endif %}
 </body>
