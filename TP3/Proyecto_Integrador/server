@@ -3,6 +3,10 @@ from flask import Flask, render_template, request, redirect, url_for, abort, fla
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
+#clasificador
+from modulos.ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
+from modulos.ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
+
 #clases
 from modulos.gestores import Gestor_de_base_de_datos, Gestor_de_reclamos
 from modulos.usuario import Usuario
@@ -13,6 +17,8 @@ from modulos.reclamos_similares import reclamos_similares
 from modulos.databases import *
 
 #otros módulos
+import pickle
+import os 
 import datetime
 from functools import wraps
 from modulos.config import app, db, login_manager
@@ -21,7 +27,17 @@ from modulos.config import app, db, login_manager
 from sqlalchemy.orm.exc import NoResultFound 
 
 GestorDB=Gestor_de_base_de_datos()
-#GestorR=Gestor_de_reclamos('modulos/ClasificadorSk/clasificadorsk/objeto_clasificador.pkl') #error can't get atribute 'Clasificador' on module __main__ from server
+
+# ruta_absoluta = os.path.abspath('modulos\ClasificadorSk\clasificadorsk\data\clasificador_svm.pkl')
+# print("ruta abs=====", ruta_absoluta)
+# GestorR=Gestor_de_reclamos(ruta_absoluta) 
+#error can't get atribute 'Clasificador' on module __main__ from server
+
+# with open(ruta_absoluta, 'rb') as archivo:
+#   cls  = pickle.load(archivo)
+
+# text= ["no funciona el campus virtual "]
+# print(cls.clasificar(text))
 
 admin_list = [1]
 
@@ -117,7 +133,7 @@ def manejar(depto):
         GestorDB.modificar_dato("depto", nuevo_depto, "reclamo", ID)
         GestorDB.modificar_dato("estado", nuevo_estado, "reclamo", ID)
 
-    reclamos_de_depto_data=GestorDB.get_reclamo_by_filtro(depto) #se obtienen los datos de los reclamos del depto de bd
+    reclamos_de_depto_data=GestorDB.get_reclamos_by_filtro("departamento", depto.lower()) #se obtienen los datos de los reclamos del depto de bd
     reclamos=GestorR.cargar_de_db(reclamos_de_depto_data) #lista de objetos Reclamo
     # así como está abajo funciona, pero los reclamos tienen que manipularse desde GestorR (que no anda jaja)
     # reclamos=[] #lista de objetos Reclamo
@@ -142,48 +158,70 @@ def usuario(user):
 
 @app.route("/reclamo", methods=['GET', 'POST'])
 def crear():
+
     user=session.get('username')
+
     if request.method == "POST":
-        #creación del objeto Usuario
-        usser=Usuario(GestorDB.get_dato_user(user, "ID"), GestorDB.get_dato_user(user, "name"), GestorDB.get_dato_user(user, "surname"), user, GestorDB.get_dato_user(user, "email"), GestorDB.get_dato_user(user, "password"), GestorDB.get_dato_user(user, "claustro"))
-        #creación del formulario para el reclamo
-        texto=request.form["description"]
-        formulario=usser.generar_datos_reclamo(texto)
-        #imagen
-        imagen=request.files["image"]
-        if imagen: #es decir, imagen no es None
-            imagen_data = imagen.read()
-            formulario.append(imagen_data)
-        #se añade un ID provisorio para poder crear el reclamo
-        formulario.insert(0, 1)
-        #se crea el reclamo
-        reclamo=GestorR.crear_reclamo(formulario) # no sé si debería andar el reclamo por fuera del gestor
-        #se clasifica
-        GestorR.clasificar_reclamo(reclamo) 
-        posibles=GestorDB.get_reclamos_by_filtro("departamento", reclamo.get_departamento()) #obtiene los datos de los reclamos con el mismo departamento que el reclamo objetivo
-        posibles_data=[] #guarda tuplas con la descripción de los reclamos y su ID
-        for x in range(len(posibles)): 
-            posibles_data.append((posibles[x][1], posibles[x][0])) #se queda con la descripción y el ID
-        similares=reclamos_similares(posibles_data, texto) #lista con los ID de los reclamos similares
-        if len(similares)==0:
-            #se guarda el reclamo original en la base de datos
-            data=[reclamo.get_descripcion(), reclamo.get_estado(), reclamo.get_departamento(), reclamo.get_fecha(), reclamo.get_adherentes(), reclamo.get_ID_usuario()]
-            GestorDB.guardar_nuevo_objeto(data)
-            return render_template("reclamo.html", reclamos_similares="no hay reclamos similares")
-        else:
-            lista_similares=[]
-            for i in range(len(similares)):
-                reclamo_data=GestorDB.get_reclamo_by_filtro("ID", similares[i]) #seguro existen los reclamos con ese ID porque vienen de una consulta a la bd
-                reclamo=GestorR.cargar_de_db(reclamo_data)
-                lista_similares.append(reclamo)
-            return render_template("reclamo.html", reclamos_similares=lista_similares)
-        try:
-            id=request.form["ID_reclamo"]
-            #añadir adherente al reclamo correspondiente a ese id
-        except:
-            pass
+
+        if 'action' in request.form:
+
+            action = request.form['action']
+
+            if action == 'volver':
+                return redirect(url_for('usuario', user=user))
+            elif action == 'crear':
+                #creación del objeto Usuario
+                usser=Usuario(GestorDB.get_dato_user(user, "ID"), GestorDB.get_dato_user(user, "name"), GestorDB.get_dato_user(user, "surname"), user, GestorDB.get_dato_user(user, "email"), GestorDB.get_dato_user(user, "password"), GestorDB.get_dato_user(user, "claustro"))
+                #creación del formulario para el reclamo
+                texto=request.form["description"]
+                formulario=usser.generar_datos_reclamo(texto)
+                #imagen
+                imagen=request.files["image"]
+                if imagen: #es decir, imagen no es None
+                    imagen_data = imagen.read()
+                    formulario.append(imagen_data)
+                #se añade un ID provisorio para poder crear el reclamo
+                formulario.insert(0, 1)
+                #se crea el reclamo
+                reclamo=GestorR.crear_reclamo(formulario) # no sé si debería andar el reclamo por fuera del gestor
+                #se clasifica
+                GestorR.clasificar_reclamo(reclamo) 
+                posibles=GestorDB.get_reclamos_by_filtro("departamento", reclamo.get_departamento) #obtiene los datos de los reclamos con el mismo departamento que el reclamo objetivo
+                posibles_data=[] #guarda tuplas con la descripción de los reclamos y su ID
+                for x in range(len(posibles)): 
+                    posibles_data.append((posibles[x][1], posibles[x][0])) #se queda con la descripción y el ID
+                similares=reclamos_similares(posibles_data, texto) #lista con los ID de los reclamos similares
+                if len(similares)==0:
+                    data=[reclamo.get_descripcion, reclamo.get_estado, reclamo.get_departamento, reclamo.get_fecha, reclamo.get_ID_usuario]
+                    GestorDB.guardar_nuevo_objeto(data)
+                    return render_template("reclamo.html", reclamos_similares="no hay reclamos similares")
+                else:
+                    lista_similares=[]
+                    for i in range(len(similares)):
+                        reclamo_data=GestorDB.get_reclamo_by_filtro("ID", similares[i]) #seguro existen los reclamos con ese ID porque vienen de una consulta a la bd
+                        reclamo=GestorR.cargar_de_db(reclamo_data)
+                        lista_similares.append(reclamo)
+                    return render_template("reclamo.html", reclamos_similares=lista_similares)
+                
+            elif action=='adherir':
+                ID_user=str(GestorDB.get_dato_user(user, "ID"))
+                ID_reclamo=int(request.form["ID_reclamo"])
+                adherentes_actuales=GestorDB.get_reclamos_by_filtro("ID", ID_reclamo) #obtiene los datos del reclamo
+                adherentes_actuales=adherentes_actuales[0][7] #se queda con los adherentes 
+                if adherentes_actuales=="":
+                    adherentes_actualizados=ID_user
+                else:
+                    adherentes_actualizados=adherentes_actuales+" "+ID_user
+                GestorDB.modificar_dato("adherentes", adherentes_actualizados, "reclamo", ID_reclamo)
+                return render_template("reclamo.html", reclamos_similares="adhirió")
+
+            elif action=='crear_igualmente':
+                data=[reclamo.get_descripcion, reclamo.get_estado, reclamo.get_departamento, reclamo.get_fecha, reclamo.get_ID_usuario]
+                GestorDB.guardar_nuevo_objeto(data)
+                return render_template("reclamo.html", reclamos_similares="no hay reclamos similares")
+            
     else:
-        return render_template("reclamo.html", reclamos_similares="todavia no buscados")
+        return render_template("reclamo.html", reclamos_similares="todavia no buscados", user=user)
 
 @app.route("/reclamos_pendientes", methods=['GET', 'POST'])
 def pendientes():
@@ -193,18 +231,17 @@ def pendientes():
     user=session.get('username')
     ID_user=str(GestorDB.get_dato_user(user, "ID"))
 
-    if request.method== 'POST':
+    if request.method== 'POST': #POST de adhesión a det reclamo
         try:
-            ID_reclamo=request.form["ID_reclamo"]
-            ID_reclamo=int(ID_reclamo)
-            adherentes_actuales=GestorDB.get_reclamos_by_filtro("ID", ID_reclamo)
-            adherentes_actuales=adherentes_actuales[7]
+            ID_reclamo=int(request.form["ID_reclamo"])
+            adherentes_actuales=GestorDB.get_reclamos_by_filtro("ID", ID_reclamo) #obtiene los datos del reclamo
+            adherentes_actuales=adherentes_actuales[0][7] #se queda con los adherentes 
             if adherentes_actuales=="":
                 adherentes_actualizados=ID_user
             else:
                 adherentes_actualizados=adherentes_actuales+" "+ID_user
             GestorDB.modificar_dato("adherentes", adherentes_actualizados, "reclamo", ID_reclamo)
-        except:
+        except: #es la otra solicitud POST (filtro de reclamos)
             pass
         # name=GestorDB.__get_username_by_ID(int(ID_user))
         # print(name)
@@ -223,6 +260,7 @@ def pendientes():
             filtro=request.form["filtro"]
         except:
             pass
+
     if cant!=0:
         #reclamos_pendientes=GestorR.cargar_de_db(reclamos_pendientes_data)
         datos=reclamos_pendientes_data

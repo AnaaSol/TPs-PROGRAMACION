@@ -73,28 +73,66 @@
           display: inline-block;
           margin-top: 0.5;
           }
+
+    .button2 {
+      background-color: #f1f1f1;
+      border: none;
+      color: white;
+      padding: 8px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      transition-duration: 0.2s;
+      cursor: pointer;
+      }
+      
+    .button3 {
+        background-color: #f1f1f1; 
+        color: black; 
+        border: 2px solid #666; 
+        width: auto;
+        }
+
+    .button3:hover {
+      background-color: rgb(80, 126, 145);
+      color: black;
+      }
+
 </style>
 </head>
 <body>
 <div>
     {% if reclamos_similares=="todavia no buscados": %}
-<form action="/reclamo" method="post" enctype="multipart/form-data">
-    <fieldset>
-        <legend>Nuevo reclamo</legend>
-        <label for="descripcion">Descripción:</label><br>
-        <textarea id="descripcion" name="description" rows="4" cols="50" required></textarea><br><br>
-    <label for="foto">Adjuntar foto:</label>
-    <input type="file" id="foto" name="image" accept="image/*">
-    <br><br>
-        <input type="submit" value="Continuar">
-    </fieldset>
-</form>
+        <form action="/reclamo" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="crear">
+            <fieldset>
+                <legend>Nuevo reclamo</legend>
+                <label for="descripcion">Descripción:</label><br>
+                <textarea id="descripcion" name="description" rows="4" cols="50" required></textarea><br><br>
+            <label for="foto">Adjuntar foto:</label>
+            <input type="file" id="foto" name="image" accept="image/*">
+            <br><br>
+                <input type="submit" value="Continuar">
+            </fieldset>
+        </form>
+        <form action="/reclamo" method="post">
+            <input type="hidden" name="action" value="volver">
+            <input type="submit" class="button2 button3" value="Volver">
+        </form>
     {% elif reclamos_similares=="no hay reclamos similares": %}
-    <form action="/usuario">
-        <h3>Su reclamo fue creado con éxito</h3>
-        <br>
-        <input type="submit" value="Continuar">
-    </form>
+        <form action="/usuario">
+            <h3>Su reclamo fue creado con éxito</h3>
+            <br>
+            <input type="submit" value="Continuar">
+        </form>
+    {% elif reclamos_similares=="adhirió": %}
+        <form action="/usuario">
+            <h3>Su ha registrado su adhesión</h3>
+            <br>
+            <input type="submit" value="Continuar">
+        </form>
     {% else: %}
         <h3>Se han encontrados reclamos similares.</h3>
         <h3>¿Preferiría adherirse a alguno o prefiere continuar con la creación de su reclamo?</h3>
@@ -114,17 +152,18 @@
               <p class="content">{{claim.get_departamento}}</p>
               <p class="etiquetas">{{claim.contar_adherentes}} adherentes</p><br><br>
               <form action=/reclamo method="post">
+                    <input type="hidden" name="action" value="adherir">
                     <input type="hidden" name="ID_reclamo" value="{{claim.get_ID}}">
                     <input type="submit" value="Adherir" class="botoncito">
               </form>
             </div>
           </div>
+          <form action="/reclamo" method="post">
+            <input type="hidden" name="action" value="crear_igualmente">
+            <input type="submit" value="Continuar">
+          </form>
           {% endfor %}
     {% endif %}
-            <form action="/usuario">
-                <input type="submit" value="Continuar">
-                <!-- agregar popup o algun aviso de que el reclamos fue creado con exito -->
-            </form>
 </div>
 </body>
 </html>

@@ -1,10 +1,10 @@
 import pickle
-from .config import db
-from .databases import Reclamo_db, Persona_db
-from .reclamo import Reclamo
-#from .ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
+from modulos.config import db
+from modulos.databases import Reclamo_db, Persona_db
+from modulos.reclamo import Reclamo
+from modulos.ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
 from sqlalchemy.orm.exc import NoResultFound
-#from .ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
+from modulos.ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
 
 class Gestor_de_reclamos():
 
@@ -23,7 +23,7 @@ class Gestor_de_reclamos():
 
     def clasificar_reclamo(self, claim):
         depto=self.__clasificador.clasificar(claim.get_descripcion)
-        claim.set_depto(depto)
+        claim.set_depto(depto[0])
 
     # def filtrar_reclamos(self, filtro, valor_filtro, reclamos):
     #     """Filtra los reclamos que recibe según un estado o departamento específico"""
@@ -52,7 +52,7 @@ class Gestor_de_reclamos():
             claim.set_depto(datos[5])
             claim.cargar_imagen(datos[6])
             for adh in datos[7].split(" "):
-                claim.sumar_adherente(adh)
+                claim.sumar_adherente(int(adh))
             reclamos.append(claim)
         return reclamos
         
