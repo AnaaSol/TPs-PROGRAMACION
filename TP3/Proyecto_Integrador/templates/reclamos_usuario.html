@@ -5,15 +5,51 @@
     <title>Reclamos de {{user}}</title>
   <style>
 
-    header {
-        background-color: #666;
-        padding: 8px;
-        text-align: center;
-        font-size: 27px;
-        color: white;
-    }
+      input {margin: 5px;}
 
-     .button {
+      * {
+      box-sizing: border-box;
+      }
+
+      body {
+      font-family: Arial, Helvetica, sans-serif;
+      }
+
+      header {
+      background-color: #666;
+      padding: 8px;
+      text-align: center;
+      font-size: 27px;
+      color: white;
+      }
+
+      nav {
+      float: left;
+      width: 82%;
+      height: 600px; 
+      background: #f1f1f1;
+      padding: 20px;
+      text-align: left;
+      font-size: 15px;
+      }
+
+      article {
+      float: left;
+      padding: 20px;
+      width: 18%;
+      height: 600px;
+      background-color: #f1f1f1; 
+      }
+
+      @media (max-width: 600px) {
+      nav, article{
+            width: 100%;
+            height: auto;
+      }
+      }
+
+
+      .button {
           background-color: #009999;
           border: none;
           color: white;
@@ -27,23 +63,23 @@
           cursor: pointer;
           }
 
-    .button1 {
-          background-color: white; 
+      .button1 {
+          background-color: #f1f1f1; 
           color: black; 
-          border: 2px solid #009999;
+          border: 2px solid #666;
           width: 250px; 
           }
 
-    .button1:hover {
-          background-color: #009999;
-          color: white;
+      .button1:hover {
+          background-color: rgb(80, 126, 145);
+          color: black;
           }
   
-    .dropdown {
-          position: relative;
-          display: inline-block;
-          width: 250px; 
-    	  }
+      .dropdown {
+      position: relative;
+      display: inline-block;
+      width: 250px; 
+      }
 
     .dropdown-content {
           display: none;
@@ -54,18 +90,36 @@
 
     .dropdown:hover .dropdown-content {
       display: block;
+      border: 2px solid #666;
+      padding: 10px
     }
     
-    .botoncito {
-    	background-color: #acb3b8;
-        display: inline-block;
-        color: #000000;
-        padding: 5px 10px;
-        text-decoration: none;
-        border: 3px solid #000000;
-        border-radius: 15px;
-        font-family: Arial, sans-serif
-    }
+    
+    .button2 {
+      background-color: #f1f1f1;
+      border: none;
+      color: white;
+      padding: 8px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      transition-duration: 0.2s;
+      cursor: pointer;
+      }
+      
+    .button3 {
+          background-color: #f1f1f1; 
+          color: black; 
+          border: 2px solid #666; 
+          width: auto;
+          }
+ 
+    .button3:hover {
+          background-color: rgb(80, 126, 145);
+          color: black;
+          }
     
     .etiquetas {
           color: #000000;
@@ -89,13 +143,17 @@
         <h5><i>Reclamos generados por</i></h5>
         <h3>{{user}}</h3>
     </header>
-{% if cant==0: %}
+<section>
+{% if cant==0: %}          
+      <article>
     <h3>Por lo visto aún no has creado ningún reclamo, {{user}}</h3>
-    <a href="/usuario/{{user}}" class="botoncito">Volver</a>
+    <a href="/usuario/{{user}}" class="button2 button3">Volver</a>
+      </article>
 {% else: %}
+      <nav>
    {% for claim in reclamos %} 
       <div class="dropdown">
-      <button class="button button1">Reclamo {{claim.get_ID}}</button>
+      <button class="button button1">Reclamo</button>
       <div class="dropdown-content">
             <p class="etiquetas">Descripción: </p>
             <p class="content">{{claim.get_descripcion}}</p>
@@ -104,13 +162,17 @@
             <p class="etiquetas">Adherentes:</p>
             <p class="content">{{claim.contar_adherentes}}</p><br>
             <p class="etiquetas">Estado:</p>
-            <p class="content">{{claim.get_estado}}</p>
+            <p class="content">{{claim.get_estado}}</p><br>
             <p class="etiquetas">Departamento:</p>
             <p class="content">{{claim.get_departamento}}</p>
       </div>
       </div>
+      </nav>
   {% endfor %}
-  <a href="/usuario/{{user}}" class="botoncito">Volver</a>
+  <article>
+  <a href="/usuario/{{user}}" class="button2 button3">Volver</a>
+</article>
 {% endif %}
+</section>
 </body>
 </html>

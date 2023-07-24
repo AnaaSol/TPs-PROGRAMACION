@@ -85,19 +85,19 @@ class Gestor_de_base_de_datos():
         valor del mismo, tomarán los valores default y se devolverán todos los reclamos en la base de datos"""
         type=type.lower()
         if type=="all" and filtro=="nada": #valores default
-            reclamos=db.session.query(Reclamo_db).all()
+            reclamo=db.session.query(Reclamo_db).all()
         elif type=="usuario":
-            reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==filtro).all() #filtro es el ID del usuario
+            reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==filtro).all() #filtro es el ID del usuario
             #si está vacía, either no existe un usuario con ese ID o no ha generado reclamos
             #(el primer caso se puede controlar con la obtención previa del ID)
         elif type=="estado":
             if filtro.lower() in ["pendiente", "resuelto", "inválido", "en proceso"]:
-                reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.estado==filtro).all() 
+                reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.estado==filtro).all() 
             else:
                 raise Exception("Filtro inválido")
         elif type=="departamento":
             if filtro.lower() in ["soporte informático", "maestranza", "secretaría técnica"]:
-                reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.depto==filtro).all()
+                reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.depto==filtro).all()
             else:
                 raise Exception("Filtro inválido")
         elif type=="id":
@@ -105,20 +105,25 @@ class Gestor_de_base_de_datos():
                 reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.ID_reclamo==filtro).one()
             except NoResultFound:
                 raise Exception("El reclamo no existe")
+        elif type=="id_usuario":
+            try: 
+                reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==filtro).all()
+            except NoResultFound:
+                raise Exception("El reclamo no existe")
         else:
             raise Exception("Sólo puede filtrar por usuario, departamento, estado o ID")
         
         #este bloque de código no se ejecuta si ocurre alguna excepción
-        # if len(reclamos)==0:
-        #     raise Exception("No se encontraron reclamos") #no tendría por qué saltar una excepción si no encuentra nada
-        #con un return reclamos corremos el riesgo de que se modifique la base de datos por afuera
+        if len(reclamo)==0:
+            raise Exception("No se encontraron reclamos") #no tendría por qué saltar una excepción si no encuentra nada
+        # con un return reclamos corremos el riesgo de que se modifique la base de datos por afuera
         datos_reclamos=[]
         if type=="id":
             datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen, reclamo.adherentes]
             datos_reclamos.append(datos)
         else:
-            for reclamo in reclamos: #TypeError: 'Reclamo_db' object is not iterable (one() devuelve el objeto, no dentro de una lista)
-                datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen, reclamo.adherentes]
+            for recl in reclamo: #TypeError: 'Reclamo_db' object is not iterable (one() devuelve el objeto, no dentro de una lista)
+                datos=[recl.ID_reclamo, recl.description, recl.timestap, recl.ID_user, recl.estado, recl.depto, recl.imagen, recl.adherentes]
                 datos_reclamos.append(datos)
         return datos_reclamos
     
