@@ -1,5 +1,5 @@
 #from modulos.config import db #no encuentra modulos
-from modulos.config import db, app #como los archivos están dentro de la misma carpeta, no pongo el nombre de la misma ("modulos")
+from modules.config import db, app #como los archivos están dentro de la misma carpeta, no pongo el nombre de la misma ("modulos")
 from flask_login import UserMixin
 from sqlalchemy.dialects.postgresql import ARRAY
 

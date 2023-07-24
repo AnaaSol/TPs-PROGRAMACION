@@ -1,16 +1,16 @@
-import pickle
-from modulos.config import db
-from modulos.databases import Reclamo_db, Persona_db
-from modulos.reclamo import Reclamo
-from modulos.ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
+import pickle as p
+from modules.config import db
+from modules.databases import Reclamo_db, Persona_db
+from modules.reclamo import Reclamo
+from modules.clasificador import Clasificador 
 from sqlalchemy.orm.exc import NoResultFound
-from modulos.ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
+from modules.preprocesamiento import TextVectorizer
 
 class Gestor_de_reclamos():
 
     def __init__(self, ruta):
         with open(ruta, 'rb') as archivo:
-           self.__clasificador = pickle.load(archivo)
+           self.__clasificador = p.load(archivo)
 
     def crear_reclamo(self, data): #data=[ID, description, fecha, user_id] + imagen 
         """Crea un reclamo con la información proporcionada por el usuario"""
@@ -22,8 +22,9 @@ class Gestor_de_reclamos():
         return claim #¿cómo se entera usuario?
 
     def clasificar_reclamo(self, claim):
-        depto=self.__clasificador.clasificar(claim.get_descripcion)
-        claim.set_depto(depto[0])
+        depto=self.__clasificador.clasificar(claim) #claim.get_description
+        return depto
+        # claim.set_depto(depto[0])
 
     # def filtrar_reclamos(self, filtro, valor_filtro, reclamos):
     #     """Filtra los reclamos que recibe según un estado o departamento específico"""
@@ -117,7 +118,7 @@ class Gestor_de_base_de_datos():
             datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen, reclamo.adherentes]
             datos_reclamos.append(datos)
         else:
-            for reclamo in reclamos: #TypeError: 'Reclamo_db' object is not iterable (one() devuelve el objeto, no dentro de una lista)
+            for reclamo in reclamos: #TypeError: 'Reclamo_db' object is not iterable (one() devuelve el objeto, no dentro de una lista como all())
                 datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen, reclamo.adherentes]
                 datos_reclamos.append(datos)
         return datos_reclamos

@@ -4,40 +4,30 @@ from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 #clasificador
-from modulos.ClasificadorSk.clasificadorsk.modules.clasificador import Clasificador 
-from modulos.ClasificadorSk.clasificadorsk.modules.preprocesamiento import TextVectorizer
+from modules.clasificador import Clasificador 
+from modules.preprocesamiento import TextVectorizer
 
 #clases
-from modulos.gestores import Gestor_de_base_de_datos, Gestor_de_reclamos
-from modulos.usuario import Usuario
-from modulos.reclamo import Reclamo
-from modulos.reclamos_similares import reclamos_similares
+from modules.gestores import Gestor_de_base_de_datos, Gestor_de_reclamos
+from modules.usuario import Usuario
+from modules.reclamo import Reclamo
+from modules.reclamos_similares import reclamos_similares
 
 #clases modelo (tablas de db)
-from modulos.databases import *
+from modules.databases import *
 
 #otros módulos
-import pickle
-import os 
 import datetime
 from functools import wraps
-from modulos.config import app, db, login_manager
+from modules.config import app, db, login_manager
 
 #excepciones
 from sqlalchemy.orm.exc import NoResultFound 
 
 GestorDB=Gestor_de_base_de_datos()
+GestorR=Gestor_de_reclamos('data\clasificador_svm.pkl') 
 
-# ruta_absoluta = os.path.abspath('modulos\ClasificadorSk\clasificadorsk\data\clasificador_svm.pkl')
-# print("ruta abs=====", ruta_absoluta)
-# GestorR=Gestor_de_reclamos(ruta_absoluta) 
-#error can't get atribute 'Clasificador' on module __main__ from server
-
-# with open(ruta_absoluta, 'rb') as archivo:
-#   cls  = pickle.load(archivo)
-
-# text= ["no funciona el campus virtual "]
-# print(cls.clasificar(text))
+print(GestorR.clasificar_reclamo("no funciona el campus virtual "))
 
 admin_list = [1]
 

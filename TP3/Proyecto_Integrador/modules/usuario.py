@@ -1,4 +1,4 @@
-from modulos.persona import Persona
+from modules.persona import Persona
 import datetime
 
 class Usuario(Persona):
@@ -31,16 +31,10 @@ class Usuario(Persona):
     def agregar_reclamo_creado(self, ID):
          self.__reclamos_generados.append(ID)
 
-    def agregar_reclamo_adherido(self, ID):
-        self.__reclamos_adheridos.append(ID)
-
     def generar_datos_reclamo(self, descripcion):
         reclamo=[descripcion, str(datetime.datetime.now())[:19], self._ID]
         #¿Cómo guardar el ID del reclamo?
         return reclamo
-    
-    def guardar_reclamo_generado(self, reclamo_ID):
-        self.__reclamos_generados.append(reclamo_ID)
     
     def adherirse_a_reclamo(self, reclamo_ID): 
         if reclamo_ID in self.__reclamos_adheridos:

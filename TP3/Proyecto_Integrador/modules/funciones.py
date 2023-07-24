@@ -18,7 +18,7 @@ def graficar_nube(texto):
     plt.show()
 
 #funciona
-#graficar_nube("Este es un serio problema, Mr. Jones. No sabemos nada aún de nuestro destino. Nuestro futuro ha sido puesto en pausa, y yo muero por vivir. Deseo que su mundo se reanude, para que devuelva a la vida al nuestro")
+graficar_nube("Este es un serio problema, Mr. Jones. No sabemos nada aún de nuestro destino. Nuestro futuro ha sido puesto en pausa, y yo muero por vivir. Deseo que su mundo se reanude, para que devuelva a la vida al nuestro")
 
 estado_reclamos_competentes=["Pendiente", "Pendiente", "En proceso", "Inválido", "Resuelto", "Resuelto", "Resuelto"] #query
 pendiente=0
