@@ -110,9 +110,9 @@ class Gestor_de_base_de_datos():
             raise Exception("Sólo puede filtrar por usuario, departamento, estado o ID")
         
         #este bloque de código no se ejecuta si ocurre alguna excepción
-        # if len(reclamos)==0:
-        #     raise Exception("No se encontraron reclamos") #no tendría por qué saltar una excepción si no encuentra nada
-        #con un return reclamos corremos el riesgo de que se modifique la base de datos por afuera
+        if len(reclamo)==0:
+            raise Exception("No se encontraron reclamos") #no tendría por qué saltar una excepción si no encuentra nada
+        # con un return reclamos corremos el riesgo de que se modifique la base de datos por afuera
         datos_reclamos=[]
         if type=="id":
             datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen, reclamo.adherentes]
