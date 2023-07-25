@@ -32,7 +32,7 @@ from sqlalchemy.orm.exc import NoResultFound
 GestorDB=Gestor_de_base_de_datos()
 GestorR=Gestor_de_reclamos('data\clasificador_svm.pkl') 
 
-print(GestorR.clasificar_reclamo("no funciona el campus virtual "))
+print(GestorR.clasificar_reclamo(["no funciona el campus virtual "]))
 
 admin_list = [1]
 
@@ -198,23 +198,31 @@ def crear():
                 #se crea el reclamo
                 reclamo=GestorR.crear_reclamo(formulario) # no sé si debería andar el reclamo por fuera del gestor
                 #se clasifica
-                GestorR.clasificar_reclamo(reclamo) 
+                depto=GestorR.clasificar_reclamo([reclamo.get_descripcion])
+                for x in range(15):
+                    print(depto)
+                reclamo.set_depto(depto[0]) 
                 posibles=GestorDB.get_reclamos_by_filtro("departamento", reclamo.get_departamento) #obtiene los datos de los reclamos con el mismo departamento que el reclamo objetivo
-                posibles_data=[] #guarda tuplas con la descripción de los reclamos y su ID
-                for x in range(len(posibles)): 
-                    posibles_data.append((posibles[x][1], posibles[x][0])) #se queda con la descripción y el ID
-                similares=reclamos_similares(posibles_data, texto) #lista con los ID de los reclamos similares
+                if len(posibles)!=0:
+                    posibles_data=[] #guarda tuplas con la descripción de los reclamos y su ID
+                    for x in range(len(posibles)): 
+                        posibles_data.append((posibles[x][1], posibles[x][0])) #se queda con la descripción y el ID
+                    similares=reclamos_similares(posibles_data, texto) #lista con los ID de los reclamos similares
+                else:
+                    similares=[]
                 if len(similares)==0:
                     data=[reclamo.get_descripcion, reclamo.get_estado, reclamo.get_departamento, reclamo.get_fecha, reclamo.get_ID_usuario]
-                    GestorDB.guardar_nuevo_objeto(data)
+                    print(data)
+                    GestorDB.guardar_nuevo_objeto("reclamo", data)
                     return render_template("reclamo.html", reclamos_similares="no hay reclamos similares")
                 else:
                     lista_similares=[]
                     for i in range(len(similares)):
-                        reclamo_data=GestorDB.get_reclamo_by_filtro("ID", similares[i]) #seguro existen los reclamos con ese ID porque vienen de una consulta a la bd
+                        reclamo_data=GestorDB.get_reclamos_by_filtro("ID", similares[i]) #seguro existen los reclamos con ese ID porque vienen de una consulta a la bd
+                        print(reclamo_data)
                         reclamo=GestorR.cargar_de_db(reclamo_data)
                         lista_similares.append(reclamo)
-                    return render_template("reclamo.html", reclamos_similares=lista_similares)
+                    return render_template("reclamo.html", lista_similares=lista_similares, user=user)
                 
             elif action=='adherir':
                 ID_user=str(GestorDB.get_dato_user(user, "ID"))
@@ -226,12 +234,12 @@ def crear():
                 else:
                     adherentes_actualizados=adherentes_actuales+" "+ID_user
                 GestorDB.modificar_dato("adherentes", adherentes_actualizados, "reclamo", ID_reclamo)
-                return render_template("reclamo.html", reclamos_similares="adhirió")
+                return render_template("reclamo.html", reclamos_similares="adhirió", user=user)
 
             elif action=='crear_igualmente':
                 data=[reclamo.get_descripcion, reclamo.get_estado, reclamo.get_departamento, reclamo.get_fecha, reclamo.get_ID_usuario]
                 GestorDB.guardar_nuevo_objeto(data)
-                return render_template("reclamo.html", reclamos_similares="no hay reclamos similares")
+                return render_template("reclamo.html", reclamos_similares="no hay reclamos similares", user=user)
             
     else:
         return render_template("reclamo.html", reclamos_similares="todavia no buscados", user=user)
@@ -307,17 +315,19 @@ def pendientes():
 @app.route("/reclamos_usuario", methods=['GET', 'POST'])
 def reclamos_user():
     user=session.get('username')
+    ID_user=GestorDB.get_dato_user(user, "ID")
     reclamos=[]
-    cant=0
-    #ya no viene ningún post desde /usuario
-    # if request.method == 'POST': #post que viene desde /usuario, ¿qué pasa con el que redirecciona desde /reclamos_usuario?
-    #     user=request.form["username"]
-    #     ID_user=GestorDB.get_dato_user(user, "ID") #no va a lanzar excepción porque user existe y ID es un atributo 
-    #     reclamos_data=GestorDB.get_reclamos_by_filtro("usuario", ID_user) 
-    #     cant=len(reclamos_data)
-    #     if cant!=0:
-    #         reclamos=GestorR.cargar_de_db(reclamos_data)
-    return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user, cant=cant)
+    reclamos_usuario=GestorDB.get_reclamos_by_filtro("id_usuario", ID_user)
+    cant=len(reclamos_usuario)
+    if cant!=0:
+        datos=reclamos_usuario
+        print(datos)
+        for i in range(len(datos)):
+            claim=Reclamo(datos[i][0], datos[i][1], datos[i][2], datos[i][3])
+            claim.set_depto(datos[i][5])
+            claim.cambiar_estado(datos[i][4])
+            reclamos.append(claim)
+    return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user)
 
 if __name__ == "__main__":
     app.run(debug=True)

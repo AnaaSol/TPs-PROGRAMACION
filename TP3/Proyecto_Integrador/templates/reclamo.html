@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Generar Reclamo</title>
 <style>
+
     fieldset {background-color: #d9e3e9;
             padding: 20px;}
         
@@ -38,7 +39,34 @@
       transition: opacity 0.3s;
     }
 
-    .dropdown {
+    
+    .button {
+          background-color: #009999;
+          border: none;
+          color: white;
+          padding: 10px 20px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 14px;
+          margin: 4px 2px;
+          transition-duration: 0.2s;
+          cursor: pointer;
+          }
+
+      .button1 {
+          background-color: #f1f1f1; 
+          color: black; 
+          border: 2px solid #666;
+          width: 250px; 
+          }
+
+      .button1:hover {
+          background-color: rgb(80, 126, 145);
+          color: black;
+          }
+
+          .dropdown {
           position: relative;
           display: inline-block;
           width: 250px; 
@@ -53,6 +81,8 @@
 
     .dropdown:hover .dropdown-content {
       display: block;
+      border: 2px solid #666;
+      padding: 10px
     }
       
     .botoncito {
@@ -122,47 +152,55 @@
             <input type="submit" class="button2 button3" value="Volver">
         </form>
     {% elif reclamos_similares=="no hay reclamos similares": %}
-        <form action="/usuario">
+    <br><br>
+        <fieldset>
+            <legend>Nuevo reclamo</legend>
             <h3>Su reclamo fue creado con éxito</h3>
             <br>
-            <input type="submit" value="Continuar">
-        </form>
+            <a href="/usuario/{{user}}" class="button2 button3">Continuar</a>
+        </fieldset>
     {% elif reclamos_similares=="adhirió": %}
-        <form action="/usuario">
-            <h3>Su ha registrado su adhesión</h3>
+    <br><br>
+        <fieldset>
+            <legend>Nuevo reclamo</legend>
+            <h3>Se ha registrado su adhesión</h3>
             <br>
-            <input type="submit" value="Continuar">
-        </form>
+            <a href="/usuario/{{user}}" class="button2 button3">Continuar</a>
+        </fieldset>
     {% else: %}
-        <h3>Se han encontrados reclamos similares.</h3>
-        <h3>¿Preferiría adherirse a alguno o prefiere continuar con la creación de su reclamo?</h3>
-        {% for claim in reclamos_similares: %}
+    <fieldset>
+        <legend>Nuevo reclamo</legend>
+        <h4>Se han encontrados reclamos similares.</h4>
+        <h4>¿Preferiría adherirse a alguno o prefiere continuar con la creación de su reclamo?</h4>
+        {% for claim in lista_similares: %}
         <div class="dropdown">
             <button class="button button1">Reclamo similar</button>
             <div class="dropdown-content">
-              <p class="etiquetas">ID:</p>
-              <p class="content">{{claim.get_ID}}</p><br>
-              <p class="etiquetas">Descripción</p>
-              <p class="content">{{claim.get_descripcion}}</p>
-              <p class="etiquetas">Estado:</p>
-              <p class="content">{{claim.get_estado}}</p><br>
-              <p class="etiquetas"> Fecha de creación: </p>
-              <p class="content">{{claim.get_fecha}}</p>
-              <p class="etiquetas">Departamento:</p>
-              <p class="content">{{claim.get_departamento}}</p>
-              <p class="etiquetas">{{claim.contar_adherentes}} adherentes</p><br><br>
+                  <p class="etiquetas">ID:</p>
+                  <p class="content">{{claim.get_ID}}</p><br>
+                  <p class="etiquetas">Descripción</p>
+                  <p class="content">{{claim.get_descripcion}}</p>
+                  <p class="etiquetas">Estado:</p>
+                  <p class="content">{{claim.get_estado}}</p><br>
+                  <p class="etiquetas"> Fecha de creación: </p>
+                  <p class="content">{{claim.get_fecha}}</p><br>
+                  <p class="etiquetas">Departamento:</p>
+                  <p class="content">{{claim.get_departamento}}</p><br>
+                  <p class="etiquetas">{{claim.contar_adherentes}} adherentes</p><br><br>
               <form action=/reclamo method="post">
                     <input type="hidden" name="action" value="adherir">
                     <input type="hidden" name="ID_reclamo" value="{{claim.get_ID}}">
                     <input type="submit" value="Adherir" class="botoncito">
               </form>
             </div>
-          </div>
-          <form action="/reclamo" method="post">
+        </div>
+        {% endfor %}
+        <br>
+        <form action="/reclamo" method="post">
             <input type="hidden" name="action" value="crear_igualmente">
             <input type="submit" value="Continuar">
           </form>
-          {% endfor %}
+    </fieldset>
     {% endif %}
 </div>
 </body>

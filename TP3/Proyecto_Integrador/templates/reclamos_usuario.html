@@ -145,10 +145,13 @@
     </header>
 <section>
 {% if cant==0: %}          
-      <article>
+      <nav>
     <h3>Por lo visto aún no has creado ningún reclamo, {{user}}</h3>
+      </nav>
+      <article>
     <a href="/usuario/{{user}}" class="button2 button3">Volver</a>
       </article>
+      
 {% else: %}
       <nav>
    {% for claim in reclamos %} 
@@ -167,8 +170,8 @@
             <p class="content">{{claim.get_departamento}}</p>
       </div>
       </div>
-      </nav>
   {% endfor %}
+</nav>
   <article>
   <a href="/usuario/{{user}}" class="button2 button3">Volver</a>
 </article>
