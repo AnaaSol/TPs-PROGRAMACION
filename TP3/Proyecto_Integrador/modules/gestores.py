@@ -99,6 +99,17 @@ class Gestor_de_base_de_datos():
                 reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==filtro).all()
             except NoResultFound:
                 raise Exception("El reclamo no existe")
+        elif type=="adherente":
+            reclamo=[]
+            try:
+                recl=db.session.query(Reclamo_db).all()
+                for i in recl:
+                    adherentes=i.adherentes
+                    adherentes.split(" ")
+                    if filtro in adherentes:
+                        reclamo.append(i)
+            except NoResultFound:
+                raise Exception("No es un adherente") #no debería saltar esta excepción
         else:
             raise Exception("Sólo puede filtrar por usuario, departamento, estado o ID")
         

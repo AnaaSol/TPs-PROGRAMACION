@@ -63,7 +63,7 @@ class Reclamo_db(db.Model):
     estado = db.Column(db.String(10))
     depto = db.Column(db.String(25))
     timestap = db.Column(db.String(50), nullable=False)
-    adherentes = db.Column(db.String()) #string de ID's separados por comas o espacios
+    adherentes = db.Column(db.String()) #string de ID's separados por espacios
     ID_user = db.Column(db.Integer(), db.ForeignKey('personas.ID'))
     imagen = db.Column(db.LargeBinary)
 

@@ -318,10 +318,18 @@ def reclamos_user():
     ID_user=GestorDB.get_dato_user(user, "ID")
     reclamos=[]
     reclamos_usuario=GestorDB.get_reclamos_by_filtro("id_usuario", ID_user)
+    reclamos_adheridos=GestorDB.get_reclamos_by_filtro("adherente", str(ID_user))
     cant=len(reclamos_usuario)
+    cant2=len(reclamos_adheridos)
     if cant!=0:
         datos=reclamos_usuario
-        print(datos)
+        for i in range(len(datos)):
+            claim=Reclamo(datos[i][0], datos[i][1], datos[i][2], datos[i][3])
+            claim.set_depto(datos[i][5])
+            claim.cambiar_estado(datos[i][4])
+            reclamos.append(claim)
+    if cant2!=0:
+        datos=reclamos_adheridos
         for i in range(len(datos)):
             claim=Reclamo(datos[i][0], datos[i][1], datos[i][2], datos[i][3])
             claim.set_depto(datos[i][5])

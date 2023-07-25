@@ -142,7 +142,7 @@
           background-color: white; 
           color: black; 
           border: 2px solid #666;
-          width: 70px; 
+          width:auto; 
           text-align: center;
           }
 
@@ -192,7 +192,7 @@
             <!-- <p>{{claim.get_ID_usuario}}</p>
                   <p>{{ID_user}}</p> -->
             {% if ID_user==claim.get_ID_usuario: %}
-                  <p class="tag"><i>Adherido</i></p>
+                  <p class="tag"><i>Usted es el creador</i></p>
             {% else: %}
                   {% if ID_user not in claim.get_adherentes: %}
                   <form action=/reclamos_pendientes method="post">
