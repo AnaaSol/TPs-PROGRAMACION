@@ -1,7 +1,6 @@
 #from modulos.config import db #no encuentra modulos
 from modules.config import db, app #como los archivos están dentro de la misma carpeta, no pongo el nombre de la misma ("modulos")
 from flask_login import UserMixin
-from sqlalchemy.dialects.postgresql import ARRAY
 
 
 #los valores de los atributos para cada instancia se pueden inicializar gracias a un posible "__init__" dentro de db.Model;

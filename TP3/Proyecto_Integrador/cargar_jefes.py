@@ -1,7 +1,7 @@
 #Esto debería estar en data
-from modulos.config import app, db
-from modulos.jefe_y_secretario import Jefe
-from modulos.gestores import Gestor_de_base_de_datos
+from modules.config import app, db
+from modules.jefe_y_secretario import Jefe
+from modules.gestores import Gestor_de_base_de_datos
 
 Jefe1=Jefe(0, "Mariano", "Pereira", "marip", "marip@gmail.com", "blabla", "secretaría técnica")
 Jefe2=Jefe(0, "Luciana", "Cabrera", "lucab", "lucab@gmail.com", "tuqui", "maestranza")

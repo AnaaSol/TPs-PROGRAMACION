@@ -15,28 +15,11 @@ def graficar_nube(texto):
     fig, ax = plt.subplots(figsize=(8, 4)) #se crea la figura
     ax.imshow(wd, interpolation='bilinear')
     ax.set_axis_off() #se ocultan los ejes
-    plt.show()
+    # plt.show()
+    return wd
 
 #funciona
-graficar_nube("Este es un serio problema, Mr. Jones. No sabemos nada aún de nuestro destino. Nuestro futuro ha sido puesto en pausa, y yo muero por vivir. Deseo que su mundo se reanude, para que devuelva a la vida al nuestro")
-
-estado_reclamos_competentes=["Pendiente", "Pendiente", "En proceso", "Inválido", "Resuelto", "Resuelto", "Resuelto"] #query
-pendiente=0
-invalido=0
-en_proceso=0
-resuelto=0
-for estado in estado_reclamos_competentes:
-    estado=estado.lower()
-    if estado=="pendiente":
-        pendiente+=1
-    elif estado=="inválido":
-        invalido+=1
-    elif estado=="resuelto":
-        resuelto+=1
-    elif estado=="en proceso":
-        en_proceso+=1
-    else:
-        print("Sólo hay 4 posibles estados.")
+#graficar_nube("Este es un serio problema, Mr. Jones. No sabemos nada aún de nuestro destino. Nuestro futuro ha sido puesto en pausa, y yo muero por vivir. Deseo que su mundo se reanude, para que devuelva a la vida al nuestro")
 
 def graficar_torta(estados, depto):
 

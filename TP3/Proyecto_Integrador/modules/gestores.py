@@ -4,6 +4,7 @@ from modules.databases import Reclamo_db, Persona_db
 from modules.reclamo import Reclamo
 from modules.clasificador import Clasificador 
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError, InterfaceError
 from modules.preprocesamiento import TextVectorizer
 
 class Gestor_de_reclamos():
@@ -170,50 +171,89 @@ class Gestor_de_base_de_datos():
     #             datos_reclamos.append(datos)
     #         return datos_reclamos  
 
+    def contar_cantidad(self, depto):
+        """Devuelve una lista con la cantidad de reclamos pendientes, inválidos, en proceso y resueltos del departamento solicitado"""
+        reclamos_competentes=self.get_reclamos_by_filtro("departamento", depto)
+        estado_reclamos_competentes=[reclamo[4] for reclamo in reclamos_competentes]
+        pendiente=0
+        invalido=0
+        en_proceso=0
+        resuelto=0
+        for estado in estado_reclamos_competentes:
+            estado=estado.lower()
+            if estado=="pendiente":
+                pendiente+=1
+            elif estado=="inválido":
+                invalido+=1
+            elif estado=="resuelto":
+                resuelto+=1
+            elif estado=="en proceso":
+                en_proceso+=1
+        return [pendiente, invalido, en_proceso, resuelto]
+
 #dato=[claim.get_ID(), claim.get_descripcion()...] ; claim=Reclamo()
     def guardar_nuevo_objeto(self, clase, dato): #dato debería ser una lista con el "formato" del objeto
-        if clase=="reclamo":
-            nuevo_reclamo=Reclamo_db(
-                description=dato[0], #str
-                estado=dato[1], #str
-                depto=dato[2], #str
-                timestap=dato[3], #str
-                ID_user=dato[4] #int
-                ) 
-            db.session.add(nuevo_reclamo)
-            db.session.commit()
-            
-        elif clase=="usuario":
-            nuevo_usuario=Persona_db(
-                name=dato[0],
-                surname=dato[1],
-                email=dato[2],
-                username=dato[3], 
-                password=dato[4],
-                )
-            nuevo_usuario.set_claustro(dato[5])
-            nuevo_usuario.set_reclamos(dato[6], "generados")
-            nuevo_usuario.set_reclamos(dato[7], "adheridos")
-            db.session.add(nuevo_usuario)
-            db.session.commit()
 
-        elif clase=="jefe":
-            nuevo_jefe=Persona_db( #se inicializa con elementos del __init__
-                name=dato[0],
-                surname=dato[1],
-                username=dato[2],
-                email=dato[3], 
-                password=dato[4],
-                )
-            nuevo_jefe.set_depto(dato[5]) #se utilizan setters para atributos particulares
-            db.session.add(nuevo_jefe)
-            db.session.commit()
+        if clase in ["reclamo", "usuario", "jefe"]:
+
+            try:
+
+                if clase=="reclamo":
+                    nuevo_reclamo=Reclamo_db(
+                        description=dato[0], #str
+                        estado=dato[1], #str
+                        depto=dato[2], #str
+                        timestap=dato[3], #str
+                        ID_user=dato[4] #int
+                        ) 
+                    db.session.add(nuevo_reclamo)
+                    db.session.commit()
+                    
+                elif clase=="usuario":
+                    nuevo_usuario=Persona_db(
+                        name=dato[0],
+                        surname=dato[1],
+                        email=dato[2],
+                        username=dato[3], 
+                        password=dato[4],
+                        )
+                    nuevo_usuario.set_claustro(dato[5])
+                    nuevo_usuario.set_reclamos(dato[6], "generados")
+                    nuevo_usuario.set_reclamos(dato[7], "adheridos")
+                    db.session.add(nuevo_usuario)
+                    db.session.commit()
+
+                elif clase=="jefe":
+                    nuevo_jefe=Persona_db( #se inicializa con elementos del __init__
+                        name=dato[0],
+                        surname=dato[1],
+                        username=dato[2],
+                        email=dato[3], 
+                        password=dato[4],
+                        )
+                    nuevo_jefe.set_depto(dato[5]) #se utilizan setters para atributos particulares
+                    db.session.add(nuevo_jefe)
+                    db.session.commit()
+
+            except InterfaceError: #se intenta cargar un tipo de dato que no admite la columna
+                print("Probablemente algún dato es de un tipo no compatible con su respectiva columna")
+                #por alguna razón no salta error cuando se intenta guarda un entero en String(), creo que lo convierte
+
+            except IntegrityError: #se intenta violar la restricción de unicidad
+                print("Recuerde respetar la unicidad de email y nombre de usuario")
+
+            except IndexError: #la lista no contiene todos los elementos requeridos
+                print("Faltan datos")
+
+            except Exception as e:
+                print("Ha ocurrido una excepción:", e)
 
         else:
             print("No existe esa base de datos.")
     
     #hay que controlar externamente nuevo_valor o pueden pasar cosas malas
     def modificar_dato(self, dato, nuevo_valor, clase, ID):  #dato y clase son siempre strs, el ID es del objeto cuyo dato se quiere modificar
+        """Modifica el dato del objeto provisto (ID y clase) si está permitido"""
         if clase.lower() in ["usuario", "reclamo"]:
             if clase=="reclamo":
                 if dato in ["estado", "depto", "adherentes"]:

@@ -16,8 +16,13 @@ from modules.reclamos_similares import reclamos_similares
 #clases modelo (tablas de db)
 from modules.databases import *
 
+#funciones
+from modules.funciones import graficar_nube, graficar_torta
+
 #otros módulos
 import datetime
+import io
+import base64
 from functools import wraps
 from modules.config import app, db, login_manager
 
@@ -139,7 +144,25 @@ def manejar(depto):
 
 @app.route("/analitica/<depto>", methods=['GET', 'POST'])
 def analitica(depto):
-    return render_template("analitica.html", depto=depto)
+
+    reclamos_depto=GestorDB.get_reclamos_by_filtro("departamento", depto) #obtiene la data de los reclamos del depto
+    descripciones=[reclamo[1] for reclamo in reclamos_depto] #se queda con las descripciones
+    texto = ' '.join(descripciones) #forma un texto
+    cantidades=GestorDB.contar_cantidad(depto) #obtiene la cantidad de reclamos por estado del depto
+
+    wd = graficar_nube(texto) #Obtiene la nube de palabras
+    torta = graficar_torta(cantidades, depto)  #Obtiene el gráfico de torta
+
+    #Guarda las imágenes en un buffer (memoria temporal)
+    buf = io.BytesIO()
+    wd.to_image().save(buf, format="PNG")
+    torta.to_image().save(buf, format="PNG")
+
+    #Codifica la imagen en base64
+    nube_cod = base64.b64encode(buf.getvalue()).decode("utf-8")
+    torta_cod = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    return render_template("analitica.html", depto=depto, nube_cod=nube_cod, torta_cod=torta_cod)
 
 @app.route("/usuario/<user>", methods=['GET', 'POST'])
 def usuario(user):
@@ -281,23 +304,20 @@ def pendientes():
     ID_user=int(ID_user) 
     return render_template("reclamos_pendientes.html", reclamos_pendientes=reclamos_pendientes, cant=cant, user=user, ID_user=ID_user)
 
-
 @app.route("/reclamos_usuario", methods=['GET', 'POST'])
 def reclamos_user():
     user=session.get('username')
-    ID_user=GestorDB.get_dato_user(user, "ID")
     reclamos=[]
-    reclamos_usuario=GestorDB.get_reclamos_by_filtro("id_usuario", ID_user)
-    cant=len(reclamos_usuario)
-    if cant!=0:
-        datos=reclamos_usuario
-        print(datos)
-        for i in range(len(datos)):
-            claim=Reclamo(datos[i][0], datos[i][1], datos[i][2], datos[i][3])
-            claim.set_depto(datos[i][5])
-            claim.cambiar_estado(datos[i][4])
-            reclamos.append(claim)
-    return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user)
+    cant=0
+    #ya no viene ningún post desde /usuario
+    # if request.method == 'POST': #post que viene desde /usuario, ¿qué pasa con el que redirecciona desde /reclamos_usuario?
+    #     user=request.form["username"]
+    #     ID_user=GestorDB.get_dato_user(user, "ID") #no va a lanzar excepción porque user existe y ID es un atributo 
+    #     reclamos_data=GestorDB.get_reclamos_by_filtro("usuario", ID_user) 
+    #     cant=len(reclamos_data)
+    #     if cant!=0:
+    #         reclamos=GestorR.cargar_de_db(reclamos_data)
+    return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user, cant=cant)
 
 if __name__ == "__main__":
     app.run(debug=True)

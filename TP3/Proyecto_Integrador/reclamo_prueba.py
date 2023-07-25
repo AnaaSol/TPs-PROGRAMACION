@@ -1,6 +1,6 @@
-from modulos.config import app, db
-from modulos.databases import Reclamo_db
-from modulos.gestores import Gestor_de_base_de_datos
+from modules.config import app, db
+from modules.databases import Reclamo_db
+from modules.gestores import Gestor_de_base_de_datos
 import datetime
 
 # datos=["No hay papel higiénico en el módulo 1 durante toda la mañana", "pendiente", "maestranza", str(datetime.datetime.now())[:19], 4 ]
