@@ -24,45 +24,56 @@
 
 
     nav {
-    float: left;
-    width: 31%;
-    height: 400px; 
-    background: #ccc;
-    padding: 20px;
-    text-align: left;
-    font-size: 15px;
-    }
+      float: left;
+      width: 50%;
+      height: 600px; 
+      background: #f1f1f1;
+      padding: 20px;
+      text-align: left;
+      font-size: 15px;
+      }
 
-    article {
-    float: left;
-    padding: 30px;
-    width: 23%;
-    background-color: #f1f1f1;
-    height: 400px; 
-    }
+      article {
+      float: left;
+      padding: 20px;
+      width: 50%;
+      height: 600px;
+      background-color: #f1f1f1; 
+      }
 
-    lateral {
-    float: left;
-    padding: 30px;
-    width: 23%;
-    background-color: #f1f1f1;
-    height: 400px;
-    }
+      @media (max-width: 600px) {
+      nav, article{
+            width: 100%;
+            height: auto;
+      }
+      }
 
-    ending {
-    float: right;
-    padding: 30px;
-    width: 23%;
-    background-color: #f1f1f1;
-    height: 400px;
-    }
-    
-    @media (max-width: 600px) {
-    nav, article, lateral, ending{
-        width: 100%;
-        height: auto;
-    }
-    }
+      
+      .button2 {
+      background-color: #f1f1f1;
+      border: none;
+      color: white;
+      padding: 8px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      transition-duration: 0.2s;
+      cursor: pointer;
+      }
+      
+    .button3 {
+          background-color: #f1f1f1; 
+          color: black; 
+          border: 2px solid #666; 
+          width: auto;
+          }
+ 
+    .button3:hover {
+          background-color: rgb(80, 126, 145);
+          color: black;
+          }
 
 </style>
 </head>
@@ -71,7 +82,14 @@
         <h5><i>Servicio de reclamos FIUNER</i></h5>
         <h3>{{depto}}</h3>
     </header>
-    <img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes">
-    <img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas">
+<section>
+    <nav>
+    <img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="600">
+    </nav>
+    <article>
+    <img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="300">
+    <a href="/jefe/{{depto}}" class="button2 button3">Volver</a>
+    </article>
+</section>
 </body>
 </html>

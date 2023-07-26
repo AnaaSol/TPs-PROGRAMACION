@@ -56,6 +56,9 @@
     </header>
     <section>
         <nav>
+            {% if estado=="cambio": %}
+            <h2 style="color:rgb(80, 126, 145);">Se realizaron actualizaciones en el estado de sus reclamos</h2><br>
+            {% endif %}
             <h1>¿Qué desea hacer? </h1>
             <br>
             <a href="/reclamo">

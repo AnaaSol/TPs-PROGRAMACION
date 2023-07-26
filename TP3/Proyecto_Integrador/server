@@ -45,6 +45,8 @@ with app.app_context():
 @login_manager.user_loader
 def user_loader(user_id):
     return Persona_db.query.get(user_id)
+
+cambio_de_estado=False
     
 @app.route("/", methods=['GET', 'POST'])
 def raiz():  
@@ -123,6 +125,7 @@ def jefe(depto):
 
 @app.route("/manejar/<depto>", methods=['GET', 'POST'])
 def manejar(depto):
+    global cambio_de_estado
 
     if request.method == 'POST':
         if "action" in request.form:
@@ -130,6 +133,7 @@ def manejar(depto):
             action=request.form["action"]
             if action=="estado":
                 nuevo_estado=request.form["nuevo_estado"]
+                cambio_de_estado=True
                 GestorDB.modificar_dato("estado", nuevo_estado, "reclamo", ID)
             elif action=="departamento":
                 nuevo_depto=request.form["nuevo_depto"]
@@ -157,24 +161,18 @@ def analitica(depto):
     texto = ' '.join(descripciones) #forma un texto
     cantidades=GestorDB.contar_cantidad(depto) #obtiene la cantidad de reclamos por estado del depto
 
-    wd = graficar_nube(texto) #Obtiene la nube de palabras
-    torta = graficar_torta(cantidades, depto)  #Obtiene el gráfico de torta
-
-    #Guarda las imágenes en un buffer (memoria temporal)
-    buf = io.BytesIO()
-    wd.to_image().save(buf, format="PNG")
-    torta.to_image().save(buf, format="PNG")
-
-    #Codifica la imagen en base64
-    nube_cod = base64.b64encode(buf.getvalue()).decode("utf-8")
-    torta_cod = base64.b64encode(buf.getvalue()).decode("utf-8")
+    nube_cod = graficar_nube(texto) #Obtiene la nube de palabras
+    torta_cod = graficar_torta(cantidades, depto)  #Obtiene el gráfico de torta
 
     return render_template("analitica.html", depto=depto, nube_cod=nube_cod, torta_cod=torta_cod)
 
 @app.route("/usuario/<user>", methods=['GET', 'POST'])
 def usuario(user):
     session['username'] = user
-    return render_template("usuario.html", user=user)
+    estado="same"
+    if cambio_de_estado:
+        estado="cambio"
+    return render_template("usuario.html", user=user, estado=estado)
 
 @app.route("/reclamo", methods=['GET', 'POST'])
 def crear():
@@ -360,7 +358,9 @@ def reclamos_user():
         for r in creados:
             reclamos.append(r)
 
-    return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user)
+    cant=len(reclamos)
+
+    return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user, cant=cant)
 
 if __name__ == "__main__":
     app.run(debug=True)
