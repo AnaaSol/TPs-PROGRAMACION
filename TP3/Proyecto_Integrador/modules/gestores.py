@@ -83,21 +83,21 @@ class Gestor_de_base_de_datos():
         valor del mismo, tomarán los valores default y se devolverán todos los reclamos en la base de datos"""
         type=type.lower()
         if type=="all" and filtro=="nada": #valores default
-            reclamo=db.session.query(Reclamo_db).all()
+            reclamos=db.session.query(Reclamo_db).all()
         elif type=="usuario":
-            reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==filtro).all() #filtro es el ID del usuario
+            reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==filtro).all() #filtro es el ID del usuario
             #si está vacía, either no existe un usuario con ese ID o no ha generado reclamos
             #(el primer caso se puede controlar con la obtención previa del ID)
         elif type=="estado":
             filtro=filtro.lower()
             if filtro in ["pendiente", "resuelto", "inválido", "en proceso"]:
-                reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.estado==filtro).all() 
+                reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.estado==filtro).all() 
             else:
                 raise Exception("Filtro inválido")
         elif type=="departamento":
             filtro=filtro.lower()
             if filtro in ["soporte informático", "maestranza", "secretaría técnica"]:
-                reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.depto==filtro).all()
+                reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.depto==filtro).all()
             else:
                 raise Exception("Filtro inválido")
         elif type=="id":
@@ -105,39 +105,17 @@ class Gestor_de_base_de_datos():
                 reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.ID_reclamo==filtro).one()
             except NoResultFound:
                 raise Exception("El reclamo no existe")
-        elif type=="id_usuario":
-            try: 
-                reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==filtro).all()
-            except NoResultFound:
-                raise Exception("El reclamo no existe")
-        elif type=="adherente":
-            reclamo=[]
-            try:
-                recl=db.session.query(Reclamo_db).all()
-                for i in recl:
-                    adherentes=i.adherentes
-                    adherentes.split(" ")
-                    if filtro in adherentes:
-                        reclamo.append(i)
-            except NoResultFound:
-                raise Exception("No es un adherente") #no debería saltar esta excepción
         else:
             raise Exception("Sólo puede filtrar por usuario, departamento, estado o ID")
         
         #este bloque de código no se ejecuta si ocurre alguna excepción
-        try:
-            if len(reclamo)==0:
-                return(reclamo) 
-        except:
-            if reclamo==None:
-                return(reclamo)
         
         datos_reclamos=[]
         if type=="id":
             datos=[reclamo.ID_reclamo, reclamo.description, reclamo.timestap, reclamo.ID_user, reclamo.estado, reclamo.depto, reclamo.imagen, reclamo.adherentes]
             datos_reclamos.append(datos)
         else:
-            for recl in reclamo: #TypeError: 'Reclamo_db' object is not iterable (one() devuelve el objeto, no dentro de una lista)
+            for recl in reclamos: #TypeError: 'Reclamo_db' object is not iterable (one() devuelve el objeto, no dentro de una lista)
                 datos=[recl.ID_reclamo, recl.description, recl.timestap, recl.ID_user, recl.estado, recl.depto, recl.imagen, recl.adherentes]
                 datos_reclamos.append(datos)
         return datos_reclamos
@@ -228,7 +206,7 @@ class Gestor_de_base_de_datos():
                         password=dato[4],
                         )
                     nuevo_usuario.set_claustro(dato[5])
-                    nuevo_usuario.set_reclamos(dato[6], "generados")
+                    nuevo_usuario.set_reclamos(dato[6], "generados") #queda guardada una lista vacía en lugar de None
                     nuevo_usuario.set_reclamos(dato[7], "adheridos")
                     db.session.add(nuevo_usuario)
                     db.session.commit()

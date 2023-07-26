@@ -28,8 +28,8 @@ class Usuario(Persona):
     def get_reclamos_adheridos(self):
         return self.__reclamos_adheridos
     
-    def agregar_reclamo_creado(self, ID):
-         self.__reclamos_generados.append(ID)
+    def guardar_reclamo_creado(self, ID):
+        self.__reclamos_generados.append(ID)
 
     def generar_datos_reclamo(self, descripcion):
         reclamo=[descripcion, str(datetime.datetime.now())[:19], self._ID]

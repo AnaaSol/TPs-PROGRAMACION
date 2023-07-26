@@ -117,7 +117,7 @@ def jefe(depto):
         if direction=="Manejar reclamos":
             return redirect(url_for('manejar', depto=depto))
         elif direction=="Analítica":
-            return redirect(url_for('analitica', depto=depto))
+            return redirect(url_for('analitica', depto=depto)) 
         
     return render_template("jefe.html", depto=depto)
 
@@ -192,6 +192,13 @@ def crear():
             elif action == 'crear':
                 #creación del objeto Usuario
                 usser=Usuario(GestorDB.get_dato_user(user, "ID"), GestorDB.get_dato_user(user, "name"), GestorDB.get_dato_user(user, "surname"), user, GestorDB.get_dato_user(user, "email"), GestorDB.get_dato_user(user, "password"), GestorDB.get_dato_user(user, "claustro"))
+                # adheridos=[reclamo for reclamo in GestorDB.get_dato_user(user, "reclamos_adheridos").split(" ")]
+                # creados=[reclamo for reclamo in GestorDB.get_dato_user(user, "reclamos_creados").split(" ")]
+                # for r in creados:
+                #     usser.guardar_reclamo_creado(r)
+                # for adh in adheridos:
+                #     usser.adherirse_a_reclamo(adh)
+
                 #creación del formulario para el reclamo
                 texto=request.form["description"]
                 formulario=usser.generar_datos_reclamo(texto)
@@ -222,6 +229,16 @@ def crear():
                         data.append(reclamo.get_imagen)
                     #print(data)
                     GestorDB.guardar_nuevo_objeto("reclamo", data)
+
+
+                    #PROBAR CON MÉTODO EN GESTORDB
+                    # ID_nuevo_reclamo=GestroDB.
+                    # creados=GestorDB.get_dato_user(user, "reclamos_generados")
+                    # if creados=="":
+                    #     GestorDB.modificar_dato("reclamos_generados", ID, "usuario", usser.get_ID())
+
+
+
                     return render_template("reclamo.html", reclamos_similares="no hay reclamos similares")
                 else:
                     lista_similares=[]
@@ -237,13 +254,21 @@ def crear():
             elif action=='adherir':
                 ID_user=str(GestorDB.get_dato_user(user, "ID"))
                 ID_reclamo=int(request.form["ID_reclamo"])
-                datos_actuales=GestorDB.get_reclamos_by_filtro("ID", ID_reclamo) #obtiene los datos del reclamo
-                adherentes_actuales=datos_actuales[0][7] #se queda con los adherentes 
+                datos_actuales_reclamo=GestorDB.get_reclamos_by_filtro("ID", ID_reclamo) #obtiene los datos del reclamo
+                adherentes_actuales=datos_actuales_reclamo[0][7] #se queda con los adherentes 
+                adheridos_actuales=GestorDB.get_dato_user(user, "reclamos_adheridos") #obtiene los reclamos adheridos del usuario
                 if adherentes_actuales=="":
                     adherentes_actualizados=ID_user
                 else:
                     adherentes_actualizados=adherentes_actuales+" "+ID_user
+
+                if adheridos_actuales=="":
+                    adheridos_actualizados=adheridos_actuales
+                else:
+                    adheridos_actualizados=adherentes_actuales+" "+str(ID_reclamo) 
+
                 GestorDB.modificar_dato("adherentes", adherentes_actualizados, "reclamo", ID_reclamo)
+                GestorDB.modificar_dato("reclamos_adheridos", adheridos_actualizados, "usuario", int(ID_user))
                 return render_template("reclamo.html", reclamos_similares="adhirió", user=user)
 
             elif action=='crear_igualmente':
@@ -269,11 +294,20 @@ def pendientes():
             ID_reclamo=int(request.form["ID_reclamo"])
             adherentes_actuales=GestorDB.get_reclamos_by_filtro("ID", ID_reclamo) #obtiene los datos del reclamo
             adherentes_actuales=adherentes_actuales[0][7] #se queda con los adherentes 
+            adheridos_actuales=GestorDB.get_dato_user(user, "reclamos_adheridos") #obtiene los reclamos a los que adhirió el usuario
             if adherentes_actuales=="":
                 adherentes_actualizados=ID_user
             else:
                 adherentes_actualizados=adherentes_actuales+" "+ID_user
+
+            if adheridos_actuales=="":
+                    adheridos_actualizados=adheridos_actuales
+            else:
+                    adheridos_actualizados=adherentes_actuales+" "+str(ID_reclamo) 
+
             GestorDB.modificar_dato("adherentes", adherentes_actualizados, "reclamo", ID_reclamo)
+            GestorDB.modificar_dato("reclamos_adheridos", adheridos_actualizados, "usuario", int(ID_user))
+
         except: #es la otra solicitud POST (filtro de reclamos)
             pass
         # name=GestorDB.__get_username_by_ID(int(ID_user))
@@ -307,27 +341,26 @@ def pendientes():
 
 @app.route("/reclamos_usuario", methods=['GET', 'POST'])
 def reclamos_user():
+
     user=session.get('username')
     ID_user=GestorDB.get_dato_user(user, "ID")
     reclamos=[]
-    reclamos_usuario=GestorDB.get_reclamos_by_filtro("id_usuario", ID_user)
-    reclamos_adheridos=GestorDB.get_reclamos_by_filtro("adherente", str(ID_user))
-    cant=len(reclamos_usuario)
-    cant2=len(reclamos_adheridos)
-    if cant!=0:
-        datos=reclamos_usuario
-        for i in range(len(datos)):
-            claim=Reclamo(datos[i][0], datos[i][1], datos[i][2], datos[i][3])
-            claim.set_depto(datos[i][5])
-            claim.cambiar_estado(datos[i][4])
-            reclamos.append(claim)
-    if cant2!=0:
-        datos=reclamos_adheridos
-        for i in range(len(datos)):
-            claim=Reclamo(datos[i][0], datos[i][1], datos[i][2], datos[i][3])
-            claim.set_depto(datos[i][5])
-            claim.cambiar_estado(datos[i][4])
-            reclamos.append(claim)
+    data_reclamos_creados=GestorDB.get_reclamos_by_filtro("usuario", ID_user) #obtiene la data de los reclamos creados por user
+    ID_reclamos_adheridos=GestorDB.get_dato_user(user, "reclamos_adheridos")
+    if ID_reclamos_adheridos=="":
+        pass
+    else: 
+        IDs=[ID for ID in ID_reclamos_adheridos.split(" ")] #obtiene los ID de los reclamos adheridos por user
+        data_reclamos_adheridos=[GestorDB.get_reclamos_by_filtro("ID", int(ID)) for ID in IDs]
+        adheridos=GestorR.cargar_de_db(data_reclamos_adheridos)
+        for r in adheridos:
+            reclamos.append(r)
+    
+    if len(data_reclamos_creados)!=0:
+        creados=GestorR.cargar_de_db(data_reclamos_creados)
+        for r in creados:
+            reclamos.append(r)
+
     return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user)
 
 if __name__ == "__main__":
