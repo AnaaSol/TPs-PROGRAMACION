@@ -4,7 +4,8 @@ import collections
 import operator
 
 def reclamos_similares (reclamos_same_depto, texto_objetivo): #reclamos_same_depto es una lista de tuplas con la descripcion de los reclamos y su ID (descrip, ID)
-    
+    """Devuelve una lista con los IDs de los reclamos similares. Si no los hay, devuelve una lista vacía"""
+
     cont=0
     similares=[]
     lista_objetivo=[] #lista de palabras del texto objetivo en orden de su frecuencia

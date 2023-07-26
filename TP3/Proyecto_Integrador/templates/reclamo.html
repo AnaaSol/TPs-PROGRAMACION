@@ -5,15 +5,21 @@
     <title>Generar Reclamo</title>
 <style>
 
+    input {margin: 5px;}
+
+    * {
+    box-sizing: border-box;
+    }
+    
     fieldset {background-color: #d9e3e9;
-            padding: 20px;}
+            padding: 20px;
+            min-height: 500px;
+        }
         
     legend {
         background-color: rgb(80, 126, 145);
         color: white;
         padding: 5px 10px;}
-        
-    input {margin: 5px;}
         
     div {margin-left: 200px;
         margin-right: 200px;
@@ -148,7 +154,7 @@
             </fieldset>
         </form>
         <form action="/reclamo" method="post">
-            <input type="hidden" name="action" value="volver">
+            <input type="hidden" name="action" value="volver_a_usuario">
             <input type="submit" class="button2 button3" value="Volver">
         </form>
     {% elif reclamos_similares=="no hay reclamos similares": %}
@@ -157,7 +163,10 @@
             <legend>Nuevo reclamo</legend>
             <h3>Su reclamo fue creado con éxito</h3>
             <br>
-            <a href="/usuario/{{user}}" class="button2 button3">Continuar</a>
+            <form action="/reclamo" method="post">
+                <input type="hidden" name="action" value="volver_a_usuario">
+                <input type="submit" class="button2 button3" value="Continuar">
+            </form>
         </fieldset>
     {% elif reclamos_similares=="adhirió": %}
     <br><br>
@@ -165,7 +174,10 @@
             <legend>Nuevo reclamo</legend>
             <h3>Se ha registrado su adhesión</h3>
             <br>
-            <a href="/usuario/{{user}}" class="button2 button3">Continuar</a>
+            <form action="/reclamo" method="post">
+                <input type="hidden" name="action" value="volver_a_usuario">
+                <input type="submit" class="button2 button3" value="Continuar">
+            </form>
         </fieldset>
     {% else: %}
     <fieldset>
@@ -173,9 +185,8 @@
         <h4>Se han encontrados reclamos similares.</h4>
         <h4>¿Preferiría adherirse a alguno o prefiere continuar con la creación de su reclamo?</h4>
         {% for claim in lista_similares: %}
-        <!-- {{claim}} -->
         <div class="dropdown">
-            <button class="button button1">Reclamo similar</button>
+            <button class="button button1">Reclamo</button>
             <div class="dropdown-content">
                   <p class="etiquetas">ID:</p>
                   <p class="content">{{claim.get_ID}}</p><br>
@@ -188,15 +199,24 @@
                   <p class="etiquetas">Departamento:</p>
                   <p class="content">{{claim.get_departamento}}</p><br>
                   <p class="etiquetas">{{claim.contar_adherentes}} adherentes</p><br><br>
-              <form action=/reclamo method="post">
-                    <input type="hidden" name="action" value="adherir">
-                    <input type="hidden" name="ID_reclamo" value="{{claim.get_ID}}">
-                    <input type="submit" value="Adherir" class="botoncito">
-              </form>
+                  <!-- <p>{{claim.get_ID_usuario}}</p>
+                        <p>{{ID_user}}</p> -->
+                  {% if ID_user==claim.get_ID_usuario: %}
+                        <p class="tag"><i>Usted es el creador</i></p>
+                  {% else: %}
+                        {% if ID_user not in claim.get_adherentes: %}
+                        <form action="/reclamo" method="post">
+                              <input type="hidden" name="ID_reclamo" value="{{claim.get_ID}}">
+                              <input type="submit" value="Adherir" class="botoncito">
+                        </form>
+                        {% else: %}
+                              <p class="tag"><i>Adherido</i></p>
+                        {% endif %}
+                  {% endif %}
             </div>
-        </div>
+            </div>
         {% endfor %}
-        <br>
+        <br><br><br><br>
         <form action="/reclamo" method="post">
             <input type="hidden" name="action" value="crear_igualmente">
             <input type="submit" value="Continuar">

@@ -23,25 +23,27 @@ class Gestor_de_reclamos():
         return claim #¿cómo se entera usuario?
 
     def clasificar_reclamo(self, claim):
-        depto=self.__clasificador.clasificar(claim) #claim.get_description
-        return depto
-        # claim.set_depto(depto[0])
-
-    def asignar_a_depto(self, reclamo, depto):
-            """Se obtiene el departamento correspondiente de la base de datos con depto y se le asigna el reclamo"""
+        """Recibe el reclamo (objeto) y lo clasifica"""
+        depto=self.__clasificador.clasificar([claim.get_descripcion])
+        claim.set_depto(depto[0])
 
     def cargar_de_db(self, datos_reclamos): #datos_reclamos se obtiene de get_reclamos_by_filtro
+        """Recibe los datos del o los reclamos y los crea, devolviendo una lista con los objetos"""
         reclamos=[]
         #datos_reclamos es una lista de datos donde datos=[ID_reclamo, description, timestap, ID_user, estado, depto, imagen, adherentes]
-        for datos in datos_reclamos:
-            claim=Reclamo(datos[0], datos[1], datos[2], datos[3])
-            claim.cambiar_estado(datos[4])
-            claim.set_depto(datos[5])
-            #claim.cargar_imagen(datos[6])
-            for adh in datos[7].split(" "):
-                claim.sumar_adherente(int(adh))
-            reclamos.append(claim)
-        return reclamos
+        try:
+            for datos in datos_reclamos:
+                claim=Reclamo(datos[0], datos[1], datos[2], datos[3])
+                claim.cambiar_estado(datos[4])
+                claim.set_depto(datos[5])
+                claim.cargar_imagen(datos[6])
+                if datos[7]!="": #evita un ValueError cuando int("")
+                    for adh in datos[7].split(" "): 
+                        claim.sumar_adherente(int(adh))
+                reclamos.append(claim)
+            return reclamos
+        except IndexError:
+            print("Recuerde utilizar el método get_reclamos_by_filtro() del Gestor de base de datos")
         
 class Gestor_de_base_de_datos():
     """El gestor de base de datos consulta y modifica la información almacenada en la base de datos"""
@@ -199,6 +201,12 @@ class Gestor_de_base_de_datos():
                         timestap=dato[3], #str
                         ID_user=dato[4] #int
                         ) 
+
+                    try: 
+                        nuevo_reclamo.add_image(dato[5])
+                    except IndexError: #no hay dato[5], es decir, imagen
+                        pass
+
                     db.session.add(nuevo_reclamo)
                     db.session.commit()
                     
@@ -265,7 +273,7 @@ class Gestor_de_base_de_datos():
                 print("Cambio guardado")
         else:
             raise Exception("No existe una base de datos para esa clase o no se permite modificarla")
-
+ 
         def eliminar(self, ID, tipo):
             if tipo=="reclamo":
                 reclamo = db.session.get(Reclamo_db, ID)
