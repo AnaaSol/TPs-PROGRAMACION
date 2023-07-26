@@ -17,7 +17,6 @@ def graficar_nube(texto):
     fig, ax = plt.subplots(figsize=(8, 4)) #se crea la figura
     ax.imshow(wd, interpolation='bilinear')
     ax.set_axis_off() #se ocultan los ejes
-    plt.gca().set_facecolor('#f1f1f1')
     buf = io.BytesIO()
     plt.savefig(buf, format='png')
     buf.seek(0)
@@ -39,7 +38,6 @@ def graficar_torta(estados, depto):
     etiquetas_y_valores = [f'{etiqueta} - {valor}%' for etiqueta, valor in zip(etiquetas, valores)]
     plt.legend(etiquetas_y_valores, loc='best', bbox_to_anchor=(1, 0.5))
     plt.title(f"Total reclamos {depto}: {cant}")
-    plt.gca().set_facecolor('#f1f1f1')
     buf = io.BytesIO()
     plt.savefig(buf, format='png')
     buf.seek(0)

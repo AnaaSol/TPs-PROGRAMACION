@@ -25,42 +25,25 @@
 
     nav {
     float: left;
-    width: 31%;
-    height: 400px; 
+    width: 30%;
+    height: 425px;
     background: #ccc;
     padding: 20px;
-    text-align: left;
     font-size: 15px;
     }
 
     article {
     float: left;
     padding: 30px;
-    width: 23%;
+    width: 70%;
+    height: 425px;
     background-color: #f1f1f1;
-    height: 400px; 
-    }
-
-    lateral {
-    float: left;
-    padding: 30px;
-    width: 23%;
-    background-color: #f1f1f1;
-    height: 400px;
-    }
-
-    ending {
-    float: right;
-    padding: 30px;
-    width: 23%;
-    background-color: #f1f1f1;
-    height: 400px;
     }
     
     @media (max-width: 600px) {
     nav, article, lateral, ending{
+        height: 425px;
         width: 100%;
-        height: auto;
     }
     }
 
@@ -99,6 +82,19 @@
       opacity: 1;
     }
 
+    table {
+            border-collapse: collapse;
+            width: 100%;
+            max-height: 425px;
+            overflow-y: auto;
+        }
+
+    th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
 </style>
 </head>
 <body>
@@ -111,19 +107,13 @@
             <h1>¿Qué desea hacer? </h1>
             <form action="/">
               <input type="submit" value="Salir">
-            </form>
-        </nav>
-        <article>
+            </form><br>
             <form action="/jefe/{{depto}}" method="post">
                 <input type="submit" value="Analítica" name="button_value">
-            </form>
-        </article>
-        <lateral>
+            </form><br>
             <form action="/jefe/{{depto}}" method="post">
                 <input type="submit" value="Manejar reclamos" name="button_value">
-            </form>
-        </lateral>
-        <ending>
+            </form><br><br><br><br><br><br><br><br><br>
             <button id="popup-button" onclick="togglePopup()">Ayuda</button>
   
             <div id="popup-overlay" class="popup-overlay-hidden"></div>
@@ -143,7 +133,63 @@
                 popupOverlay.classList.toggle("popup-overlay-visible");
                 }
             </script>
-        </ending>
+        </nav>
+        <article>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+            <!-- Botones de descarga -->
+            <button onclick="descargarHTML()">Descargar como HTML</button>
+            <button onclick="descargarPDF()">Descargar como PDF</button>
+        
+            <!-- Script para la descarga -->
+            <script>
+                function descargarHTML() {
+                    const contenidoTabla = document.getElementsByTagName('table')[0].outerHTML;
+                    const archivoBlob = new Blob([contenidoTabla], { type: 'text/html' });
+                    const urlArchivo = URL.createObjectURL(archivoBlob);
+                    const enlaceDescarga = document.createElement('a');
+                    enlaceDescarga.href = urlArchivo;
+                    enlaceDescarga.download = 'tabla.html';
+                    enlaceDescarga.click();
+                }
+        
+                function descargarPDF() {
+                    const tabla = document.querySelector('table');
+                    const opt = {
+                        margin: 10,
+                        filename: 'tabla.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    html2pdf().from(tabla).set(opt).save();
+                }
+            </script>
+            <br><br>
+            <table>
+                <tr>
+                    <th>ID reclamo</th>
+                    {% for claim in reclamos:%}
+                    <td>{{claim[0]}}</td>
+                    {% endfor%}
+                </tr>
+                <tr>
+                    <th> Descripcion </th>
+                    {% for claim in reclamos:%}
+                    <td>{{claim[1]}}</td>
+                    {% endfor%} 
+                </tr>
+                <tr>
+                    <th>Estado</th>
+                    {% for claim in reclamos:%}
+                    <td>{{claim[4]}}</td>
+                    {% endfor%}
+                </tr>
+                <tr>
+                    <td><img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="400"></td>
+                    <td><img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="170"></td>
+                </tr>
+            </table>
+        </article>
     </section>
 </body>
 </html>

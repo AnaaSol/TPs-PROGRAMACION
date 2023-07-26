@@ -4,83 +4,147 @@
     <meta charset="UTF-8">
     <title>Reclamos de {{depto}}</title>
   <style>
+      input {margin: 5px;}
 
-      header {
-        background-color: #666;
-        padding: 8px;
-        text-align: center;
-        font-size: 27px;
-        color: white;
+* {
+box-sizing: border-box;
+}
+
+body {
+font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+  background-color: #666;
+  padding: 8px;
+  text-align: center;
+  font-size: 27px;
+  color: white;
+}
+
+nav {
+float: left;
+width: 82%;
+height: 600px; 
+background: #f1f1f1;
+padding: 20px;
+text-align: left;
+font-size: 15px;
+}
+
+article {
+float: left;
+padding: 20px;
+width: 18%;
+height: 600px;
+background-color: #f1f1f1; 
+}
+
+@media (max-width: 600px) {
+nav, article{
+      width: 100%;
+      height: auto;
+}
+}
+
+.button {
+    background-color: #009999;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.2s;
+    cursor: pointer;
+    }
+
+.button1 {
+    background-color: #f1f1f1; 
+    color: black; 
+    border: 2px solid #666;
+    width: 250px; 
+    }
+
+.button1:hover {
+    background-color: rgb(80, 126, 145);
+    color: black;
+    }
+
+.button2 {
+background-color: #f1f1f1;
+border: none;
+color: white;
+padding: 8px 10px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-size: 16px;
+margin: 4px 2px;
+transition-duration: 0.2s;
+cursor: pointer;
+}
+
+.button3 {
+    background-color: #f1f1f1; 
+    color: black; 
+    border: 2px solid #666; 
+    width: auto;
+    }
+
+.button3:hover {
+    background-color: rgb(80, 126, 145);
+    color: black;
+    }
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 250px; 
+      }
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    background-color: #f1f1f1;
+    }
+
+.dropdown:hover .dropdown-content {
+display: block;
+border: 2px solid #666;
+padding: 10px
+}
+
+.botoncito { 
+      background-color: #f1f1f1;
+}
+
+
+.etiquetas {
+    color: #000000;
+    text-align: left;
+    background-color: #f1f1f1;
+    text-decoration: underline;
+    padding-right: 5px;
+    display: inline-block; 
+    margin-bottom: 0.001;
     }
     
-     .button {
-          background-color: #009999;
-          border: none;
-          color: white;
-          padding: 16px 32px;
-          text-align: center;
-          text-decoration: none;
-          display: inline-block;
-          font-size: 16px;
-          margin: 4px 2px;
-          transition-duration: 0.2s;
-          cursor: pointer;
-          }
-
-    .button1 {
-          background-color: white; 
-          color: black; 
-          border: 2px solid #009999;
-          width: 250px; 
-          }
-
-    .button1:hover {
-          background-color: #009999;
-          color: white;
-          }
-  
-    .dropdown {
-          position: relative;
-          display: inline-block;
-          width: 250px; 
-    	  }
-
-    .dropdown-content {
-          display: none;
-          position: absolute;
-          z-index: 1;
-          background-color: #f1f1f1;
-          }
-
-    .dropdown:hover .dropdown-content {
-      display: block;
+.content {
+    display: inline-block;
+    margin-top: 0.5;
     }
-    
-    .botoncito {
-    	background-color: #acb3b8;
-        display: inline-block;
-        color: #000000;
-        padding: 5px 10px;
-        text-decoration: none;
-        border: 3px solid #000000;
-        border-radius: 15px;
-        font-family: Arial, sans-serif
+
+.tag {
+    background-color: white; 
+    color: black; 
+    border: 2px solid #666;
+    width:auto; 
+    text-align: center;
     }
-    
-    .etiquetas {
-          color: #000000;
-          text-align: left;
-          background-color: #f1f1f1;
-          text-decoration: underline;
-          padding-right: 5px;
-          display: inline-block; 
-          margin-bottom: 0.001;
-          }
-          
-    .content {
-          display: inline-block;
-          margin-top: 0.5;
-          }
     
   </style>
 </head>
@@ -89,51 +153,59 @@
             <h5><i>Reclamos para {{depto}} del</i></h5>
             <h3>Servicio de reclamos FIUNER</h3>
         </header>
-{% if len==0: %}
-    <h3>¡Vaya! No hay reclamos que correspondan a {{depto}} aún.</h3>
-    <a href="/jefe/{{depto}}" class="botoncito">Volver</a>
-{% else: %}
-   {% for claim in reclamos %} 
-  <div class="dropdown">
-    <button class="button button1">Reclamo {{claim.get_ID}}</button>
-    <div class="dropdown-content">
-      <p class="etiquetas">Usuario creador:</p>
-      <p class="content">{{claim.get_ID_user}}</p>
-      <p class="etiquetas"> Fecha de creación: </p>
-      <p class="content">{{claim.get_fecha}}</p><br>
-      <p class="etiquetas">Adherentes:</p>
-      <p class="content">{{claim.get_adherentes}}</p><br>
-      <p class="etiquetas">Estado:</p>
-      <p class="content">{{claim.get_estado}}</p>
-      <p class="etiquetas">Departamento:</p>
-      <p class="content">{{claim.get_departamento}}</p>
-      <form action="/manejar/{{depto}}" method="post">
-      <input type="hidden" name="ID" value="{{claim.get_ID}}">
-      <label for="cambiar">Cambiar estado</label>
-      <form action="/manejar/{{depto}}">
-      <select id="cambiar" name="nuevo_estado"> 
-           <option value="pendiente">Pendiente</option> 
-           <option value="inválido">Inválido</option> 
-           <option value="en proceso">En proceso</option> 
-           <option value="resuelto">Resuelto</option>
-      </select><br>
-      <input type="hidden" name="action" value="estado">
-      <input type="submit" value="Aplicar filtro" class="botoncito"><br><br>
-      </form>
-      {% if depto=="Secretaría técnica": %}
-      <label for="derivar">Derivar</label>
-      <form action="/manejar/{{depto}}">
-      <select id="derivar" name="nuevo_depto"> 
-           <option value="maestranza">Maestranza</option> 
-           <option value="soporte informático">Soporte informático</option>
-      </select><br>
-            <input type="hidden" name="action" value="departamento">
-            <input type="submit" value="Aplicar filtro" class="botoncito"><br><br>
-      </form>
-      {% endif %}
-    </div>
-  </div>
-  {% endfor %}
-{% endif %}
+<section>
+      <nav>
+            {% if len==0: %}
+            <h3>¡Vaya! No hay reclamos que correspondan a {{depto}} aún.</h3>
+            <a href="/jefe/{{depto}}" class="botoncito">Volver</a>
+            {% else: %}
+            {% for claim in reclamos %} 
+            <div class="dropdown">
+            <button class="button button1">Reclamo {{claim.get_ID}}</button>
+            <div class="dropdown-content">
+                  <p class="etiquetas">Usuario creador:</p>
+                  <p class="content">{{claim.get_ID_usuario}}</p><br>
+                  <p class="etiquetas"> Fecha de creación: </p>
+                  <p class="content">{{claim.get_fecha}}</p><br>
+                  <p class="etiquetas">Adherentes:</p>
+                  <p class="content">{{claim.get_adherentes}}</p><br>
+                  <p class="etiquetas">Estado:</p>
+                  <p class="content">{{claim.get_estado}}</p><br>
+                  <p class="etiquetas">Departamento:</p>
+                  <p class="content">{{claim.get_departamento}}</p><br>
+                  <form action="/manejar/{{depto}}" method="post">
+                  <input type="hidden" name="ID" value="{{claim.get_ID}}">
+                  <label for="cambiar" class="etiquetas">Cambiar estado</label><br>
+                  <form action="/manejar/{{depto}}">
+                  <select id="cambiar" name="nuevo_estado"> 
+                  <option value="pendiente">Pendiente</option> 
+                  <option value="inválido">Inválido</option> 
+                  <option value="en proceso">En proceso</option> 
+                  <option value="resuelto">Resuelto</option>
+                  </select><br>
+                  <input type="hidden" name="action" value="estado">
+                  <input type="submit" value="Aplicar filtro" class="botoncito"><br>
+                  </form>
+                  <br>
+                  {% if depto=="Secretaría técnica": %}
+                  <label for="derivar" class="etiquetas">Derivar</label><br>
+                  <form action="/manejar/{{depto}}">
+                  <select id="derivar" name="nuevo_depto"> 
+                  <option value="maestranza">Maestranza</option> 
+                  <option value="soporte informático">Soporte informático</option>
+                  </select><br>
+                        <input type="hidden" name="action" value="departamento">
+                        <input type="submit" value="Aplicar filtro" class="botoncito"><br><br>
+                  </form>
+                  {% endif %}
+            </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+      </nav>
+      <article>
+            <a href="/jefe/{{depto}}" class="button2 button3">Volver</a>
+      </article>
+</section>
 </body>
 </html>

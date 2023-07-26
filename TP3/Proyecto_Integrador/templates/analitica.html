@@ -25,24 +25,33 @@
 
     nav {
       float: left;
-      width: 50%;
+      width: 60%;
       height: 600px; 
-      background: #f1f1f1;
-      padding: 20px;
+      background: white;
+      padding: 1px;
       text-align: left;
       font-size: 15px;
       }
 
       article {
       float: left;
-      padding: 20px;
-      width: 50%;
+      padding: 10px;
+      width: 30%;
       height: 600px;
-      background-color: #f1f1f1; 
+      background-color: white; 
       }
+    
+    lateral {
+        float: right;
+        padding: 15px;
+        width: 10%;
+        height: 600px;
+        background: #f1f1f1;
+        text-align: center;
+    }
 
       @media (max-width: 600px) {
-      nav, article{
+      nav, article, lateral {
             width: 100%;
             height: auto;
       }
@@ -88,8 +97,10 @@
     </nav>
     <article>
     <img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="300">
-    <a href="/jefe/{{depto}}" class="button2 button3">Volver</a>
     </article>
+    <lateral>
+    <a href="/jefe/{{depto}}" class="button2 button3">Volver</a>
+    </lateral>
 </section>
 </body>
 </html>
