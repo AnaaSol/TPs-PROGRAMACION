@@ -44,6 +44,15 @@ class Gestor_de_reclamos():
             return reclamos
         except IndexError:
             print("Recuerde utilizar el método get_reclamos_by_filtro() del Gestor de base de datos")
+
+    def filtrar_por_depto(self, reclamos, filtro):
+        """Recibe una lista con los reclamos a filtrar y un string como filtro y devuelve una lista con los objetos filtrados"""
+        filtrados=[]
+        for reclamo in reclamos:
+            if reclamo.get_departamento==filtro:
+                filtrados.append(reclamo)
+        return filtrados
+
         
 class Gestor_de_base_de_datos():
     """El gestor de base de datos consulta y modifica la información almacenada en la base de datos"""

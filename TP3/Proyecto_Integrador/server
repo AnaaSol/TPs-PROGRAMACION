@@ -295,8 +295,9 @@ def pendientes():
         if filtro=="todos":
             reclamos_pendientes=reclamos_pendientes_sin_filtrar
         else:
-            reclamos_pendientes=[reclamo for reclamo in reclamos_pendientes_sin_filtrar if reclamo.get_departamento==filtro]
-    
+            #reclamos_pendientes=[reclamo for reclamo in reclamos_pendientes_sin_filtrar if reclamo.get_departamento==filtro]
+            reclamos_pendientes=GestorR.filtrar_por_depto(reclamos_pendientes_sin_filtrar, filtro)
+
     ID_user=int(ID_user) 
     return render_template("reclamos_pendientes.html", reclamos_pendientes=reclamos_pendientes, cant=cant, user=user, ID_user=ID_user)
 
