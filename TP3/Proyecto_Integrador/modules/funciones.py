@@ -22,13 +22,15 @@ def graficar_nube(texto):
 #graficar_nube("Este es un serio problema, Mr. Jones. No sabemos nada aún de nuestro destino. Nuestro futuro ha sido puesto en pausa, y yo muero por vivir. Deseo que su mundo se reanude, para que devuelva a la vida al nuestro")
 
 def graficar_torta(estados, depto):
-
+    cant=0
+    for x in estados:
+        cant+=x
     fig, axes=plt.subplots(figsize=(6,6), subplot_kw={"aspect":1})
-    sizes = [50, 25, 20, 5] #sizes debería ser la cantidad de reclamos por estado = estados
+    sizes = estados #sizes debería ser la cantidad de reclamos por estado = estados
     labels = ['Pendiente', 'En proceso', 'Resuelto', 'Inválido'] #el tp sólo pide los resueltos y en proceso
     axes.pie(sizes, labels=labels, autopct='%1.1f%%')
     axes.set_aspect('equal')
-    axes.set_title(f"Total reclamos {depto}: {len(estados)}")
+    axes.set_title(f"Total reclamos {depto}: {cant}")
     plt.show()
     #plt.savefig(f"static/torta_{depto}.png")
 

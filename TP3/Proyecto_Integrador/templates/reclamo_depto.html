@@ -89,10 +89,10 @@
             <h5><i>Reclamos para {{depto}} del</i></h5>
             <h3>Servicio de reclamos FIUNER</h3>
         </header>
-    {% if len==0 %}
+{% if len==0: %}
     <h3>¡Vaya! No hay reclamos que correspondan a {{depto}} aún.</h3>
     <a href="/jefe/{{depto}}" class="botoncito">Volver</a>
-    {% endif %}
+{% else: %}
    {% for claim in reclamos %} 
   <div class="dropdown">
     <button class="button button1">Reclamo {{claim.get_ID}}</button>
@@ -110,22 +110,30 @@
       <form action="/manejar/{{depto}}" method="post">
       <input type="hidden" name="ID" value="{{claim.get_ID}}">
       <label for="cambiar">Cambiar estado</label>
+      <form action="/manejar/{{depto}}">
       <select id="cambiar" name="nuevo_estado"> 
            <option value="pendiente">Pendiente</option> 
            <option value="inválido">Inválido</option> 
            <option value="en proceso">En proceso</option> 
            <option value="resuelto">Resuelto</option>
-      </select><br><br>
+      </select><br>
+      <input type="hidden" name="action" value="estado">
+      <input type="submit" value="Aplicar filtro" class="botoncito"><br><br>
+      </form>
       {% if depto=="Secretaría técnica": %}
       <label for="derivar">Derivar</label>
+      <form action="/manejar/{{depto}}">
       <select id="derivar" name="nuevo_depto"> 
            <option value="maestranza">Maestranza</option> 
            <option value="soporte informático">Soporte informático</option>
-      </select><br><br>
-      {% endif %}
+      </select><br>
+            <input type="hidden" name="action" value="departamento">
+            <input type="submit" value="Aplicar filtro" class="botoncito"><br><br>
       </form>
+      {% endif %}
     </div>
   </div>
   {% endfor %}
+{% endif %}
 </body>
 </html>

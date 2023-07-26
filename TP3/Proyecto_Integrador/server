@@ -125,11 +125,15 @@ def jefe(depto):
 def manejar(depto):
 
     if request.method == 'POST':
-        ID=request.form["ID"]
-        nuevo_depto=request.form["nuevo_depto"]
-        nuevo_estado=request.form["nuevo_estado"]
-        GestorDB.modificar_dato("depto", nuevo_depto, "reclamo", ID)
-        GestorDB.modificar_dato("estado", nuevo_estado, "reclamo", ID)
+        if "action" in request.form:
+            ID=request.form["ID"]
+            action=request.form["action"]
+            if action=="estado":
+                nuevo_estado=request.form["nuevo_estado"]
+                GestorDB.modificar_dato("estado", nuevo_estado, "reclamo", ID)
+            elif action=="departamento":
+                nuevo_depto=request.form["nuevo_depto"]
+                GestorDB.modificar_dato("depto", nuevo_depto, "reclamo", ID)
 
     reclamos_de_depto_data=GestorDB.get_reclamos_by_filtro("departamento", depto.lower()) #se obtienen los datos de los reclamos del depto de bd
     reclamos=GestorR.cargar_de_db(reclamos_de_depto_data) #lista de objetos Reclamo
@@ -201,7 +205,7 @@ def crear():
                 #se crea el reclamo
                 reclamo=GestorR.crear_reclamo(formulario) # no sé si debería andar el reclamo por fuera del gestor
                 #se clasifica
-                print(GestorR.clasificar_reclamo(reclamo))
+                GestorR.clasificar_reclamo(reclamo)
 
                 posibles=GestorDB.get_reclamos_by_filtro("departamento", reclamo.get_departamento) #obtiene los datos de los reclamos con el mismo departamento que el reclamo objetivo
                 if len(posibles)!=0:

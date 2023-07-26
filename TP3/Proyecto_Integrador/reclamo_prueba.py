@@ -1,5 +1,5 @@
 from modules.config import app, db
-from modules.databases import Reclamo_db
+from modules.databases import Reclamo_db, Persona_db
 from modules.gestores import Gestor_de_base_de_datos
 import datetime
 
@@ -8,7 +8,10 @@ import datetime
 
 with app.app_context():
     db.create_all() #¿deberíamos crear la BD acá o en server?
-    # linea_a_eliminar = db.session.query(Reclamo_db).filter_by(ID_reclamo=4).first()
+    # linea_a_eliminar = db.session.query(Reclamo_db).filter_by(ID_reclamo=1).first()
+    # db.session.delete(linea_a_eliminar)
+    # db.session.commit()
+    # linea_a_eliminar = db.session.query(Persona_db).filter_by(ID=1).first()
     # db.session.delete(linea_a_eliminar)
     # db.session.commit()
     # GestorDB=Gestor_de_base_de_datos()

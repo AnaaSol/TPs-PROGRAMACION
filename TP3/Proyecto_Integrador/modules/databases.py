@@ -20,8 +20,8 @@ class Persona_db(db.Model):
     surname= db.Column(db.String(100), nullable=False)
     #atributos de usuario
     claustro = db.Column(db.String(100))
-    # reclamos_adheridos = db.Column(db.String()) #string de ID's separados por comas o espacios
-    # reclamos_generados = db.Column(db.String())
+    reclamos_adheridos = db.Column(db.String()) #string de ID's separados por comas o espacios
+    reclamos_generados = db.Column(db.String())
     #atributos de jefe
     depto = db.Column(db.String(100))
     #columna discriminante
@@ -37,8 +37,8 @@ class Persona_db(db.Model):
         #atributos característicos = None a menos que se cambien después
         self.depto=None
         self.claustro=None
-        # self.reclamos_generados=None
-        # self.reclamos_adheridos=None
+        self.reclamos_generados=None
+        self.reclamos_adheridos=None
 
     def set_depto(self, depto):
         self.depto=depto
