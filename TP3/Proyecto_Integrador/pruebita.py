@@ -16,3 +16,20 @@ listita3=listita+"blast"+"esto debería creo"
 print("listita=", listita)
 print("listita2=", listita2)
 print("listita2 divida=", listita2.split(" "))
+
+a=["pero", "la", "concha", "de", "la", "lora"]
+print(a)
+print(a[0])
+print(a[-1])
+
+funny=["it should remain this way"]
+empty=[]
+
+for a in empty:
+    print("entró")
+    data="blabla"
+    funny.append(data)
+
+print(funny)
+print(len(empty))
+print(empty[-1])

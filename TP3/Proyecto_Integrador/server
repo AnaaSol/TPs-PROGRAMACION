@@ -229,15 +229,14 @@ def crear():
                         data.append(reclamo.get_imagen)
                     #print(data)
                     GestorDB.guardar_nuevo_objeto("reclamo", data)
-
-
-                    #PROBAR CON MÉTODO EN GESTORDB
-                    # ID_nuevo_reclamo=GestroDB.
-                    # creados=GestorDB.get_dato_user(user, "reclamos_generados")
-                    # if creados=="":
-                    #     GestorDB.modificar_dato("reclamos_generados", ID, "usuario", usser.get_ID())
-
-
+                    #GUARDA EN RECLAMOS_GENERADOS EL ID DEL NUEVO RECLAMO:
+                    # ID_ult_recl_user=GestorDB.get_reclamo_by_filtro("usuario", usser.get_ID())[-1][0] #el gestor nunca devolvería una lista vacía por la línea anterior
+                    # previos=GestorDB.get_dato_user(user, "reclamos_generados")
+                    # if previos=="":
+                    #     act=str(ID_ult_recl_user)
+                    # else:
+                    #     act=previos+" "+str(ID_ult_recl_user)
+                    # GestorDB.modificar_dato("reclamos_generados",act,"usuario", usser.get_ID())
 
                     return render_template("reclamo.html", reclamos_similares="no hay reclamos similares")
                 else:
