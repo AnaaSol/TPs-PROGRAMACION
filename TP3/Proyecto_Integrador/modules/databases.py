@@ -1,9 +1,4 @@
-#from modulos.config import db #no encuentra modulos
-from modules.config import db, app #como los archivos están dentro de la misma carpeta, no pongo el nombre de la misma ("modulos")
-
-#los valores de los atributos para cada instancia se pueden inicializar gracias a un posible "__init__" dentro de db.Model;
-#por lo que no pueden ser "privados" (este tipo de atributos se acceden sólo desde la clase), sino protegidos:
-#esto considera la herencia y permite que los atributos sean accededidos por las clases hijas
+from modules.config import db, app 
 
 class Persona_db(db.Model):
     
@@ -18,15 +13,14 @@ class Persona_db(db.Model):
     surname= db.Column(db.String(100), nullable=False)
     #atributos de usuario
     claustro = db.Column(db.String(100))
-    reclamos_adheridos = db.Column(db.String()) #string de ID's separados por comas o espacios
+    reclamos_adheridos = db.Column(db.String()) #string de ID's separados espacios
     reclamos_generados = db.Column(db.String())
     #atributos de jefe
     depto = db.Column(db.String(100))
     #actualizaciones
     actualizacion = db.Column(db.String())
-    #columna discriminante
-    #type=db.Column(db.String(50)) #¿es necesaria? podríamos filtrar por depto ; if depto=None, persona es un usuario final
-
+    #columna discriminante: descartada
+    
 #al init pasarle sólo atributos comunes
     def __init__(self, email, username, password, name, surname): #cuando instancio utilizo estos nombres (keyword argument)
         self.email=email
@@ -82,18 +76,4 @@ class Reclamo_db(db.Model):
     def add_image(self, image):
         self.image=image
 
-    #print(user_by_email.get_password())
-    #print(user_by_email.ID)
-    #user_1_password=db.session.query(Persona_db.get_password()).filter(Persona_db.ID==1) #get_password() requiere la instancia (self)
-    #user=db.session.get(Persona_db, 1) #sólo acepta como identificador la clave primaria
-    #print(user.name) #primera vez que carga de base de datos
-    #print(user.surname)
-    #print(user.get_password())
-
-    # from usuario import Usuario
-    # Paulita=Usuario(user.ID, user.name, user.surname, user.username, user.email, user.password, user.claustro)
-    # print(Paulita.get_email())
-
-#para obtener los reclamos creados por un usuario específico
-#ID_required_user="ID del usuario solicitado"
-#reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.ID_user==ID_required_user) #sólo se puede hacer si los atributos son públicos
+#sólo se puede hacer consultas si los atributos son públicos

@@ -168,8 +168,12 @@ padding: 10px
                   <p class="content">{{claim.get_descripcion}}</p><br>
                   <p class="etiquetas"> Fecha de creación: </p>
                   <p class="content">{{claim.get_fecha}}</p><br>
-                  <p class="etiquetas">Adherentes:</p>
-                  <p class="content">{{claim.get_adherentes|length}}</p><br>
+                  <p class="etiquetas">IDs Adherentes:</p>
+                  {% if claim.get_adherentes|length==0: %}
+                  <p class="content">Ninguno aún</p><br>
+                  {%  else: %}
+                  <p class="content">{{claim.get_adherentes}}</p><br>
+                  {% endif %}
                   <p class="etiquetas">Estado:</p>
                   <p class="content">{{claim.get_estado}}</p><br>
                   <p class="etiquetas">Departamento:</p>
@@ -177,7 +181,6 @@ padding: 10px
                   <form action="/manejar/{{depto}}" method="post">
                   <input type="hidden" name="ID" value="{{claim.get_ID}}">
                   <label for="cambiar" class="etiquetas">Cambiar estado</label><br>
-                  <form action="/manejar/{{depto}}">
                   <select id="cambiar" name="nuevo_estado"> 
                   <option value="pendiente">Pendiente</option> 
                   <option value="inválido">Inválido</option> 
@@ -189,14 +192,15 @@ padding: 10px
                   </form>
                   <br>
                   {% if depto=="Secretaría técnica": %}
-                  <label for="derivar" class="etiquetas">Derivar</label><br>
-                  <form action="/manejar/{{depto}}">
-                  <select id="derivar" name="nuevo_depto"> 
-                  <option value="maestranza">Maestranza</option> 
-                  <option value="soporte informático">Soporte informático</option>
-                  </select><br>
-                        <input type="hidden" name="action" value="departamento">
-                        <input type="submit" value="Aplicar filtro" class="botoncito"><br><br>
+                  <form action="/manejar/{{depto}}" method="post">
+                    <input type="hidden" name="ID" value="{{claim.get_ID}}">
+                    <label for="derivar" class="etiquetas">Derivar</label><br>
+                    <select id="derivar" name="nuevo_depto"> 
+                    <option value="maestranza">Maestranza</option> 
+                    <option value="soporte informático">Soporte informático</option>
+                    </select><br>
+                    <input type="hidden" name="action" value="departamento">
+                    <input type="submit" value="Aplicar filtro" class="botoncito"><br><br>
                   </form>
                   {% endif %}
             </div>

@@ -59,22 +59,3 @@ class Reclamo():
     def contar_adherentes(self):
         return len(self.__adherentes)
     
-# reclamo=Reclamo(1, "Me gusta la torta frita", "2023-07-19 15:31:19", 2)
-# print(reclamo.get_adherentes)
-# print(reclamo.contar_adherentes)
-# reclamo.sumar_adherente(2)
-# print(reclamo.get_adherentes)
-# print(reclamo.contar_adherentes)
-# reclamo.sumar_adherente(3)
-# reclamo.sumar_adherente(4)
-# print(reclamo.get_adherentes)
-# print(reclamo.contar_adherentes)
-
-
-type=None
-
-if not type:
-    print("Type es igual a None")
-    print(type)
-else:
-    print("Type tiene un valor distinto de None")

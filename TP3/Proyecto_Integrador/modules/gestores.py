@@ -210,7 +210,7 @@ class Gestor_de_base_de_datos():
         else:
             raise Exception("No existe esa base de datos.")
     
-    #hay que controlar externamente nuevo_valor o pueden pasar cosas malas
+    #hay que controlar externamente nuevo_valor
     def modificar_dato(self, dato, nuevo_valor, clase, ID):  #dato y clase son siempre strs, el ID es del objeto cuyo dato se quiere modificar
         """Modifica el dato del objeto provisto (ID y clase) si está permitido"""
         if clase.lower() in ["usuario", "reclamo"]:

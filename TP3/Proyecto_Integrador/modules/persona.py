@@ -48,7 +48,3 @@ class Persona(ABC):
 
     def get_email(self):
         return self._email
-
-#Galileo=Usuario()
-#Galileo.contraseña=ksjdsk
-#Galileo.set_contraseña(kajsks)
