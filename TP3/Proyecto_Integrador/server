@@ -127,8 +127,10 @@ def manejar(depto):
     if request.method == 'POST':
         if "action" in request.form:
             ID=request.form["ID"]
+            print("este es el ID", ID)
             action=request.form["action"]
             if action=="estado":
+                print(action)
                 nuevo_estado=request.form["nuevo_estado"]
                 datos=GestorDB.get_reclamos_by_filtro("ID", ID)[0]
                 ID_usuario_creador=datos[3]
@@ -143,6 +145,7 @@ def manejar(depto):
                     GestorDB.modificar_dato("actualizacion", "actualizacion", "usuario", ID_user)
                 GestorDB.modificar_dato("estado", nuevo_estado, "reclamo", ID)
             elif action=="departamento":
+                print(action)
                 nuevo_depto=request.form["nuevo_depto"]
                 print(nuevo_depto)
                 GestorDB.modificar_dato("depto", nuevo_depto, "reclamo", ID)

@@ -177,7 +177,8 @@ padding: 10px
                   <form action="/manejar/{{depto}}" method="post">
                   <input type="hidden" name="ID" value="{{claim.get_ID}}">
                   <label for="cambiar" class="etiquetas">Cambiar estado</label><br>
-                  <form action="/manejar/{{depto}}">
+                  <!-- Creo que este form sobra -->
+                  <!-- <form action="/manejar/{{depto}}"> -->
                   <select id="cambiar" name="nuevo_estado"> 
                   <option value="pendiente">Pendiente</option> 
                   <option value="inválido">Inválido</option> 
@@ -189,14 +190,15 @@ padding: 10px
                   </form>
                   <br>
                   {% if depto=="Secretaría técnica": %}
-                  <label for="derivar" class="etiquetas">Derivar</label><br>
-                  <form action="/manejar/{{depto}}">
-                  <select id="derivar" name="nuevo_depto"> 
-                  <option value="maestranza">Maestranza</option> 
-                  <option value="soporte informático">Soporte informático</option>
-                  </select><br>
-                        <input type="hidden" name="action" value="departamento">
-                        <input type="submit" value="Aplicar filtro" class="botoncito"><br><br>
+                  <form action="/manejar/{{depto}}" method="post">
+                    <input type="hidden" name="ID" value="{{claim.get_ID}}">
+                    <label for="derivar" class="etiquetas">Derivar</label><br>
+                    <select id="derivar" name="nuevo_depto"> 
+                    <option value="maestranza">Maestranza</option> 
+                    <option value="soporte informático">Soporte informático</option>
+                    </select><br>
+                    <input type="hidden" name="action" value="departamento">
+                    <input type="submit" value="Aplicar filtro" class="botoncito"><br><br>
                   </form>
                   {% endif %}
             </div>
