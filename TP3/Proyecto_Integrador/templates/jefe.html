@@ -37,7 +37,7 @@
     padding: 30px;
     width: 70%;
     height: 425px;
-    background-color: #f1f1f1;
+    background-color: white;
     }
     
     @media (max-width: 425px) {
@@ -97,18 +97,6 @@
         max-height: 300px;
         overflow-y: auto;
     }
-
-    /* Estilo para ocultar la fila */
-    .oculto {
-            display: none;
-        }
-
-    /* Estilo para mostrar la fila al imprimir o al descargar la tabla
-    @media print {
-        .mostrar-al-imprimir {
-            display: table-row;
-        }
-    } */
 
 </style>
 </head>
@@ -195,9 +183,9 @@
                                 <td>{{claim[4]}}</td>
                             </tr>
                         {%endfor%}
-                    <tr class="oculto mostrar-al-imprimir">
-                        <td colspan="3"><img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="400">
-                        <img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="170"></td>
+                    <tr>
+                        <td colspan="2"><img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="400"></td>
+                        <td><img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="170"></td>
                     </tr>
             </table>
         </div>
