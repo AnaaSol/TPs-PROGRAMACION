@@ -20,11 +20,3 @@ class Jefe(Persona):
     def manejar_reclamo(self, reclamo, estado):
         """Actualiza el estado del reclamo"""
         reclamo.cambiar_estado(estado)
-
-    def generar_reporte(self):
-        pass
-
-class Secretario(Jefe):
-    
-    def derivar_reclamo(self):
-        """Deriva el reclamo"""

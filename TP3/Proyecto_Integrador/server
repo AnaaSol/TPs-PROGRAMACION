@@ -1,5 +1,5 @@
 #flask
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, session
 
 #clasificador
 from modules.clasificador import Clasificador 
@@ -9,13 +9,13 @@ from modules.preprocesamiento import TextVectorizer
 from modules.gestores import Gestor_de_base_de_datos, Gestor_de_reclamos
 from modules.usuario import Usuario
 from modules.reclamo import Reclamo
-from modules.reclamos_similares import reclamos_similares
 
 #clases modelo (tablas de db)
 from modules.databases import *
 
 #funciones
 from modules.funciones import graficar_nube, graficar_torta
+from modules.reclamos_similares import reclamos_similares
 
 #otros módulos
 import datetime
@@ -32,8 +32,6 @@ GestorR=Gestor_de_reclamos('data\clasificador_svm.pkl')
 
 with app.app_context():
     db.create_all()
-
-cambio_de_estado=False
     
 @app.route("/", methods=['GET', 'POST'])
 def raiz():  
@@ -87,21 +85,18 @@ def new_user():
             condicion="Las contraseñas ingresadas no coinciden"
 
         else:
-            #ID_inicializador=0 #no se guarda, la base de datos le asigna uno al guardar el usuario
-            #user=Usuario(ID_inicializador, name, apellido, user_name, mail, contraseña, cloister)
-            #estructura de desglose del método= name, surname, username, email, password +claustro/depto
+            #en lugar de crear el objeto directamento lo guardamos en la bd
             datos_user=[name, apellido, mail, user_name, contraseña, cloister, "", ""]
             GestorDB.guardar_nuevo_objeto("usuario", datos_user)
             return redirect(url_for('raiz'))
-            #¿deberíamos mostrar un mensaje de registro o direccionar a usuario directamente?
-    
+            
     return render_template("sing_up.html", condicion=condicion)
 
 @app.route("/jefe/<depto>", methods=['GET', 'POST'])
 def jefe(depto):
     depto=depto.capitalize()
     if request.method == 'POST':
-        direction=request.form["button_value"] #it's either "Manejar reclamos" o "Analítica"
+        direction=request.form["button_value"] #it's either "Manejar reclamos" o "Analítica" (o "Panel general" si el jefe es el de secretaría técnica)
         if direction=="Manejar reclamos":
             return redirect(url_for('manejar', depto=depto))
         elif direction=="Analítica":
@@ -109,7 +104,7 @@ def jefe(depto):
         elif direction=="Panel general":
             return redirect(url_for('panel_general', depto=depto))
     reclamos_depto=GestorDB.get_reclamos_by_filtro("departamento", depto.lower()) #obtiene la data de los reclamos del depto
-    if len(reclamos_depto)!=0:
+    if len(reclamos_depto)!=0: #es decir, hay reclamos para el depto
         descripciones=[reclamo[1] for reclamo in reclamos_depto] #se queda con las descripciones
         texto = ' '.join(descripciones) #forma un texto
         cantidades=GestorDB.contar_cantidad(depto.lower()) #obtiene la cantidad de reclamos por estado del depto
@@ -121,13 +116,13 @@ def jefe(depto):
     
 @app.route("/panel_general/<depto>", methods=['GET', 'POST'])
 def panel_general(depto):
-    reclamos_generales=GestorDB.get_reclamos_by_filtro()
+    reclamos_generales_data=GestorDB.get_reclamos_by_filtro()
+    reclamos_generales=GestorR.cargar_de_db(reclamos_generales_data)
     cant=len(reclamos_generales)
     return render_template("panel_general.html", depto=depto, reclamos=reclamos_generales, cant=cant)
 
 @app.route("/manejar/<depto>", methods=['GET', 'POST'])
 def manejar(depto):
-    global cambio_de_estado
 
     if request.method == 'POST':
         if "action" in request.form:
@@ -149,6 +144,7 @@ def manejar(depto):
                 GestorDB.modificar_dato("estado", nuevo_estado, "reclamo", ID)
             elif action=="departamento":
                 nuevo_depto=request.form["nuevo_depto"]
+                print(nuevo_depto)
                 GestorDB.modificar_dato("depto", nuevo_depto, "reclamo", ID)
 
     reclamos_de_depto_data=GestorDB.get_reclamos_by_filtro("departamento", depto.lower()) #se obtienen los datos de los reclamos del depto de bd
@@ -174,11 +170,7 @@ def analitica(depto):
 @app.route("/usuario/<user>", methods=['GET', 'POST'])
 def usuario(user):
     session['username'] = user
-    estado="same"
-    
-    if cambio_de_estado:
-        estado="cambio"
-    return render_template("usuario.html", user=user, estado=estado)
+    return render_template("usuario.html", user=user)
 
 @app.route("/reclamo", methods=['GET', 'POST'])
 def crear():
@@ -286,7 +278,6 @@ def crear():
 
 @app.route("/reclamos_pendientes", methods=['GET', 'POST'])
 def pendientes():
-    #GestorDB.modificar_dato("adherentes", "", "reclamo", 1) :lo arrancaba en cero adherentes para probar
 
     reclamos_pendientes=[]
     user=session.get('username')
@@ -314,11 +305,6 @@ def pendientes():
 
         except: #es la otra solicitud POST (filtro de reclamos)
             pass
-        # name=GestorDB.__get_username_by_ID(int(ID_user))
-        # print(name)
-        # print(GestorDB.get_dato_user(name,"reclamos_adheridos"))
-        # adheridos_actualizados=adheridos_actuales+" "+str(ID)
-        # GestorDB.modificar_dato("reclamos_adheridos", reclamos_actualizados, "usuario", int(ID_user))
 
     reclamos_pendientes_data = GestorDB.get_reclamos_by_filtro("estado", "pendiente")
     # print(reclamos_pendientes_data)
@@ -337,10 +323,9 @@ def pendientes():
         if filtro=="todos":
             reclamos_pendientes=reclamos_pendientes_sin_filtrar
         else:
-            #reclamos_pendientes=[reclamo for reclamo in reclamos_pendientes_sin_filtrar if reclamo.get_departamento==filtro]
             reclamos_pendientes=GestorR.filtrar_por_depto(reclamos_pendientes_sin_filtrar, filtro)
 
-    ID_user=int(ID_user) 
+    ID_user=int(ID_user)
     return render_template("reclamos_pendientes.html", reclamos_pendientes=reclamos_pendientes, cant=cant, user=user, ID_user=ID_user)
 
 @app.route("/reclamos_usuario", methods=['GET', 'POST'])
