@@ -196,7 +196,7 @@ def crear():
             action = request.form['action']
 
             if action == 'volver_a_usuario':
-                return redirect(url_for('usuario', user=user))
+                return redirect(url_for('usuario', user=user, action=action))
             elif action == 'crear':
                 #creación del objeto Usuario
                 usser=Usuario(GestorDB.get_dato_user(user, "ID"), GestorDB.get_dato_user(user, "name"), GestorDB.get_dato_user(user, "surname"), user, GestorDB.get_dato_user(user, "email"), GestorDB.get_dato_user(user, "password"), GestorDB.get_dato_user(user, "claustro"))
