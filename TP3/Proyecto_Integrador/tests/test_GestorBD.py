@@ -1,6 +1,7 @@
 import unittest
 from modules.gestores import Gestor_de_base_de_datos
 from modules.config import app, db
+from modules.databases import Persona_db
     
 class TestGestorBD(unittest.TestCase):
     
@@ -75,4 +76,24 @@ class TestGestorBD(unittest.TestCase):
                 self.assertEqual(str(context.exception), "No puede modificar este atributo del reclamo")
         
     def test_guardar_nuevo_objeto(self):
-        """Prueba que se modifique en la base de datos el dato solicitado"""
+        """Prueba el método guardar_nuevo_objeto() y sus excepciones"""
+
+        with app.test_request_context():
+            db.create_all()
+
+            #se prueba que se guarde el objeto
+            datos_nuevo_usuario=["Alan", "Torres", "provisorio@gmail.com", "usuarioprovisoriodeprueba", "caramelodelimón", "estudiante", "", ""]            
+            self.gestorBD.guardar_nuevo_objeto("usuario", datos_nuevo_usuario)
+
+            self.assertEqual(datos_nuevo_usuario[4], self.gestorBD.get_dato_user("usuarioprovisoriodeprueba", "password"))
+
+            #se elimina el objeto una vez realizada la prueba
+            objeto=db.session.query(Persona_db).filter_by(username="usuarioprovisoriodeprueba").one()
+            db.session.delete(objeto)  
+            db.session.commit()
+
+            #se prueban las excepciones
+            with self.assertRaises(Exception) as context:
+                self.gestorBD.guardar_nuevo_objeto("estudiante", datos_nuevo_usuario)
+                self.assertEqual(str(context.exception), "No existe esa base de datos")
+

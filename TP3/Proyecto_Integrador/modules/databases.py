@@ -1,7 +1,5 @@
 #from modulos.config import db #no encuentra modulos
 from modules.config import db, app #como los archivos están dentro de la misma carpeta, no pongo el nombre de la misma ("modulos")
-from flask_login import UserMixin
-
 
 #los valores de los atributos para cada instancia se pueden inicializar gracias a un posible "__init__" dentro de db.Model;
 #por lo que no pueden ser "privados" (este tipo de atributos se acceden sólo desde la clase), sino protegidos:
@@ -24,6 +22,8 @@ class Persona_db(db.Model):
     reclamos_generados = db.Column(db.String())
     #atributos de jefe
     depto = db.Column(db.String(100))
+    #actualizaciones
+    actualizacion = db.Column(db.String())
     #columna discriminante
     #type=db.Column(db.String(50)) #¿es necesaria? podríamos filtrar por depto ; if depto=None, persona es un usuario final
 
@@ -39,6 +39,8 @@ class Persona_db(db.Model):
         self.claustro=None
         self.reclamos_generados=None
         self.reclamos_adheridos=None
+        #actualizaciones
+        self.actualizacion="ninguna"
 
     def set_depto(self, depto):
         self.depto=depto
@@ -66,6 +68,7 @@ class Reclamo_db(db.Model):
     adherentes = db.Column(db.String()) #string de ID's separados por espacios
     ID_user = db.Column(db.Integer(), db.ForeignKey('personas.ID'))
     imagen = db.Column(db.LargeBinary)
+    actualizacion = db.Column(db.String())
 
     def __init__(self, description, depto, timestap, estado, ID_user): #cuando instancio utilizo estos nombres
         self.depto=depto

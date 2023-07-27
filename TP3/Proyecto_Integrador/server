@@ -1,7 +1,5 @@
 #flask
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-# from flask_login import login_user, login_required, current_user, logout_user
-# from werkzeug.security import generate_password_hash, check_password_hash
 
 #clasificador
 from modules.clasificador import Clasificador 
@@ -32,19 +30,8 @@ from sqlalchemy.orm.exc import NoResultFound
 GestorDB=Gestor_de_base_de_datos()
 GestorR=Gestor_de_reclamos('data\clasificador_svm.pkl') 
 
-# print(GestorR.clasificar_reclamo(["no funciona el campus virtual "]))
-# print("prueba:", GestorR.clasificar_reclamo(["no funciona el campus virtual "])[0])
-# print(GestorR.clasificar_reclamo(["no hay wifi en el baño"]))
-# print(GestorR.clasificar_reclamo(["el campus imprime 80 veces las notificaciones", "no hay papel en el baño"]))
-
-# admin_list = [1]
-
 with app.app_context():
     db.create_all()
-
-# @login_manager.user_loader
-# def user_loader(user_id):
-#     return Persona_db.query.get(user_id)
 
 cambio_de_estado=False
     
@@ -122,12 +109,8 @@ def jefe(depto):
     reclamos_depto=GestorDB.get_reclamos_by_filtro("departamento", depto.lower()) #obtiene la data de los reclamos del depto
     if len(reclamos_depto)!=0:
         descripciones=[reclamo[1] for reclamo in reclamos_depto] #se queda con las descripciones
-        print("data==", reclamos_depto)
-        print("descrip==", descripciones)
         texto = ' '.join(descripciones) #forma un texto
-        print("oh you fucker", texto)
         cantidades=GestorDB.contar_cantidad(depto.lower()) #obtiene la cantidad de reclamos por estado del depto
-        print("now whattt", cantidades)
         nube_cod = graficar_nube(texto) #Obtiene la nube de palabras
         torta_cod = graficar_torta(cantidades, depto)  #Obtiene el gráfico de torta
 
@@ -143,7 +126,17 @@ def manejar(depto):
             action=request.form["action"]
             if action=="estado":
                 nuevo_estado=request.form["nuevo_estado"]
-                cambio_de_estado=True
+                datos=GestorDB.get_reclamos_by_filtro("ID", ID)[0]
+                ID_usuario_creador=datos[3]
+                if datos[7]=="": #es decir, no hay adherentes
+                    ID_usuarios_interesados=[ID_usuario_creador]
+                else:
+                    ID_usuarios_interesados=[ID_usuario_creador]
+                    for adh in datos[7].split(" "):
+                        ID_usuarios_interesados.append(int(adh))
+
+                for ID_user in ID_usuarios_interesados:
+                    GestorDB.modificar_dato("actualizacion", "actualizacion", "usuario", ID_user)
                 GestorDB.modificar_dato("estado", nuevo_estado, "reclamo", ID)
             elif action=="departamento":
                 nuevo_depto=request.form["nuevo_depto"]
@@ -151,14 +144,6 @@ def manejar(depto):
 
     reclamos_de_depto_data=GestorDB.get_reclamos_by_filtro("departamento", depto.lower()) #se obtienen los datos de los reclamos del depto de bd
     reclamos=GestorR.cargar_de_db(reclamos_de_depto_data) #lista de objetos Reclamo
-    # así como está abajo funciona, pero los reclamos tienen que manipularse desde GestorR (que no anda jaja)
-    # reclamos=[] #lista de objetos Reclamo
-    # for datos in reclamos_de_depto_data: #datos=[ID_reclamo, description, timestap, ID_user, estado, depto, imagen]
-    #     claim=Reclamo(datos[0], datos[1], datos[2], datos[3])
-    #     claim.set_depto(datos[5])
-    #     claim.cambiar_estado(datos[4])
-    #     claim.cargar_imagen(datos[6])
-    #     reclamos.append(claim)
     length=len(reclamos)
 
     return render_template("reclamo_depto.html", depto=depto, reclamos=reclamos, len=length)
@@ -166,13 +151,13 @@ def manejar(depto):
 @app.route("/analitica/<depto>", methods=['GET', 'POST'])
 def analitica(depto):
 
-    reclamos_depto=GestorDB.get_reclamos_by_filtro("departamento", depto) #obtiene la data de los reclamos del depto
-    descripciones=[reclamo[1] for reclamo in reclamos_depto] #se queda con las descripciones
-    texto = ' '.join(descripciones) #forma un texto
-    cantidades=GestorDB.contar_cantidad(depto) #obtiene la cantidad de reclamos por estado del depto
-
-    nube_cod = graficar_nube(texto) #Obtiene la nube de palabras
-    torta_cod = graficar_torta(cantidades, depto)  #Obtiene el gráfico de torta
+    reclamos_depto=GestorDB.get_reclamos_by_filtro("departamento", depto.lower()) #obtiene la data de los reclamos del depto
+    if len(reclamos_depto)!=0:
+        descripciones=[reclamo[1] for reclamo in reclamos_depto] #se queda con las descripciones
+        texto = ' '.join(descripciones) #forma un texto
+        cantidades=GestorDB.contar_cantidad(depto.lower()) #obtiene la cantidad de reclamos por estado del depto
+        nube_cod = graficar_nube(texto) #Obtiene la nube de palabras
+        torta_cod = graficar_torta(cantidades, depto)  #Obtiene el gráfico de torta
 
     return render_template("analitica.html", depto=depto, nube_cod=nube_cod, torta_cod=torta_cod)
 
@@ -180,6 +165,7 @@ def analitica(depto):
 def usuario(user):
     session['username'] = user
     estado="same"
+    
     if cambio_de_estado:
         estado="cambio"
     return render_template("usuario.html", user=user, estado=estado)
@@ -376,7 +362,15 @@ def reclamos_user():
 
     cant=len(reclamos)
 
-    return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user, cant=cant)
+    if GestorDB.get_dato_user(user, "actualizacion")=="actualizacion":
+        print(GestorDB.get_dato_user(user, "actualizacion"))
+        notificacion="¡Novedades! Hubieron cambios a sus reclamos"
+        GestorDB.modificar_dato("actualizacion", "ninguna", "usuario", ID_user)
+    else:
+        print(GestorDB.get_dato_user(user, "actualizacion"))
+        notificacion="nada"
+    
+    return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user, cant=cant, notificacion=notificacion)
 
 if __name__ == "__main__":
     app.run(debug=True)

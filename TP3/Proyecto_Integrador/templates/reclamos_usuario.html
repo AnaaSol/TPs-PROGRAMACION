@@ -146,7 +146,7 @@
 <section>
 {% if cant==0: %}          
       <nav>
-    <h3>Por lo visto aún no has creado ningún reclamo, {{user}}</h3>
+    <h3>Por lo visto aún no has creado ni adherido a ningún reclamo, {{user}}</h3>
       </nav>
       <article>
     <a href="/usuario/{{user}}" class="button2 button3">Volver</a>
@@ -154,6 +154,9 @@
       
 {% else: %}
       <nav>
+      {% if notificacion!="nada": %}
+      <p> {{ notificacion }}</p>
+      {% endif %}
    {% for claim in reclamos %} 
       <div class="dropdown">
       <button class="button button1">Reclamo</button>

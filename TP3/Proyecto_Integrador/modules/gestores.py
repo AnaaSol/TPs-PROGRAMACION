@@ -101,7 +101,7 @@ class Gestor_de_base_de_datos():
                 datos=[recl.ID_reclamo, recl.description, recl.timestap, recl.ID_user, recl.estado, recl.depto, recl.imagen, recl.adherentes]
                 datos_reclamos.append(datos)
         return datos_reclamos
-    
+
     def chequear_disponibilidad(self, respecto_de, valor):
         """Chequea la disponibilidad de un email o nombre de usuario"""
         respecto_de=respecto_de.lower()
@@ -119,7 +119,7 @@ class Gestor_de_base_de_datos():
     
     def get_dato_user(self, username, dato):
         """Recibe el nombre de usuario y el dato a consultar y devuelve el valor del mismo, si el usuario existe y el dato es válido"""
-        if dato in ["ID", "email", "username", "password", "name", "surname", "depto", "claustro", "reclamos_adheridos", "reclamos_generados"]:
+        if dato in ["ID", "email", "username", "password", "name", "surname", "depto", "claustro", "reclamos_adheridos", "reclamos_generados", "actualizacion"]:
             user=self.__get_user_by_username(username)
             attribute=getattr(user, dato, "El atributo no existe") 
             #el valor default nunca debería devolverse por el control previo, pero lo dejo para prevenir un AttributeError
@@ -152,7 +152,7 @@ class Gestor_de_base_de_datos():
 
         if clase in ["reclamo", "usuario", "jefe"]:
 
-            try:
+            # try:
 
                 if clase=="reclamo":
                     nuevo_reclamo=Reclamo_db(
@@ -180,7 +180,7 @@ class Gestor_de_base_de_datos():
                         password=dato[4],
                         )
                     nuevo_usuario.set_claustro(dato[5])
-                    nuevo_usuario.set_reclamos(dato[6], "generados") #queda guardada una lista vacía en lugar de None
+                    nuevo_usuario.set_reclamos(dato[6], "generados") #queda guardada un string vacío en lugar de None
                     nuevo_usuario.set_reclamos(dato[7], "adheridos")
                     db.session.add(nuevo_usuario)
                     db.session.commit()
@@ -197,21 +197,18 @@ class Gestor_de_base_de_datos():
                     db.session.add(nuevo_jefe)
                     db.session.commit()
 
-            except InterfaceError: #se intenta cargar un tipo de dato que no admite la columna
-                print("Probablemente algún dato es de un tipo no compatible con su respectiva columna")
-                #por alguna razón no salta error cuando se intenta guarda un entero en String(), creo que lo convierte
+            # except InterfaceError: #se intenta cargar un tipo de dato que no admite la columna
+            #     print("Probablemente algún dato es de un tipo no compatible con su respectiva columna")
+            #     #por alguna razón no salta error cuando se intenta guarda un entero en String(), creo que lo convierte
 
-            except IntegrityError: #se intenta violar la restricción de unicidad
-                print("Recuerde respetar la unicidad de email y nombre de usuario")
+            # except IntegrityError: #se intenta violar la restricción de unicidad
+            #     print("Recuerde respetar la unicidad de email y nombre de usuario")
 
-            except IndexError: #la lista no contiene todos los elementos requeridos
-                print("Faltan datos")
-
-            except Exception as e:
-                print("Ha ocurrido una excepción:", e)
+            # except IndexError: #la lista no contiene todos los elementos requeridos
+            #     print("Faltan datos")
 
         else:
-            print("No existe esa base de datos.")
+            raise Exception("No existe esa base de datos.")
     
     #hay que controlar externamente nuevo_valor o pueden pasar cosas malas
     def modificar_dato(self, dato, nuevo_valor, clase, ID):  #dato y clase son siempre strs, el ID es del objeto cuyo dato se quiere modificar
@@ -223,7 +220,7 @@ class Gestor_de_base_de_datos():
                 else:
                     raise Exception("No puede modificar este atributo del reclamo")
             else:
-                if dato in ["reclamos_adheridos", "reclamos_generados"]: #cambios de email, username y contraseña escapan de los requerimientos funcionales
+                if dato in ["reclamos_adheridos", "reclamos_generados", "actualizacion"]: #cambios de email, username y contraseña escapan de los requerimientos funcionales
                     objeto=db.session.get(Persona_db, ID)
                 else:
                     raise Exception("No puede modificar este atributo del usuario")
