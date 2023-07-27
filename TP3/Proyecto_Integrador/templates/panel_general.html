@@ -154,25 +154,25 @@
         </header>
 <section>
     <nav>
-        {%if cant==0:%}
+        {%if cant==0: %}
             <h3>¡Vaya! No se han generado reclamos aún.</h3>
         {% else: %}
             {% for claim in reclamos %} 
             <div class="dropdown">
             <button class="button button1">Reclamo {{claim[0]}}</button>
             <div class="dropdown-content">
-                <p class="etiquetas">Usuario creador:</p>
-                <p class="content">{{claim[3]}}</p><br>
-                <p class="etiquetas">Descripción:</p>
-                <p class="content">{{claim[1]}}</p><br>
-                <p class="etiquetas"> Fecha de creación: </p>
-                <p class="content">{{claim[2]}}</p><br>
-                <p class="etiquetas">Adherentes:</p>
-                <p class="content">{{claim[6]}}</p><br>
-                <p class="etiquetas">Estado:</p>
-                <p class="content">{{claim[4]}}</p><br>
-                <p class="etiquetas">Departamento:</p>
-                <p class="content">{{claim[5]}}</p><br>
+                <p class="etiquetas">ID:</p>
+            <p class="content">{{claim.get_ID}}</p><br>
+            <p class="etiquetas">Descripción</p>
+            <p class="content">{{claim.get_descripcion}}</p><br>
+            <p class="etiquetas">Estado:</p>
+            <p class="content">{{claim.get_estado}}</p><br>
+            <p class="etiquetas"> Fecha de creación: </p>
+            <p class="content">{{claim.get_fecha}}</p><br>
+            <p class="etiquetas">Departamento:</p>
+            <p class="content">{{claim.get_departamento}}</p><br>
+            <p class="etiquetas">Adherentes:</p>
+            <p class="content">{{claim.get_departamento}}</p><br>
             </div>
             </div>
             {% endfor %}

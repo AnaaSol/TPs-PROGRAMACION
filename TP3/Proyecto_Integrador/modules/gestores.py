@@ -226,7 +226,7 @@ class Gestor_de_base_de_datos():
                     raise Exception("No puede modificar este atributo del usuario")
             if objeto is not None:
                 setattr(objeto, dato, nuevo_valor) #sólo funciona si el atributo es público
-               #objeto.dato=nuevo_valor ; si dato no existe como atributo, lo crea y le asigna nuevo_valor
+                #objeto.dato=nuevo_valor ; si dato no existe como atributo, lo crea y le asigna nuevo_valor
                 db.session.commit()
                 print("Cambio guardado")
         else:
