@@ -92,15 +92,26 @@
         <h3>{{depto}}</h3>
     </header>
 <section>
+    {% if not nube_cod: %}
     <nav>
-    <img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="600">
+        <h3>Al no haber reclamos que le correspondan, no se pueden generar los gráficos analíticos</h3>
     </nav>
     <article>
-    <img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="300">
     </article>
     <lateral>
-    <a href="/jefe/{{depto}}" class="button2 button3">Volver</a>
+        <a href="/jefe/{{depto}}" class="button2 button3">Volver</a>
     </lateral>
+    {% else: %}
+        <nav>
+        <img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="600">
+        </nav>
+        <article>
+        <img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="300">
+        </article>
+        <lateral>
+        <a href="/jefe/{{depto}}" class="button2 button3">Volver</a>
+        </lateral>
+    {% endif %}
 </section>
 </body>
 </html>

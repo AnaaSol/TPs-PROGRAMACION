@@ -167,8 +167,9 @@ def analitica(depto):
         cantidades=GestorDB.contar_cantidad(depto.lower()) #obtiene la cantidad de reclamos por estado del depto
         nube_cod = graficar_nube(texto) #Obtiene la nube de palabras
         torta_cod = graficar_torta(cantidades, depto)  #Obtiene el gráfico de torta
-
-    return render_template("analitica.html", depto=depto, nube_cod=nube_cod, torta_cod=torta_cod)
+        return render_template("analitica.html", depto=depto, nube_cod=nube_cod, torta_cod=torta_cod)
+    else:
+        return render_template("analitica.html", depto=depto)
 
 @app.route("/usuario/<user>", methods=['GET', 'POST'])
 def usuario(user):
