@@ -1,17 +1,16 @@
 import unittest
-from modulos.classes import *
+import datetime
+from modules.reclamo import Reclamo
 #from modulos.databases import *
 
 class TestReclamo(unittest.TestCase):
     
     def setUp(self):
-        self.reclamo = Reclamo() 
+        self.reclamo= Reclamo(1, "No hay agua en el baño", str(datetime.datetime.now())[:19], 1) 
 
     def test_sumar_adherente(self):
         """Prueba que se guarden los usuarios adheridos"""
 
-    def test_cambiar_estado(self):
-        """Prueba que se cambie correctamente el estado del reclamo"""
+        self.reclamo.sumar_adherente(2)
+        self.assertEqual(self.reclamo.get_adherentes, [2])
 
-    def test_set_depto(self):
-        """Prueba que se derive al departamento correcto después de la clasificación"""

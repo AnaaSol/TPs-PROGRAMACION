@@ -1,7 +1,7 @@
 #flask
-from flask import Flask, render_template, request, redirect, url_for, abort, flash, session
-from flask_login import login_user, login_required, current_user, logout_user
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+# from flask_login import login_user, login_required, current_user, logout_user
+# from werkzeug.security import generate_password_hash, check_password_hash
 
 #clasificador
 from modules.clasificador import Clasificador 
@@ -24,7 +24,7 @@ import datetime
 import io
 import base64
 from functools import wraps
-from modules.config import app, db, login_manager
+from modules.config import app, db
 
 #excepciones
 from sqlalchemy.orm.exc import NoResultFound 
@@ -37,14 +37,14 @@ GestorR=Gestor_de_reclamos('data\clasificador_svm.pkl')
 # print(GestorR.clasificar_reclamo(["no hay wifi en el baño"]))
 # print(GestorR.clasificar_reclamo(["el campus imprime 80 veces las notificaciones", "no hay papel en el baño"]))
 
-admin_list = [1]
+# admin_list = [1]
 
 with app.app_context():
     db.create_all()
 
-@login_manager.user_loader
-def user_loader(user_id):
-    return Persona_db.query.get(user_id)
+# @login_manager.user_loader
+# def user_loader(user_id):
+#     return Persona_db.query.get(user_id)
 
 cambio_de_estado=False
     
@@ -115,17 +115,21 @@ def jefe(depto):
     depto=depto.capitalize()
     if request.method == 'POST':
         direction=request.form["button_value"] #it's either "Manejar reclamos" o "Analítica"
-        print(direction)
         if direction=="Manejar reclamos":
             return redirect(url_for('manejar', depto=depto))
         elif direction=="Analítica":
             return redirect(url_for('analitica', depto=depto)) 
-    reclamos_depto=GestorDB.get_reclamos_by_filtro("departamento", depto) #obtiene la data de los reclamos del depto
-    descripciones=[reclamo[1] for reclamo in reclamos_depto] #se queda con las descripciones
-    texto = ' '.join(descripciones) #forma un texto
-    cantidades=GestorDB.contar_cantidad(depto) #obtiene la cantidad de reclamos por estado del depto
-    nube_cod = graficar_nube(texto) #Obtiene la nube de palabras
-    torta_cod = graficar_torta(cantidades, depto)  #Obtiene el gráfico de torta
+    reclamos_depto=GestorDB.get_reclamos_by_filtro("departamento", depto.lower()) #obtiene la data de los reclamos del depto
+    if len(reclamos_depto)!=0:
+        descripciones=[reclamo[1] for reclamo in reclamos_depto] #se queda con las descripciones
+        print("data==", reclamos_depto)
+        print("descrip==", descripciones)
+        texto = ' '.join(descripciones) #forma un texto
+        print("oh you fucker", texto)
+        cantidades=GestorDB.contar_cantidad(depto.lower()) #obtiene la cantidad de reclamos por estado del depto
+        print("now whattt", cantidades)
+        nube_cod = graficar_nube(texto) #Obtiene la nube de palabras
+        torta_cod = graficar_torta(cantidades, depto)  #Obtiene el gráfico de torta
 
     return render_template("jefe.html", depto=depto, nube_cod=nube_cod, torta_cod=torta_cod, reclamos=reclamos_depto)
 
@@ -298,16 +302,17 @@ def pendientes():
             adherentes_actuales=GestorDB.get_reclamos_by_filtro("ID", ID_reclamo) #obtiene los datos del reclamo
             adherentes_actuales=adherentes_actuales[0][7] #se queda con los adherentes 
             adheridos_actuales=GestorDB.get_dato_user(user, "reclamos_adheridos") #obtiene los reclamos a los que adhirió el usuario
+            # print("actuales=", adheridos_actuales)
             if adherentes_actuales=="":
                 adherentes_actualizados=ID_user
             else:
                 adherentes_actualizados=adherentes_actuales+" "+ID_user
 
             if adheridos_actuales=="":
-                    adheridos_actualizados=adheridos_actuales
+                    adheridos_actualizados=str(ID_reclamo)
             else:
                     adheridos_actualizados=adherentes_actuales+" "+str(ID_reclamo) 
-
+            # print("actualizados=", adheridos_actualizados)
             GestorDB.modificar_dato("adherentes", adherentes_actualizados, "reclamo", ID_reclamo)
             GestorDB.modificar_dato("reclamos_adheridos", adheridos_actualizados, "usuario", int(ID_user))
 
@@ -350,12 +355,17 @@ def reclamos_user():
     reclamos=[]
     data_reclamos_creados=GestorDB.get_reclamos_by_filtro("usuario", ID_user) #obtiene la data de los reclamos creados por user
     ID_reclamos_adheridos=GestorDB.get_dato_user(user, "reclamos_adheridos")
+
     if ID_reclamos_adheridos=="":
         pass
     else: 
         IDs=[ID for ID in ID_reclamos_adheridos.split(" ")] #obtiene los ID de los reclamos adheridos por user
-        data_reclamos_adheridos=[GestorDB.get_reclamos_by_filtro("ID", int(ID)) for ID in IDs]
-        adheridos=GestorR.cargar_de_db(data_reclamos_adheridos)
+        adheridos=[]
+        for ID in IDs:
+            data=GestorDB.get_reclamos_by_filtro("ID", int(ID))
+            claim=GestorR.cargar_de_db(data)[0]
+            # print(claim)
+            adheridos.append(claim)
         for r in adheridos:
             reclamos.append(r)
     

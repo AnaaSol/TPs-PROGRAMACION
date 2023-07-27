@@ -4,28 +4,30 @@ class Persona(ABC):
     
     @abstractmethod #los atributos protegidos y no privados porque sino Usuario() y Jefe() no pueden acceder a ellos
     def __init__(self, ID, nombre, apellido, usuario, email, contraseña):
-        self._ID=ID #¿cómo asegurar que sea única?
+        self._ID=ID 
         self._nombre=nombre
         self._apellido=apellido
         self._usuario=usuario
         self._contraseña=contraseña
         self._email=email
 
-    #setters: compilados en la función cambiar_datos()
+    #setters: compilados en la función actualizar_datos()
 
-    def cambiar_datos(self, dato_a_cambiar, nuevo):
-        #debería pedir la contraseña antes de permtiir hacer cambios: controlado desde el HTML
-        if dato_a_cambiar == "email":
-            #debería chequear que el mail no esté ocupado
-            self._mail=nuevo
-        elif dato_a_cambiar == "contraseña":
-            self._contraseña=nuevo
-    
-    # def cambiar_contraseña(self, contraseña, contraseña_nueva):
-    #     if contraseña==self.__contraseña:
-    #         self.__contraseña=contraseña_nueva
-    #     else:
-    #         return "La contraseña ingresada no coincide."
+    def actualizar_datos(self, contraseña, dato_a_cambiar, nuevo):
+        """Con la contraseña correcta provista, actualiza el dato requerido"""
+        if contraseña==self._contraseña:
+            if dato_a_cambiar=="nombre":
+                self._nombre=nuevo
+            elif dato_a_cambiar=="apellido":
+                self._apellido=nuevo
+            elif dato_a_cambiar=="email":
+                self._email=nuevo
+            elif dato_a_cambiar=="contraseña":
+                self._contraseña=nuevo
+            else:
+                raise Exception("Ese dato no existe o no puede modificarse")
+        else:
+            raise Exception("Contraseña incorrecta")
 
     #getters
 

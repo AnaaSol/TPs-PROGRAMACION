@@ -33,7 +33,6 @@ class Usuario(Persona):
 
     def generar_datos_reclamo(self, descripcion):
         reclamo=[descripcion, str(datetime.datetime.now())[:19], self._ID]
-        #¿Cómo guardar el ID del reclamo?
         return reclamo
     
     def adherirse_a_reclamo(self, reclamo_ID): 
@@ -41,7 +40,6 @@ class Usuario(Persona):
             raise Exception("Usted ya está adherido a este reclamo")
         else: 
             self.__reclamos_adheridos.append(reclamo_ID)
-        #cómo incrementadmos reclamo.adherentes?
 
 
 
