@@ -20,7 +20,7 @@ class Gestor_de_reclamos():
             claim.cargar_imagen(data[4])
         except:
             pass
-        return claim #¿cómo se entera usuario?
+        return claim 
 
     def clasificar_reclamo(self, claim):
         """Recibe el reclamo (objeto) y lo clasifica"""
@@ -57,13 +57,6 @@ class Gestor_de_reclamos():
 class Gestor_de_base_de_datos():
     """El gestor de base de datos consulta y modifica la información almacenada en la base de datos"""
 
-    def __get_username_by_ID(self, id):
-        try:
-            user=db.session.query(Persona_db).filter_by(ID=id).one() #one() lanza error si encuentra más de uno o ninguno
-            return user.username
-        except NoResultFound:
-            raise Exception("El usuario no existe")
-
     def __get_user_by_username(self, username):
         try:
             user=db.session.query(Persona_db).filter_by(username=username).one() #one() lanza error si encuentra más de uno o ninguno
@@ -71,14 +64,14 @@ class Gestor_de_base_de_datos():
         except NoResultFound:
             raise Exception("El usuario no existe")
         
-    # def __get_reclamo_by_ID(self, ID):
-    #     try:
-    #         reclamo=db.session.query(Reclamo_db).filter_by(ID_reclamo=ID).one()
-    #         return reclamo
-    #     except NoResultFound:
-    #         raise Exception("El reclamo no existe")
+    def __get_reclamo_by_ID(self, ID):
+        try:
+            reclamo=db.session.query(Reclamo_db).filter_by(ID_reclamo=ID).one()
+            return reclamo
+        except NoResultFound:
+            raise Exception("El reclamo no existe")
         
-    def get_reclamos_by_filtro(self, type="all", filtro="ninguno"): 
+    def get_reclamos_by_filtro(self, type="all", filtro="nada"): 
         """Filtra los reclamos por departamento, estado o ID de usuario. Si no se especifica el tipo de filtro ni el
         valor del mismo, tomarán los valores default y se devolverán todos los reclamos en la base de datos"""
         type=type.lower()
@@ -89,22 +82,11 @@ class Gestor_de_base_de_datos():
             #si está vacía, either no existe un usuario con ese ID o no ha generado reclamos
             #(el primer caso se puede controlar con la obtención previa del ID)
         elif type=="estado":
-            filtro=filtro.lower()
-            if filtro in ["pendiente", "resuelto", "inválido", "en proceso"]:
-                reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.estado==filtro).all() 
-            else:
-                raise Exception("Filtro inválido")
+            reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.estado==filtro).all() 
         elif type=="departamento":
-            filtro=filtro.lower()
-            if filtro in ["soporte informático", "maestranza", "secretaría técnica"]:
-                reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.depto==filtro).all()
-            else:
-                raise Exception("Filtro inválido")
+            reclamos=db.session.query(Reclamo_db).filter(Reclamo_db.depto==filtro).all()
         elif type=="id":
-            try: 
-                reclamo=db.session.query(Reclamo_db).filter(Reclamo_db.ID_reclamo==filtro).one()
-            except NoResultFound:
-                raise Exception("El reclamo no existe")
+            reclamo=self.__get_reclamo_by_ID(filtro)
         else:
             raise Exception("Sólo puede filtrar por usuario, departamento, estado o ID")
         
@@ -144,14 +126,6 @@ class Gestor_de_base_de_datos():
             return attribute
         else:
             raise Exception("El dato ingresado no corresponde a ningún atributo de user")
-        
-    # def get_dato_reclamo(self, ID_reclamo, dato): 
-    #     if dato in ["ID_reclamo", "description", "estado", "depto", "timestap", "adherentes", "ID_user"]:
-    #         reclamo=self.__get_reclamo_by_ID(ID_reclamo)
-    #         attribute=getattr(reclamo, dato, None)
-    #         return attribute
-    #     else:
-    #         raise Exception("Dato inválido")
 
     def contar_cantidad(self, depto):
         """Devuelve una lista con la cantidad de reclamos pendientes, inválidos, en proceso y resueltos del departamento solicitado"""
@@ -261,19 +235,19 @@ class Gestor_de_base_de_datos():
         else:
             raise Exception("No existe una base de datos para esa clase o no se permite modificarla")
  
-        def eliminar(self, ID, tipo):
-            if tipo=="reclamo":
-                reclamo = db.session.get(Reclamo_db, ID)
-                if reclamo:
-                    db.session.delete(reclamo)  
-                    db.session.commit()
-                    print("Se ha eliminado con éxito")
-            elif tipo=="jefe" or tipo=="usuario":
-                persona = db.session.get(Persona_db, ID)
-                if persona:
-                    db.session.delete(persona)
-                    db.session.commit()
-                    print("Se ha eliminado con éxito")
+        # def eliminar(self, ID, tipo):
+        #     if tipo=="reclamo":
+        #         reclamo = db.session.get(Reclamo_db, ID)
+        #         if reclamo:
+        #             db.session.delete(reclamo)  
+        #             db.session.commit()
+        #             print("Se ha eliminado con éxito")
+        #     elif tipo=="jefe" or tipo=="usuario":
+        #         persona = db.session.get(Persona_db, ID)
+        #         if persona:
+        #             db.session.delete(persona)
+        #             db.session.commit()
+        #             print("Se ha eliminado con éxito")
 
         
 

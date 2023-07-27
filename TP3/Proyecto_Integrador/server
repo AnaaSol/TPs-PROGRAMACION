@@ -1,6 +1,6 @@
 #flask
 from flask import Flask, render_template, request, redirect, url_for, abort, flash, session
-from flask_login import login_user, login_required, current_user, logout_user
+# from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 #clasificador
@@ -24,7 +24,7 @@ import datetime
 import io
 import base64
 from functools import wraps
-from modules.config import app, db, login_manager
+from modules.config import app, db
 
 #excepciones
 from sqlalchemy.orm.exc import NoResultFound 
@@ -42,9 +42,9 @@ admin_list = [1]
 with app.app_context():
     db.create_all()
 
-@login_manager.user_loader
-def user_loader(user_id):
-    return Persona_db.query.get(user_id)
+# @login_manager.user_loader
+# def user_loader(user_id):
+#     return Persona_db.query.get(user_id)
     
 @app.route("/", methods=['GET', 'POST'])
 def raiz():  

@@ -1,12 +1,11 @@
 import unittest
-from modulos.classes import *
+from modules.jefe import Jefe
 #from modulos.databases import *
 
 class TestJefe(unittest.TestCase):
     
     def setUp(self):
-        self.jefe = Jefe()
-        self.reclamo= Reclamo() 
+        self.jefe = Jefe(1, "Ana Sol", "Murzi", "anam28", "anas.murzi@gmail.com", "contraseña", "maestranza")
 
     def test_manejar_reclamo(self):
         """Prueba que actualice el estado del reclamo"""
