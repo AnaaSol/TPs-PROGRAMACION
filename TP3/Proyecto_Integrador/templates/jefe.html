@@ -40,7 +40,7 @@
     background-color: #f1f1f1;
     }
     
-    @media (max-width: 600px) {
+    @media (max-width: 425px) {
     nav, article, lateral, ending{
         height: 425px;
         width: 100%;
@@ -85,8 +85,6 @@
     table {
             border-collapse: collapse;
             width: 100%;
-            max-height: 425px;
-            overflow-y: auto;
         }
 
     th, td {
@@ -94,6 +92,23 @@
             padding: 8px;
             text-align: center;
         }
+
+    .table-container {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    /* Estilo para ocultar la fila */
+    .oculto {
+            display: none;
+        }
+
+    /* Estilo para mostrar la fila al imprimir o al descargar la tabla
+    @media print {
+        .mostrar-al-imprimir {
+            display: table-row;
+        }
+    } */
 
 </style>
 </head>
@@ -152,6 +167,7 @@
                     enlaceDescarga.click();
                 }
         
+             
                 function descargarPDF() {
                     const tabla = document.querySelector('table');
                     const opt = {
@@ -165,30 +181,26 @@
                 }
             </script>
             <br><br>
+            <div class="table-container">
             <table>
-                <tr>
-                    <th>ID reclamo</th>
-                    {% for claim in reclamos:%}
-                    <td>{{claim[0]}}</td>
-                    {% endfor%}
-                </tr>
-                <tr>
-                    <th> Descripcion </th>
-                    {% for claim in reclamos:%}
-                    <td>{{claim[1]}}</td>
-                    {% endfor%} 
-                </tr>
-                <tr>
-                    <th>Estado</th>
-                    {% for claim in reclamos:%}
-                    <td>{{claim[4]}}</td>
-                    {% endfor%}
-                </tr>
-                <tr>
-                    <td><img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="400"></td>
-                    <td><img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="170"></td>
-                </tr>
+                    <tr>
+                        <th>ID reclamo</th>
+                        <th> Descripcion </th>
+                        <th>Estado</th>
+                    </tr>
+                        {%for claim in reclamos:%}
+                            <tr>
+                                <td>{{claim[0]}}</td>
+                                <td>{{claim[1]}}</td>
+                                <td>{{claim[4]}}</td>
+                            </tr>
+                        {%endfor%}
+                    <tr class="oculto mostrar-al-imprimir">
+                        <td colspan="3"><img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="400">
+                        <img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="170"></td>
+                    </tr>
             </table>
+        </div>
         </article>
     </section>
 </body>
