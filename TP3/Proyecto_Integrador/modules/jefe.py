@@ -17,6 +17,3 @@ class Jefe(Persona):
     def get_departamento(self):
         return self.__departamento
 
-    def manejar_reclamo(self, reclamo, estado):
-        """Actualiza el estado del reclamo"""
-        reclamo.cambiar_estado(estado)

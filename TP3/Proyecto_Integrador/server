@@ -145,9 +145,7 @@ def manejar(depto):
                     GestorDB.modificar_dato("actualizacion", "actualizacion", "usuario", ID_user)
                 GestorDB.modificar_dato("estado", nuevo_estado, "reclamo", ID)
             elif action=="departamento":
-                print(action)
                 nuevo_depto=request.form["nuevo_depto"]
-                print(nuevo_depto)
                 GestorDB.modificar_dato("depto", nuevo_depto, "reclamo", ID)
 
     reclamos_de_depto_data=GestorDB.get_reclamos_by_filtro("departamento", depto.lower()) #se obtienen los datos de los reclamos del depto de bd

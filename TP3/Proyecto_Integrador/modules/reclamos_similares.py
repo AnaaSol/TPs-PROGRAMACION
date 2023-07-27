@@ -1,4 +1,3 @@
-#from usuario import *
 import nltk as nltk
 import collections
 import operator
@@ -16,7 +15,7 @@ def reclamos_similares (reclamos_same_depto, texto_objetivo): #reclamos_same_dep
     nltk.download('stopwords')
     stopwords_es=nltk.corpus.stopwords.words('spanish')
     palabras_filtradas_objetivo=[palabra for palabra in texto_objetivo.split() if palabra.lower() not  in stopwords_es]
-    texto_filtrado_objetivo = ' '.join(palabras_filtradas_objetivo) #¿no es al cuete si después las separás de vuelta?
+    texto_filtrado_objetivo = ' '.join(palabras_filtradas_objetivo)
     counter1 = collections.Counter(texto_filtrado_objetivo.split()) #diccionario que mapea cada elemento con su frecuencia
     for palabra, cont in counter1.most_common(): #el método most_common retorna una lista de parejas ordenada en función del orden de apariciones, de mayor a menor
         lista_objetivo.append(palabra) #uso solo la palabra, descartando el numero de veces que se repite (pero manteniendo el orden)
@@ -49,9 +48,3 @@ def reclamos_similares (reclamos_same_depto, texto_objetivo): #reclamos_same_dep
     for j in range(len(similares)):
         lista_IDs.append(similares[j][0])
     return lista_IDs #devuelve una lista con los ID del/los reclamo/s similar/es 
-
-if __name__== "__main__": 
-    print(reclamos_similares([("hola prueba reclamos similares encontrados", 1), ("hola prueba", 2), ("hola prueba completa reclamos similares encontrados", 3)], "hola prueba completa reclamos similares encontrados"))
-    # lista_de_tuplas=[("tuqui", 37, "alapucha", 999), (1, 2), (1,3), (8, "boe ya basta")]
-    # print(lista_de_tuplas[0][0])
-    # print(lista_de_tuplas[3][1])

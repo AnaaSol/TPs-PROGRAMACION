@@ -183,6 +183,7 @@
                         <th> Descripcion </th>
                         <th>Estado</th>
                     </tr>
+                    {% if nube_cod: %}
                         {%for claim in reclamos:%}
                             <tr>
                                 <td>{{claim[0]}}</td>
@@ -190,12 +191,11 @@
                                 <td>{{claim[4]}}</td>
                             </tr>
                         {%endfor%}
-                    {% if nube_cd: %}
                         <tr>
                             <td colspan="2"><img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="400"></td>
                             <td><img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="170"></td>
                         </tr>
-                    {%endif%}
+                    {% endif %}
             </table>
         </div>
         </article>

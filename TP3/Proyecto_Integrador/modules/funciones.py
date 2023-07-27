@@ -30,12 +30,12 @@ def graficar_torta(estados, depto):
     cant=0
     for x in estados:
         cant+=x
-    valores = estados #sizes debería ser la cantidad de reclamos por estado = estados
-    etiquetas = ['Pendiente', 'En proceso', 'Resuelto', 'Inválido'] #el tp sólo pide los resueltos y en proceso
+    valores = estados #estados es la cantidad de reclamos por estado [cant_pendientes, cant_invalidos...]
+    etiquetas = ['Pendiente', 'Inválido', 'En proceso', 'Resuelto'] 
     colores = ['red', 'green', 'blue', 'orange']
     plt.figure(figsize=(8, 6))
     plt.pie(valores, labels=None, colors=colores, autopct=None)
-    etiquetas_y_valores = [f'{etiqueta} - {valor}%' for etiqueta, valor in zip(etiquetas, valores)]
+    etiquetas_y_valores = [f'{etiqueta} - {valor}' for etiqueta, valor in zip(etiquetas, valores)]
     plt.legend(etiquetas_y_valores, loc='best', bbox_to_anchor=(1, 0.5))
     plt.title(f"Total reclamos {depto}: {cant}")
     buf = io.BytesIO()
@@ -43,7 +43,6 @@ def graficar_torta(estados, depto):
     buf.seek(0)
     torta = base64.b64encode(buf.read()).decode('utf-8')
     return torta
-    #plt.savefig(f"static/torta_{depto}.png")
 
 
 
