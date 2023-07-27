@@ -157,7 +157,6 @@ padding: 10px
       <nav>
             {% if len==0: %}
             <h3>¡Vaya! No hay reclamos que correspondan a {{depto}} aún.</h3>
-            <a href="/jefe/{{depto}}" class="botoncito">Volver</a>
             {% else: %}
             {% for claim in reclamos %} 
             <div class="dropdown">

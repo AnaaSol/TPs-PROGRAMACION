@@ -116,7 +116,14 @@
             </form><br>
             <form action="/jefe/{{depto}}" method="post">
                 <input type="submit" value="Manejar reclamos" name="button_value">
-            </form><br><br><br><br><br><br><br><br><br>
+            </form>
+            {% if depto=="Secretaría técnica": %}
+                <br>
+                <form action="/jefe/{{depto}}" method="post">
+                    <input type="submit" value="Panel general" name="button_value">
+                </form>
+            {% endif %}
+            <br><br><br><br><br><br><br>
             <button id="popup-button" onclick="togglePopup()">Ayuda</button>
   
             <div id="popup-overlay" class="popup-overlay-hidden"></div>
@@ -183,10 +190,12 @@
                                 <td>{{claim[4]}}</td>
                             </tr>
                         {%endfor%}
-                    <tr>
-                        <td colspan="2"><img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="400"></td>
-                        <td><img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="170"></td>
-                    </tr>
+                    {% if nube_cd: %}
+                        <tr>
+                            <td colspan="2"><img src="data:image/png;base64,{{ torta_cod }}" alt="Estadísticas" width="400"></td>
+                            <td><img src="data:image/png;base64,{{ nube_cod }}" alt="Palabras frecuentes" width="170"></td>
+                        </tr>
+                    {%endif%}
             </table>
         </div>
         </article>
