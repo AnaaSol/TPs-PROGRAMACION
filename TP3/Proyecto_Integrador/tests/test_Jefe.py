@@ -7,8 +7,14 @@ class TestJefe(unittest.TestCase):
     def setUp(self):
         self.jefe = Jefe(1, "Ana Sol", "Murzi", "anam28", "anas.murzi@gmail.com", "contraseña", "maestranza")
 
-    def test_manejar_reclamo(self):
-        """Prueba que actualice el estado del reclamo"""
+    def test_get_depto(self):
+        """Prueba la correcta obtencion del departamento"""
+        self.assertEqual(self.jefe.get_departamento(), "maestranza")
 
-    def test_generar_reporte(self):
-        """Prueba la correcta generación del reporte (con los gráficos y estadísticas solicitadas)"""
+    def test_set_depto(self):
+        """Prueba que cambie el departamento"""
+        self.jefe.set_departamento("secretaría técnica")
+        self.assertEqual(self.jefe.get_departamento(), "secretaría técnica")
+
+    
+
