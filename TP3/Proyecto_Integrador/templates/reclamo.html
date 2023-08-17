@@ -199,14 +199,13 @@
                   <p class="etiquetas">Departamento:</p>
                   <p class="content">{{claim.get_departamento}}</p><br>
                   <p class="etiquetas">{{claim.contar_adherentes}} adherentes</p><br><br>
-                  <!-- <p>{{claim.get_ID_usuario}}</p>
-                        <p>{{ID_user}}</p> -->
-                  {% if ID_user==claim.get_ID_usuario: %}
+                  {% if ID==claim.get_ID_usuario: %}
                         <p class="tag"><i>Usted es el creador</i></p>
                   {% else: %}
-                        {% if ID_user not in claim.get_adherentes: %}
+                        {% if ID not in claim.get_adherentes: %}
                         <form action="/reclamo" method="post">
                               <input type="hidden" name="ID_reclamo" value="{{claim.get_ID}}">
+                              <input type="hidden" name="action" value="adherir">
                               <input type="submit" value="Adherir" class="botoncito">
                         </form>
                         {% else: %}
@@ -219,8 +218,16 @@
         <br><br><br><br>
         <form action="/reclamo" method="post">
             <input type="hidden" name="action" value="crear_igualmente">
+            <input type="hidden" name="crear_reclamo_ID" value="{{formulario[0]}}">
+            <input type="hidden" name="crear_reclamo_descrip" value="{{formulario[1]}}">
+            <input type="hidden" name="crear_reclamo_ID_usuario" value="{{formulario[3]}}">
+            <input type="hidden" name="crear_reclamo_fecha" value="{{formulario[2]}}">
             <input type="submit" value="Continuar">
           </form>
+        <form action="/reclamo" method="post">
+            <input type="hidden" name="action" value="volver_a_usuario">
+            <input type="submit" class="button2 button3" value="Volver">
+        </form>
     </fieldset>
     {% endif %}
 </div>
