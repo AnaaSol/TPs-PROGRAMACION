@@ -28,7 +28,7 @@ from modules.config import app, db
 from sqlalchemy.orm.exc import NoResultFound 
 
 GestorDB=Gestor_de_base_de_datos()
-GestorR=Gestor_de_reclamos('data\clasificador_svm.pkl') 
+GestorR=Gestor_de_reclamos('./data/clasificador_svm.pkl') 
 
 with app.app_context():
     db.create_all()
@@ -365,4 +365,4 @@ def reclamos_user():
     return render_template("reclamos_usuario.html",  reclamos=reclamos, user=user, cant=cant, notificacion=notificacion)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port='5000')
